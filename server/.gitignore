@@ -6,6 +6,9 @@ logs
 *.log
 npm-debug.log*
 
+# json
+package-lock.json
+
 # Dependency directories
 pids
 logs
