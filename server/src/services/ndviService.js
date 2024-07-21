@@ -1,5 +1,5 @@
 import ee from '@google/earthengine';
-import config from '../../config/config';
+import config from '../../config/config.js';
 
 // Initialize Earth Engine
 function initEE() {
@@ -43,7 +43,7 @@ async function getNDVI(lat, lon){
 }
 
 // Initialize the Earth Engine API
-initializeEE();
+initEE();
 
 // Exports
 export default {

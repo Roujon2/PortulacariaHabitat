@@ -1,10 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import authRoutes from './routes/authRoutes';
+import authRoutes from './src/routes/authRoutes.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import config from '../config/config';
-import ndviRoute from './routes/ndviRoute';
+import config from './config/config.js';
+import ndviRoute from './src/routes/ndviRoute.js';
 
 const app = express();
 const PORT = config.server.port;

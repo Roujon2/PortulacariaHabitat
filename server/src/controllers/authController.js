@@ -1,4 +1,4 @@
-import config from '../../config/config';
+import config from '../../config/config.js';
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
@@ -73,7 +73,7 @@ const checkLoggedIn = (req, res) => {
 
         // If the user token doesn't exist
         if (!user) {
-            return res.json({ loggedIn: false });
+            return res.json({ loggedIn: false , user: null });
         }
 
         // Verify the token and add user info
@@ -85,7 +85,7 @@ const checkLoggedIn = (req, res) => {
         res.json({ loggedIn: true, decoded });
     }catch(error){
         console.error('Error: ', error.message);
-        return res.json({ loggedIn: false });
+        return res.json({ loggedIn: false , user: null});
     }
 };
 
