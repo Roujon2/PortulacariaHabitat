@@ -12,12 +12,39 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 // Ensures cookies are sent
 axios.defaults.withCredentials = true;
 
+// Server URL
+const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
+
 const Home = () => {
   const { loggedIn } = useContext(AuthContext) as AuthContextProps;
-  if (loggedIn === true) return <p><p>Logged In!</p></p>
+  if (loggedIn === true) return (<div>
+    <p>Logged In!</p>
+    <MainPage />
+  </div>)
   if (loggedIn === false) return <Login />
   return <p>Error... Connection to server failed</p>
 };
+
+const MainPage = () => {
+
+  // Logout function
+  const handleLogout = async () => {
+    try {
+      // Call logout endpoint
+      await axios.get(`${serverUrl}/auth/logout`, { withCredentials: true });
+
+      // Reload page
+      window.location.reload();
+    } catch (error) {
+      // Log error
+      console.error(error);
+    }
+  }
+
+  return(
+    <button className="btn" onClick={handleLogout}>Logout</button>
+  )
+}
 
 
 const router = createBrowserRouter([

@@ -82,7 +82,7 @@ const checkLoggedIn = (req, res) => {
 
         // Reset token in cookie
         res.cookie('user', newToken, {httpOnly: true, maxAge: config.google.token_expiration});
-        res.json({ loggedIn: true, decoded });
+        res.json({ loggedIn: true, user: decoded });
     }catch(error){
         console.error('Error: ', error.message);
         return res.json({ loggedIn: false , user: null});

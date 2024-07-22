@@ -3,7 +3,9 @@ import config from '../../config/config.js';
 
 // Initialize Earth Engine
 function initEE() {
-    ee.data.authenticateViaPrivateKey(config.google.ee_key, () => {
+    const privateKey = JSON.parse(config.google.ee_key);
+
+    ee.data.authenticateViaPrivateKey(privateKey, () => {
         ee.initialize(null, null, () => {
             console.log('EE initialized');
         });

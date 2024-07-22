@@ -3,10 +3,6 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();
 
-// Service account parsing
-const eeServiceAccKey = process.env.EE_SERVICE_ACC_KEY;
-const parsedKey = JSON.parse(eeServiceAccKey);
-
 const config = {
     google: {
         client_id: process.env.GOOGLE_CLIENT_ID,
@@ -17,7 +13,7 @@ const config = {
         client_url: process.env.GOOGLE_CLIENT_URL,
         token_secret: process.env.GOOGLE_TOKEN_SECRET,
         token_expiration: process.env.GOOGLE_TOKEN_EXPIRY,
-        ee_key: parsedKey
+        ee_key: process.env.GOOGLE_EE_SERVICE_ACCOUNT_KEY
     },
     server: {
         port: process.env.PORT || 5000

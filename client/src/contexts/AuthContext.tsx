@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState, createContext, useCallback, ReactNode } from 'react';
 import { User } from '../types/user';
 
-const serverUrl = process.env.BACKEND_SERVER_URL as string;
+const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
 // AuthContext definition for AuthContextProvider
 interface AuthContextProps {
@@ -28,7 +28,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
             // Call loggedIn endpoint
             const {
                 data: { loggedIn, user },
-            } = await axios.get(`${serverUrl}/auth/loggedIn`);
+            } = await axios.get(`${serverUrl}/auth/logged-in`, { withCredentials: true });
 
             // If user is null
             if (!user) {
