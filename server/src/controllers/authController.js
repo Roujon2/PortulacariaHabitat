@@ -78,7 +78,12 @@ const checkLoggedIn = (req, res) => {
 
         // Verify the token and add user info
         const decoded = jwt.verify(user, config.google.token_secret);
-        const newToken = jwt.sign({decoded}, config.google.token_secret, { expiresIn: config.google.token_expiration });
+
+        // Separate the user info from the token
+        const {iat, exp, ...userDetails} = decoded;
+
+        // Generate a new token
+        const newToken = jwt.sign(userDetails, config.google.token_secret, { expiresIn: config.google.token_expiration });
 
         // Reset token in cookie
         res.cookie('user', newToken, {httpOnly: true, maxAge: config.google.token_expiration});

@@ -13,24 +13,22 @@ const Callback: React.FC = () => {
 
     useEffect(() => {
         (async () => {
-            if (loggedIn === false){
-                try{
-                    if (called.current) return;
-                    called.current = true;
+           
+            try{
+                if (called.current) return;
+                called.current = true;
 
-                    const res = await axios.get(`${serverUrl}/auth/token${window.location.search}`);
-                    console.log(res.data);
-                    checkLoginState();
-                    navigate('/');
-                }catch (error){
-                    console.error(error);
-                    navigate('/');
-                }
-            }else if (loggedIn === true){
+                const res = await axios.get(`${serverUrl}/auth/token${window.location.search}`);
+
+                await checkLoginState();
                 navigate('/');
+            }catch (error){
+                console.error(error);
+                navigate('/login');
             }
+
         })();
-    }, [checkLoginState, loggedIn, navigate]);
+    }, [checkLoginState, navigate]);
 
     return <></>
 };
