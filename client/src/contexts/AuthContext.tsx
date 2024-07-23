@@ -8,6 +8,7 @@ const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 interface AuthContextProps {
     loggedIn: boolean | null;
     user: User | null;
+    loading: boolean;
     checkLoginState: () => Promise<void>;
 }
 
@@ -22,6 +23,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
     // Var states
     const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const checkLoginState = useCallback(async () => {
         try {
@@ -55,6 +57,9 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
 
             // Log error
             console.error(error);
+        }finally{
+            // Set loading to false
+            setLoading(false);
         }
     }, []);
 
@@ -64,7 +69,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
     }, [checkLoginState]);
 
     return(
-        <AuthContext.Provider value={{ loggedIn, user, checkLoginState }}>
+        <AuthContext.Provider value={{ loggedIn, user, loading, checkLoginState }}>
             {children}
         </AuthContext.Provider>
     );

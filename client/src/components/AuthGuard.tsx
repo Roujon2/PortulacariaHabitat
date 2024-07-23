@@ -8,10 +8,16 @@ interface AuthGuardProps {
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     // Check login context
-    const { loggedIn } = useContext(AuthContext) as AuthContextProps;
+    const { loggedIn, loading } = useContext(AuthContext) as AuthContextProps;
 
+    // If loading return loading
+    if (loading) {
+        return <p>Loading...</p>
+    }
+
+    // Just in case
     if (loggedIn === null) {
-        return <p>Loading from AuthGuard...</p>
+        return <Navigate to="/login" />
     }
 
     // If not logged in
