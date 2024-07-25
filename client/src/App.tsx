@@ -1,10 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import axios from 'axios';
-import { useContext } from 'react';
-import Login from './components/Login';
+import Login from './components/Pages/Login/Login';
 import { AuthContextProvider, AuthContextProps, AuthContext } from './contexts/AuthContext';
 import Callback from './components/Callback';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
@@ -13,9 +11,6 @@ import AuthGuard from './components/AuthGuard';
 
 // Ensures cookies are sent
 axios.defaults.withCredentials = true;
-
-// Server URL
-const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
 const router = createBrowserRouter([
   {

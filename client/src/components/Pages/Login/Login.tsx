@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { AuthContext, AuthContextProps } from '../contexts/AuthContext';
-import { useContext } from 'react';
+import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
+import { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import SignInButton from '../../Atoms/SignInButton/SignInButton';
+import './login.css';
 
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
@@ -10,6 +12,8 @@ const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 const Login: React.FC = () => {
     // Check if user is logged in
     const { loggedIn, loading } = useContext(AuthContext) as AuthContextProps;
+
+    const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
     // If loading return loading
     if (loading) {
@@ -23,6 +27,8 @@ const Login: React.FC = () => {
     }
 
     const handleLogin = async () => { 
+        // Set button loading
+        setButtonLoading(true);
         try{
             // Get auth url from backend
             const { data: {url} } = await axios.get(`${serverUrl}/auth/url`);
@@ -31,13 +37,14 @@ const Login: React.FC = () => {
             window.location.assign(url);
         }catch(error){
             console.error(error);
+            setButtonLoading(false);
         }
     }
 
     return (
-        <div>
-            <h1>Login</h1>
-            <button onClick={handleLogin}>Login with Google</button>
+        <div className='login-page'>
+            <h1>Portulacaria Habitat</h1>
+            <SignInButton onClick={handleLogin} isLoading={buttonLoading}/>
         </div>
     );
 };
