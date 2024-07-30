@@ -27,6 +27,7 @@ app.use('/auth', authRoutes);
 // Route for NDVI
 app.use('/ndvi', ndviRoute);
 
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
