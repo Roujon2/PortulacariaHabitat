@@ -4,8 +4,8 @@ import config from '../../config/config.js'
 // Auth middleware verification
 const authorizeToken = (req, res, next) => {
     try {
-        // Token from cookies
-        const token = req.cookies.token;
+        // User token from cookies
+        const token = req.cookies.user;
 
         if (!token) return res.status(401).json({ message: 'Unauthorized access. Authorization token not found.' });
         

@@ -36,6 +36,14 @@ const sendNDVIPolygon = async (req, res) => {
     // Get the NDVI value
     try {
         const ndvi = await ndviService.calculateNDVI(polygons);
+
+        // Send an error if the ndvi is null
+        if (!ndvi) {
+            return res.status(500).json({
+                error: 'Error getting NDVI value: ' + error.message,
+            });
+        }
+
         res.status(200).json(ndvi);
     } catch (error) {
         res.status(500).json({

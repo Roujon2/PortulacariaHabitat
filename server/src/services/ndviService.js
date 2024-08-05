@@ -46,7 +46,13 @@ async function getNDVI(lat, lon){
 
 // Function to calculate the ndvi
 async function calculateNDVI(polygons){
-    const { coordinates, startDate, endDate } = polygons;
+    // Unpack the polygon data
+    let coordinates = polygons.coordinates;
+    // Reformat the coordinates
+    coordinates = reformatCoordinates(coordinates);
+
+    const startDate = polygons.startDate;
+    const endDate = polygons.endDate;
 
     const polygonGeo = ee.Geometry.Polygon(coordinates);
 
@@ -59,7 +65,8 @@ async function calculateNDVI(polygons){
     try{
         l8.getInfo();
     }catch(error){
-        console.error('Error getting NDVI value:', error.message);
+        console.error('Error getting NDVI value, image does not exist for the drawn polygon and dates:', error.message);
+        return null;
     }
 
     // Compute NDVI
@@ -69,9 +76,15 @@ async function calculateNDVI(polygons){
 
     const ndviMap = ndviClip.getMap({ min: 0.04, max: 0.76, palette: ['blue', 'white', 'green'] });
 
-    console.log("NDVI Map:", ndviMap);
-
     return ndviMap
+}
+
+
+// Function to reformat coordinate data
+function reformatCoordinates(coordinates){
+    return coordinates.map(coord => {
+        return [coord.lng, coord.lat];
+    });
 }
 
 // Initialize the Earth Engine API

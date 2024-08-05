@@ -6,6 +6,10 @@ import type { LoadScriptProps } from "@react-google-maps/api";
 import SavePolygonMenu, {SavePolygonMenuProps} from "../../Atoms/SavePolygonMenu/SavePolygonMenu";
 import {Polygon} from "../../../types/polygon";
 
+import axios from 'axios';
+import { url } from "inspector";
+import { get } from "http";
+
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
 const mapOptions = {
@@ -14,10 +18,30 @@ const mapOptions = {
     disableDefaultUI: true,
 };
 
+// Function to get ndvi data from backend
+const getNDVIData = async (polygon: Polygon) => {
+    try{
+        const ndviData = await axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/ndvi/polygon`,
+            data: polygon,
+            withCredentials: true,
+        });
+        console.log(ndviData.data);
+
+        return ndviData.data;
+
+    }catch(error){
+        console.error("Error getting ndvi data:", error);  
+    }
+}
 
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
+
+    // Map state var
+    const [map, setMap] = useState<google.maps.Map | null>(null);
 
     // State var for the selected drawn polygon
     const [selectedPolygon, setSelectedPolygon] = useState<Polygon | null>(null);
@@ -35,7 +59,10 @@ const InteractiveMap: React.FC = () => {
 
     // Function to handle map loaded
     const onMapLoad = (map: google.maps.Map) => {
-        console.log('Map loaded:', map);
+        console.log('Map loaded.');
+
+        // Set the map state var
+        setMap(map);
     }
 
     // Function to handle polygon complete
@@ -74,10 +101,36 @@ const InteractiveMap: React.FC = () => {
             
             console.log('Updated polygon:', updatedPolygon);
 
+            // Make api call to get ndvi data
+            getNDVIData(updatedPolygon).then(ndviData => {
+              // Add overlay to the map
+              addOverlay(ndviData.urlFormat);
+            });
+
             return updatedPolygon;
         });
+
     }
 
+    // Function to add an overlay to the map
+    const addOverlay = (url: string) => {
+        // If there is no map, return
+        if (!map) return;
+
+        const overlayMapParams = new google.maps.ImageMapType({
+            getTileUrl: (coord: google.maps.Point, zoom: number) => {
+                return url
+                    .replace('{x}', coord.x.toString())
+                    .replace('{y}', coord.y.toString())
+                    .replace('{z}', zoom.toString());
+            },
+            tileSize: new google.maps.Size(256, 256),
+            opacity: 0.5,
+            name: 'NDVI'
+        });
+
+        map.overlayMapTypes.push(overlayMapParams);
+    };
 
     // If there is an error loading the script
     if (loadError) return <div>Error loading maps</div>;

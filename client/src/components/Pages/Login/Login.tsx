@@ -43,7 +43,7 @@ const Login: React.FC = () => {
 
     return (
         <div className='login-page'>
-            <h1>Portulacaria Habitat</h1>
+            <h1>Spekboom Mapping</h1>
             <SignInButton onClick={handleLogin} isLoading={buttonLoading}/>
         </div>
     );
