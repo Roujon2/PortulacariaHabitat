@@ -3,6 +3,8 @@ import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
+import { getUserByEmail } from '../models/userModel.js';
+
 // Query parameters for Google OAuth url
 const googleAuthParams = queryString.stringify({
     client_id: config.google.client_id,
@@ -52,6 +54,14 @@ const verifyGoogleAuth = async (req, res) => {
             name: decoded.name,
             picture: decoded.picture
         };
+
+        // Check if the user exists in the database
+        const dbUser = await getUserByEmail(user.email);
+
+        // If the user doesn't exist, reject the request
+        if (!dbUser) {
+            return res.status(401).json({ message: 'User not authorized. Contact developers for more information.' });
+        }
 
         // Generate a new JWT token for the user
         const token = jwt.sign(user, config.google.token_secret, { expiresIn: config.google.token_expiration });
