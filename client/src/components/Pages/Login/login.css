@@ -1,13 +1,84 @@
-.login-page{
+.login-page {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    top: 50%;
-    left: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    width: 100%;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
-    background-color: aliceblue;
+    width: 100%;
+    background-image: url('../../../assets/images/LoginPageImage.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(10px) saturate(80%) brightness(0.8);
+    z-index: 1; 
+}
+
+.login-content {
+    margin-top: 10%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    height: 100vh;
+    transition: transform 0.3s ease;
+}
+
+.login-content.show-desc{
+    transform: translateY(-5%);
+}
+
+.login-content>h1 {
+    font-size: 5rem;
+    font-weight: 700;
+    color: #e9ffae;
+}
+
+.desc-arrow {
+    display: flex;
+    margin-top: 1rem;
+    font-size: 3rem;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.desc-arrow:hover {
+    transform: scale(1.2);
+    opacity: 0.3;
+}
+
+.login-desc-container{
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.login-desc-container.show{
+    opacity: 1;
+}
+
+.login-footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: linear-gradient(0deg, rgb(21, 19, 79) 0%, rgba(0,0,0,0) 100%);
+    color: #ffffff;
+    z-index: 2;
 }

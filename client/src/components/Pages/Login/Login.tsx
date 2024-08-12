@@ -4,7 +4,10 @@ import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 import { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import SignInButton from '../../Atoms/SignInButton/SignInButton';
+import LoginDescription from '../../Atoms/LoginDescription/LoginDescription';
 import './login.css';
+
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
@@ -12,6 +15,9 @@ const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 const Login: React.FC = () => {
     // Check if user is logged in
     const { loggedIn, loading } = useContext(AuthContext) as AuthContextProps;
+
+    // State var to show desc or not
+    const [showDesc, setShowDesc] = useState<boolean>(false);
 
     const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
@@ -41,10 +47,33 @@ const Login: React.FC = () => {
         }
     }
 
+    // Event handling the show description
+    const toggleDescription = () => {
+        setShowDesc(!showDesc);
+    };
+
     return (
+        
         <div className='login-page'>
-            <h1>Spekboom Mapping</h1>
-            <SignInButton onClick={handleLogin} isLoading={buttonLoading}/>
+            <div className='background'></div>
+
+            <div className={`login-content ${showDesc ? 'show-desc' : ''}`}>
+                <h1>Spekboom Mapping</h1>
+                <SignInButton onClick={handleLogin} isLoading={buttonLoading}/>
+
+                <div className='desc-arrow' onClick={toggleDescription}>
+                    {showDesc ? <IoIosArrowUp /> : <IoIosArrowDown /> }
+                </div>
+
+                <div className={`login-desc-container ${showDesc ? 'show' : ''}`}>
+                    {<LoginDescription/>}
+                </div>
+            </div>
+
+            <div className='login-footer'>
+                <p>© 2024 Spekboom Mapping</p>
+            </div>
+
         </div>
     );
 };

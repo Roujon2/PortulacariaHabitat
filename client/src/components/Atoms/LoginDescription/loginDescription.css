@@ -1,0 +1,11 @@
+.login-desc{
+    display: flex;
+    font-size: 1.5rem;
+    opacity: 0.8;
+    max-width: 75vw;
+    color: aliceblue;
+    background-color: rgb(71, 149, 213);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0.5rem 0.1rem rgba(0, 0, 0, 0.5);
+}
