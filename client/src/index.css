@@ -12,7 +12,15 @@
 }
 
 
+/* Variable to use easily across the whole project */
+:root{
 
+
+  /* Width of a container Class to wrap around the different components that changes depending on the screen size*/
+  --container-width-lg: 75%;
+  --container-width-md: 86%;
+  --container-width-sm: 90%;
+}
 
 body {
   margin: 0;
@@ -28,4 +36,20 @@ code {
     monospace;
 }
 
+
+/* Media Queries (Medium Devices)  */
+@media screen and (max-width: 1024px){
+  .container{
+    width: var(--container-width-md);
+  }
+
+}
+
+/*  Media Queries (Small Devices)  */
+@media screen and (max-width: 600px){
+  .container{
+    width: var(--container-width-sm);
+  }
+
+}
 
