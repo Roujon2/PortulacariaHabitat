@@ -27,6 +27,11 @@ app.use('/auth', authRoutes);
 // Route for NDVI
 app.use('/ndvi', ndviRoute);
 
+// Heath check
+app.get('/health', (req, res) => {
+    res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString() });
+});
+
 
 // Start server
 app.listen(PORT, () => {

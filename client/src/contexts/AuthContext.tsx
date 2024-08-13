@@ -9,6 +9,7 @@ interface AuthContextProps {
     loggedIn: boolean | null;
     user: User | null;
     loading: boolean;
+    serverOnline: boolean;
     checkLoginState: () => Promise<void>;
 }
 
@@ -24,6 +25,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
     const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [serverOnline, setServerOnline] = useState<boolean>(true);
 
     const checkLoginState = useCallback(async () => {
         try {
@@ -63,13 +65,26 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
         }
     }, []);
 
+    // Checking server status
+    const checkServerStatus = useCallback(async () => {
+        try {
+            // Ping server
+            await axios.get(`${serverUrl}/health`);
+            setServerOnline(true);
+        } catch (error) {
+            setServerOnline(false);
+            console.error("Server is offline:", error);
+        }
+    }, []);
+
     // UseEffect to check login state on mount
     useEffect(() => {
         checkLoginState();
-    }, [checkLoginState]);
+        checkServerStatus();
+    }, [checkLoginState, checkServerStatus]);
 
     return(
-        <AuthContext.Provider value={{ loggedIn, user, loading, checkLoginState }}>
+        <AuthContext.Provider value={{ loggedIn, user, loading, checkLoginState, serverOnline }}>
             {children}
         </AuthContext.Provider>
     );
