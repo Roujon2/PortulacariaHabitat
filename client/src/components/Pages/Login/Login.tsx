@@ -32,25 +32,26 @@ const Login: React.FC = () => {
             <div className='login-page'>
                 <div className='background'></div>
 
-                <div className={`login-content ${loading ? 'loading' : ''}`}>
-                    <h1>Spekboom Mapping</h1>
+                <h1 className='login-app-name'>Spekboom Mapping</h1>
 
-                    <div className='spinner-container'>
-                        {React.createElement('loading-reuleaux', {
-                            size: "50",
-                            stroke: "5",
-                            'stroke-length': "0.15",
-                            'bg-opacity': "0.1",
-                            speed: "1.2", 
-                            color: '#482895'
-                        })}
+                <div className={`login-content ${loading ? 'loading' : ''}`}>
+                    <div className='login-main'>
+                        <div className='spinner-container'>
+                            {React.createElement('loading-reuleaux', {
+                                size: "50",
+                                stroke: "5",
+                                'stroke-length': "0.15",
+                                'bg-opacity': "0.1",
+                                speed: "1.2", 
+                                color: '#482895'
+                            })}
+                        </div>
                     </div>
                 </div>
 
                 <div className='login-footer'>
                     <p>© 2024 Spekboom Mapping</p>
                 </div>
-
             </div>
         );
     }
@@ -89,19 +90,16 @@ const Login: React.FC = () => {
         <div className='login-page'>
             <div className='background'></div>
 
-            <div className={`login-content ${showDesc ? 'show-desc' : ''}`}>
-                <h1>Spekboom Mapping</h1>
-                
-                <SignInButton onClick={handleLogin} isLoading={buttonLoading} disabled={!serverOnline}/>
+            <h1 className='login-app-name'>Spekboom Mapping</h1>
 
-                {!serverOnline && <p className='server-offline'>Server is offline. Try again later.</p>}
+            <div className={`login-content`}>
+                <div className='login-main'>
+                    
+                    <div className='login-signin'>
+                        <SignInButton onClick={handleLogin} isLoading={buttonLoading} disabled={!serverOnline}/>
 
-                <div className={`desc-arrow ${buttonLoading ? 'loading' : ''}`} onClick={toggleDescription}>
-                    {showDesc ? <IoIosArrowUp /> : <IoIosArrowDown /> }
-                </div>
-
-                <div className={`login-desc-container ${showDesc ? 'show' : ''}`}>
-                    {<LoginDescription/>}
+                        {!serverOnline && <p className='server-offline'>Server is offline. Try again later.</p>}
+                    </div>
                 </div>
             </div>
 
