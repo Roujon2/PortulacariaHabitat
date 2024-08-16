@@ -47,6 +47,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
                 name: user.name,
                 email: user.email,
                 picture: user.picture,
+                id: user.id,
             }
             
             // Set vars

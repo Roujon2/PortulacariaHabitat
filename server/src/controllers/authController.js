@@ -63,6 +63,9 @@ const verifyGoogleAuth = async (req, res) => {
             return res.status(401).json({ message: 'User not authorized. Contact developers for more information.' });
         }
 
+        // Add the db user id to the token user 
+        user.id = dbUser.id;
+
         // Generate a new JWT token for the user
         const token = jwt.sign(user, config.google.token_secret, { expiresIn: config.google.token_expiration });
         // Set user info in the cookie
@@ -70,7 +73,7 @@ const verifyGoogleAuth = async (req, res) => {
         res.json({user});
     }catch(error){
         console.error('Error: ', error.message);
-        return res.status(500).json({ message: 'Error verifying authorization code. '+err.message })
+        return res.status(500).json({ message: 'Error verifying authorization code. '+ error.message })
     }
 };
 

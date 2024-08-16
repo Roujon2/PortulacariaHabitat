@@ -9,6 +9,7 @@ import {Polygon} from "../../../types/polygon";
 import axios from 'axios';
 import { url } from "inspector";
 import { get } from "http";
+import Callback from './../../Callback';
 
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
