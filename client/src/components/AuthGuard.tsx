@@ -10,11 +10,6 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     // Check login context
     const { loggedIn, loading } = useContext(AuthContext) as AuthContextProps;
 
-    // If loading return loading
-    if (loading) {
-        return <p>Loading...</p>
-    }
-
     // Just in case
     if (loggedIn === null) {
         return <Navigate to="/login" />

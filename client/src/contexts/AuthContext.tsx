@@ -11,6 +11,7 @@ interface AuthContextProps {
     loading: boolean;
     serverOnline: boolean;
     checkLoginState: () => Promise<void>;
+    checkServerStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -85,7 +86,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
     }, [checkLoginState, checkServerStatus]);
 
     return(
-        <AuthContext.Provider value={{ loggedIn, user, loading, checkLoginState, serverOnline }}>
+        <AuthContext.Provider value={{ loggedIn, user, loading, checkLoginState, serverOnline, checkServerStatus }}>
             {children}
         </AuthContext.Provider>
     );

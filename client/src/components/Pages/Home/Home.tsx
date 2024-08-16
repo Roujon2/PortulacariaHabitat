@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import axios from 'axios';
-import { AuthContext, AuthContextProps } from '../contexts/AuthContext';
-import InteractiveMap from './Organisms/InteractiveMap/InteractiveMap';
+import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
+import InteractiveMap from '../../Organisms/InteractiveMap/InteractiveMap';
+
+import './home.css';
 
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 

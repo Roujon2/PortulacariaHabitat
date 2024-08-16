@@ -24,7 +24,8 @@ const Callback: React.FC = () => {
                 navigate('/');
             }catch (error){
                 console.error(error);
-                navigate('/login');
+                // Navigate to login with error added
+                navigate('/login?error=auth_failed');
             }
 
         })();

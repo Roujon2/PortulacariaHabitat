@@ -1,14 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
-import { useContext, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useContext, useState, useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import SignInButton from '../../Atoms/SignInButton/SignInButton';
 import LoginDescription from '../../Atoms/LoginDescription/LoginDescription';
 import './login.css';
 
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { reuleaux } from 'ldrs';
+import ErrorText from '../../Atoms/ErrorText/ErrorText';
 
 
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
@@ -16,12 +17,35 @@ const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 // Login component
 const Login: React.FC = () => {
     // Check if user is logged in
-    const { loggedIn, loading, serverOnline } = useContext(AuthContext) as AuthContextProps;
+    const { loggedIn, loading, serverOnline, checkServerStatus } = useContext(AuthContext) as AuthContextProps;
 
-    // State var to show desc or not
-    const [showDesc, setShowDesc] = useState<boolean>(false);
+    // Error message state var
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+
+    const location = useLocation();
+
+    // Use effect
+    useEffect(() => {
+        // Extract the error query parameter
+        const queryParams = new URLSearchParams(location.search);
+        const error = queryParams.get('error');
+
+        if (error) {
+            switch (error) {
+                // Case where the oauth failed
+                case 'auth_failed':
+                    setErrorMessage('Authentication failed. Please try again.');
+                    break;
+                default:
+                    setErrorMessage('An error occurred. Please try again.');
+                    break;
+            }
+        }
+
+        
+    }, [location.search]);
 
     // Register reuleaux
     reuleaux.register('loading-reuleaux');
@@ -66,6 +90,9 @@ const Login: React.FC = () => {
     const handleLogin = async () => { 
         // Set button loading
         setButtonLoading(true);
+
+        // Check server status that changes the serverOnline state
+        checkServerStatus();
         try{
             // Get auth url from backend
             const { data: {url} } = await axios.get(`${serverUrl}/auth/url`);
@@ -75,15 +102,9 @@ const Login: React.FC = () => {
         }catch(error){
             console.error(error);
             setButtonLoading(false);
+            setErrorMessage('Authentication failed. Please try again.');
         }
     }
-
-    // Event handling the show description
-    const toggleDescription = () => {
-        if(buttonLoading) return;
-
-        setShowDesc(!showDesc);
-    };
 
     return (
 
@@ -98,7 +119,8 @@ const Login: React.FC = () => {
                     <div className='login-signin'>
                         <SignInButton onClick={handleLogin} isLoading={buttonLoading} disabled={!serverOnline}/>
 
-                        {!serverOnline && <p className='server-offline'>Server is offline. Try again later.</p>}
+                        {!serverOnline && <ErrorText message='Connection error. Verify internet connection and try again.' />}
+                        {errorMessage && <ErrorText message={errorMessage} />}
                     </div>
                 </div>
             </div>
