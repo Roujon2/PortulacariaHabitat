@@ -20,19 +20,20 @@ const SideNavigation: React.FC = () => {
 
     return (
         <div className='sidebar-container'>
-            <Sidebar
-            collapsed={collapsed}>
-                
+            <Sidebar collapsed={collapsed}>
+    
                 <Menu>
-                    <MenuItem onClick={handleCollapse} icon={<IoMdMenu className={collapsed? '' : 'rotated'} />}>
+                    <MenuItem onClick={handleCollapse} icon={<IoMdMenu className={collapsed? 'item-collapse' : 'item-collapse-rotated'} />}>
                     </MenuItem>
                     <MenuItem icon={<FaMapLocationDot />}>
                         Map
                     </MenuItem>
-                    <MenuItem icon={<RiLogoutBoxFill />}>
-                        Logout
-                    </MenuItem>
                 </Menu>
+
+                <div className="logout-container">
+                    <RiLogoutBoxFill className="logout-icon" />
+                    <p className={collapsed? 'logout-text' : 'logout-text-expanded'}>Logout</p>
+                </div>
 
             </Sidebar>
         </div>

@@ -8,8 +8,49 @@
     transition: all 0.3s ease;
 }
 
-
 /* Collapse icon rotation */
-.sidebar-container .rotated{
-    transform: rotate(90deg);
+.sidebar-container .item-collapse{
+    transition: all 0.3s ease;
+}
+.sidebar-container .item-collapse-rotated{
+    transform: rotate(-90deg);
+    transition: all 0.3s ease;
+}
+
+
+.logout-container{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+.logout-container:hover{
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.logout-container:hover .logout-icon {
+    transform: scale(1.1);
+}
+.logout-icon {
+    color: rgb(200, 0, 0);
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+.logout-text{
+    font-size: 0;
+    color: rgb(200, 0, 0);
+    transition: all 0.3s ease;
+}
+.logout-text-expanded {
+    font-size: 1rem;
+    color: rgb(200, 0, 0);
+    transition: all 0.3s ease;
 }
