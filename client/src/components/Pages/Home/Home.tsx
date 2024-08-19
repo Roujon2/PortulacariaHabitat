@@ -28,10 +28,9 @@ const Home: React.FC = () => {
 
     return (
         <div className='home-page'>
-            <SideNavigation />
+            <SideNavigation onLogoutClick={handleLogout} onMapClick={() => {}} />
             <h1>Welcome, {user.name}</h1>
             <p>{user.email}</p>
-            <button onClick={handleLogout}>Logout</button>
             <InteractiveMap />
         </div>
     );

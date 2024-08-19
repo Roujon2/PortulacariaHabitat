@@ -9,9 +9,15 @@ import { IoMdMenu } from "react-icons/io";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
 
+interface SideNavigationProps {
+    onMapClick: () => void;
+    onLogoutClick: () => void;
+}
+
+
 
 // Side navigation component
-const SideNavigation: React.FC = () => {
+const SideNavigation: React.FC<SideNavigationProps> = ({ onMapClick, onLogoutClick }) => {
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
 
     const handleCollapse = () => {
@@ -30,7 +36,7 @@ const SideNavigation: React.FC = () => {
                     </MenuItem>
                 </Menu>
 
-                <div className="logout-container">
+                <div className="logout-container" onClick={onLogoutClick}>
                     <RiLogoutBoxFill className="logout-icon" />
                     <p className={collapsed? 'logout-text' : 'logout-text-expanded'}>Logout</p>
                 </div>
