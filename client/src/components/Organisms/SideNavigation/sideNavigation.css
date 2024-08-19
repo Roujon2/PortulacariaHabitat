@@ -1,0 +1,15 @@
+.sidebar-container{
+    display: flex;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+
+/* Collapse icon rotation */
+.sidebar-container .rotated{
+    transform: rotate(90deg);
+}

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import axios from 'axios';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 import InteractiveMap from '../../Organisms/InteractiveMap/InteractiveMap';
+import SideNavigation from '../../Organisms/SideNavigation/SideNavigation';
 
 import './home.css';
 
@@ -27,6 +28,7 @@ const Home: React.FC = () => {
 
     return (
         <div className='home-page'>
+            <SideNavigation />
             <h1>Welcome, {user.name}</h1>
             <p>{user.email}</p>
             <button onClick={handleLogout}>Logout</button>
