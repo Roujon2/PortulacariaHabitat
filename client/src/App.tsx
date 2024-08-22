@@ -8,6 +8,7 @@ import Callback from './components/Callback';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Home from './components/Pages/Home/Home';
 import AuthGuard from './components/AuthGuard';
+import MainWrapper from './components/Pages/MainWrapper/MainWrapper';
 
 // Ensures cookies are sent
 axios.defaults.withCredentials = true;
@@ -15,11 +16,18 @@ axios.defaults.withCredentials = true;
 const router = createBrowserRouter([
   {
     path: '/',
-    element:(
+    element: (
       <AuthGuard>
-        <Home />
+        {/* Wrap all routes with the main wrapper */}
+        <MainWrapper /> 
       </AuthGuard>
     ),
+    children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
+    ]
   },
   {
     path: '/login',
