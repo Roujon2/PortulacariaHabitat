@@ -4,7 +4,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 99;
     transition: all 0.3s ease;
 }
 
@@ -53,4 +53,16 @@
     font-size: 1rem;
     color: rgb(200, 0, 0);
     transition: all 0.3s ease;
+}
+
+.logout-confirmation-overlay{
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 20, 20, 0.5);
+    z-index: 100;
+    display: none;
+}
+.logout-confirmation-overlay.active{
+    display: block;
 }

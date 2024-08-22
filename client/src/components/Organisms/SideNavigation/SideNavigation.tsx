@@ -11,6 +11,10 @@ import './sideNavigation.css';
 import { IoMdMenu } from "react-icons/io";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { MdAccountCircle } from "react-icons/md";
+
+import LogoutConfirmation from "../../Atoms/LogoutConfirmation/LogoutConfirmation";
+
 
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
@@ -23,7 +27,12 @@ interface SideNavigationProps {
 const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
     // Login state
     const { checkLoginState } = useContext(AuthContext) as AuthContextProps; 
+
+    // Navigation collapse state
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
+
+    // Logout confirmation
+    const [showLogoutConfirmation, setShowLogoutConfirmation] = React.useState<boolean>(false);
 
     const handleCollapse = () => {
         setCollapsed(!collapsed);
@@ -48,14 +57,23 @@ const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
                     <MenuItem icon={<FaMapLocationDot />}>
                         Map
                     </MenuItem>
+                    <MenuItem icon={<MdAccountCircle />}>
+                        Profile
+                    </MenuItem>
                 </Menu>
 
-                <div className="logout-container" onClick={handleLogout}>
+                <div className="logout-container" onClick={() => setShowLogoutConfirmation(true)}>
                     <RiLogoutBoxFill className="logout-icon" />
                     <p className={collapsed? 'logout-text' : 'logout-text-expanded'}>Logout</p>
                 </div>
-
             </Sidebar>
+
+            {showLogoutConfirmation && (
+                <>
+                    <div className='logout-confirmation-overlay active'></div>
+                    <LogoutConfirmation confirmLogout={handleLogout} cancelLogout={() => setShowLogoutConfirmation(false)} />
+                </>
+            )}
         </div>
     );
 };
