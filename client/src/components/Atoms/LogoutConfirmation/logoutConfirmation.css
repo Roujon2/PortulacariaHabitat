@@ -33,11 +33,11 @@
 }
 
 .logout-confirmation-button.confirm{
-    background-color: rgb(0, 154, 185);
+    background-color: rgb(185, 0, 0);
     color: rgb(255, 255, 255);
 }
 .logout-confirmation-button.confirm:hover{
-    background-color: rgb(0, 76, 91);
+    background-color: rgb(91, 0, 0);
 }
 
 .logout-confirmation-button.cancel{
