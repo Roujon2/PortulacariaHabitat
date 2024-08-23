@@ -6,10 +6,19 @@ import InteractiveMap from "../../Organisms/InteractiveMap/InteractiveMap";
 
 import './mainWrapper.css';
 
+// Content imports
+import Home from "../Home/Home";
+
 
 // Component to wrap all pages in
 const MainWrapper: React.FC = ({ }) => {
     const location = useLocation();
+
+    const [selectedMenu, setSelectedMenu] = React.useState<string>('default');
+
+    const handleNav = (menu: string) => {
+        setSelectedMenu(menu);
+    };
 
     // Conditionally render side navigation based on the current route (this is a failsafe, the router should handle this)
     const showSideNav = location.pathname !== "/login" && location.pathname !== "/auth/callback";
@@ -18,7 +27,7 @@ const MainWrapper: React.FC = ({ }) => {
 
     return (
         <div className="main-wrapper">
-            {showSideNav && <SideNavigation />}
+            {showSideNav && <SideNavigation onNavigate={handleNav} />}
 
             <div className="main-content">
 
@@ -27,7 +36,7 @@ const MainWrapper: React.FC = ({ }) => {
                 </div>
 
                 <div className="content-wrapper">
-                    <Outlet />
+                    {selectedMenu === 'map' && <Home/>}
                 </div>
 
             </div>

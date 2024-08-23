@@ -23,12 +23,12 @@ import LogoutConfirmation from "../../Atoms/LogoutConfirmation/LogoutConfirmatio
 const serverUrl = process.env.REACT_APP_BACKEND_SERVER_URL as string;
 
 interface SideNavigationProps {
-
+    onNavigate: (menu: string) => void;
 }
 
 
 // Side navigation component
-const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
+const SideNavigation: React.FC<SideNavigationProps> = ({onNavigate}) => {
     // Login state
     const { checkLoginState } = useContext(AuthContext) as AuthContextProps; 
 
@@ -76,13 +76,13 @@ const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
                 >
                     <MenuItem onClick={handleCollapse} icon={<IoMdMenu className={collapsed? 'item-collapse' : 'item-collapse-rotated'} />}>
                     </MenuItem>
-                    <MenuItem icon={<FaMapLocationDot />} className={selectedMenu === 'map' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('map')} disabled={selectedMenu === 'map'}>
+                    <MenuItem icon={<FaMapLocationDot />} className={selectedMenu === 'map' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('map'); onNavigate('map')}} disabled={selectedMenu === 'map'} >
                         Map
                     </MenuItem>
-                    <MenuItem icon={<MdAccountCircle />}  className={selectedMenu === 'profile' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('profile')} disabled={selectedMenu === 'profile'} >
+                    <MenuItem icon={<MdAccountCircle />}  className={selectedMenu === 'profile' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('profile'); onNavigate('profile')}} disabled={selectedMenu === 'profile'} >
                         Profile
                     </MenuItem>
-                    <MenuItem icon={<PiPolygonDuotone />}  className={selectedMenu === 'polygons' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('polygons')} disabled={selectedMenu === 'polygons'} >
+                    <MenuItem icon={<PiPolygonDuotone />}  className={selectedMenu === 'polygons' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('polygons'); onNavigate('polygons')}} disabled={selectedMenu === 'polygons'} >
                         Polygons
                     </MenuItem>
                 </Menu>
