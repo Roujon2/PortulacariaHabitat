@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
-import axios from 'axios';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
-import InteractiveMap from '../../Organisms/InteractiveMap/InteractiveMap';
 
 import './home.css';
 

@@ -15,6 +15,8 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
 import { PiPolygonDuotone } from "react-icons/pi";
+import { MdHelp } from "react-icons/md";
+
 
 
 import LogoutConfirmation from "../../Atoms/LogoutConfirmation/LogoutConfirmation";
@@ -36,7 +38,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({onNavigate}) => {
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
 
     // Selected menu for navigation
-    const [selectedMenu, setSelectedMenu] = React.useState<string>('map');
+    const [selectedMenu, setSelectedMenu] = React.useState<string>('help');
 
     // Logout confirmation
     const [showLogoutConfirmation, setShowLogoutConfirmation] = React.useState<boolean>(false);
@@ -76,14 +78,14 @@ const SideNavigation: React.FC<SideNavigationProps> = ({onNavigate}) => {
                 >
                     <MenuItem onClick={handleCollapse} icon={<IoMdMenu className={collapsed? 'item-collapse' : 'item-collapse-rotated'} />}>
                     </MenuItem>
-                    <MenuItem icon={<FaMapLocationDot />} className={selectedMenu === 'map' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('map'); onNavigate('map')}} disabled={selectedMenu === 'map'} >
-                        Map
-                    </MenuItem>
                     <MenuItem icon={<MdAccountCircle />}  className={selectedMenu === 'profile' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('profile'); onNavigate('profile')}} disabled={selectedMenu === 'profile'} >
                         Profile
                     </MenuItem>
                     <MenuItem icon={<PiPolygonDuotone />}  className={selectedMenu === 'polygons' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('polygons'); onNavigate('polygons')}} disabled={selectedMenu === 'polygons'} >
                         Polygons
+                    </MenuItem>
+                    <MenuItem icon={<MdHelp />}  className={selectedMenu === 'help' ? 'menu-item_active' : 'menu-item'} onClick={() => {setSelectedMenu('help'); onNavigate('help')}} disabled={selectedMenu === 'help'} >
+                        Help
                     </MenuItem>
                 </Menu>
 
