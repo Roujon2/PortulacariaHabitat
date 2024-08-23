@@ -29,7 +29,6 @@
 .logout-confirmation-button:hover{
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.255);
-    transform: scale(1.05);
 }
 
 .logout-confirmation-button.confirm{

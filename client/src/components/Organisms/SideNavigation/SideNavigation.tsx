@@ -3,6 +3,8 @@ import React, { useContext } from "react";
 // Nav sidebar imports
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 
+import { Link } from 'react-router-dom';
+
 import axios from 'axios';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 
@@ -12,6 +14,8 @@ import { IoMdMenu } from "react-icons/io";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
+import { PiPolygonDuotone } from "react-icons/pi";
+
 
 import LogoutConfirmation from "../../Atoms/LogoutConfirmation/LogoutConfirmation";
 
@@ -31,6 +35,9 @@ const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
     // Navigation collapse state
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
 
+    // Selected menu for navigation
+    const [selectedMenu, setSelectedMenu] = React.useState<string>('map');
+
     // Logout confirmation
     const [showLogoutConfirmation, setShowLogoutConfirmation] = React.useState<boolean>(false);
 
@@ -49,16 +56,34 @@ const SideNavigation: React.FC<SideNavigationProps> = ({}) => {
 
     return (
         <div className='sidebar-container'>
-            <Sidebar collapsed={collapsed}>
-    
-                <Menu>
+            <Sidebar collapsed={collapsed}
+                rootStyles={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                }}
+            >
+                <Menu
+                    menuItemStyles={
+                        {
+                            button: ( {active, disabled} ) => ({
+                                transition: 'all 0.3s',
+                                ['&:hover']: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                },
+                                backgroundColor: disabled ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0)',
+                            })
+                        }
+                    }
+                >
                     <MenuItem onClick={handleCollapse} icon={<IoMdMenu className={collapsed? 'item-collapse' : 'item-collapse-rotated'} />}>
                     </MenuItem>
-                    <MenuItem icon={<FaMapLocationDot />}>
+                    <MenuItem icon={<FaMapLocationDot />} className={selectedMenu === 'map' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('map')} disabled={selectedMenu === 'map'}>
                         Map
                     </MenuItem>
-                    <MenuItem icon={<MdAccountCircle />}>
+                    <MenuItem icon={<MdAccountCircle />}  className={selectedMenu === 'profile' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('profile')} disabled={selectedMenu === 'profile'} >
                         Profile
+                    </MenuItem>
+                    <MenuItem icon={<PiPolygonDuotone />}  className={selectedMenu === 'polygons' ? 'menu-item_active' : 'menu-item'} onClick={() => setSelectedMenu('polygons')} disabled={selectedMenu === 'polygons'} >
+                        Polygons
                     </MenuItem>
                 </Menu>
 

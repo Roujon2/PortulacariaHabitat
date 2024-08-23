@@ -21,7 +21,6 @@ const Home: React.FC = () => {
         <div className='home-page'>
             <h1>Welcome, {user.name}</h1>
             <p>{user.email}</p>
-            <InteractiveMap />
         </div>
     );
 };
