@@ -37,6 +37,24 @@ const getNDVIData = async (polygon: Polygon) => {
     }
 }
 
+// Function to get classifier data from backend
+const classifyPolygon = async (polygon: Polygon) => {
+    try{
+        const classifierData = await axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/test`,
+            data: {polygon: polygon},
+            withCredentials: true,
+        });
+        console.log(classifierData.data);
+
+        return classifierData.data;
+
+    }catch(error){
+        console.error("Error getting classifier data:", error);  
+    }
+}
+
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
@@ -102,10 +120,17 @@ const InteractiveMap: React.FC = () => {
             
             console.log('Updated polygon:', updatedPolygon);
 
-            // Make api call to get ndvi data
+            /*// Make api call to get ndvi data
             getNDVIData(updatedPolygon).then(ndviData => {
               // Add overlay to the map
               addOverlay(ndviData.urlFormat);
+            });
+            */
+
+            // Make api call to get classifier data
+            classifyPolygon(updatedPolygon).then(classifierData => {
+              console.log(classifierData);
+              addOverlay(classifierData.urlFormat);
             });
 
             return updatedPolygon;

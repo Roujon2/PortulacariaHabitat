@@ -29,8 +29,11 @@ function prepSrL8(image){
 async function classifyImage(polygon){
     return new Promise((resolve, reject) => {
         try{
+            // Reformat coordinates
+            const polyCoords = reformatCoordinates(polygon.coordinates);
+
             // Create ee polygon from coordinates
-            const eePolygon = ee.Geometry.Polygon(polygon.coordinates);
+            const eePolygon = ee.Geometry.Polygon(polyCoords);
 
             // Prepare the image
             const image = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
@@ -65,6 +68,13 @@ async function classifyImage(polygon){
         } catch (error) {
             reject(error);
         }
+    });
+}
+
+// Function to reformat coordinate data if it is in {lat, lng} format
+function reformatCoordinates(coordinates){
+    return coordinates.map(coord => {
+        return [coord.lng, coord.lat];
     });
 }
 

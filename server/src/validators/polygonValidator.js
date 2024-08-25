@@ -23,22 +23,20 @@ const polygonSchema = joi.object({
 
     coordinates: joi.array()
         .items(
-            joi.array()
-                .items(
-                    joi.number()
-                        .required()
-                        .messages({
-                            'number.base': 'Coordinate must be a number',
-                            'any.required': 'Coordinate is required'
-                        })
-                )
-                .length(2)
-                .required()
-                .messages({
-                    'array.base': 'Coordinate must be an array',
-                    'array.length': 'Coordinate must have exactly 2 elements (latitude and longitude)',
-                    'any.required': 'Coordinate is required'
-                })
+            joi.object({
+                lat: joi.number()
+                    .required()
+                    .messages({
+                        'number.base': 'Latitude must be a number',
+                        'any.required': 'Latitude is required'
+                    }),
+                lng: joi.number()
+                    .required()
+                    .messages({
+                        'number.base': 'Longitude must be a number',
+                        'any.required': 'Longitude is required'
+                    }),
+            })
         )
         .min(3)
         .required()
@@ -47,6 +45,6 @@ const polygonSchema = joi.object({
             'array.min': 'Polygon must have at least 3 coordinates',
             'any.required': 'Coordinates are required'
         }),
-});
+}).unknown(true);
 
 export default polygonSchema;
