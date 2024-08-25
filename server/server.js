@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import config from './config/config.js';
 import ndviRoute from './src/routes/ndviRoute.js';
+import classifierRoute from './src/routes/classifierRoutes.js';
 
 const app = express();
 const PORT = config.server.port;
@@ -26,6 +27,9 @@ app.use('/auth', authRoutes);
 
 // Route for NDVI
 app.use('/ndvi', ndviRoute);
+
+// Route for Classifier
+app.use('/classifier', classifierRoute);
 
 // Heath check
 app.get('/health', (req, res) => {

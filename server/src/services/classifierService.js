@@ -29,10 +29,13 @@ function prepSrL8(image){
 async function classifyImage(polygon){
     return new Promise((resolve, reject) => {
         try{
+            // Create ee polygon from coordinates
+            const eePolygon = ee.Geometry.Polygon(polygon.coordinates);
+
             // Prepare the image
             const image = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
                 .filterDate('2022-03-01', '2022-07-01')
-                .filterBounds(polygon)
+                .filterBounds(eePolygon)
                 .map(prepSrL8)
                 .median();
             
@@ -40,20 +43,20 @@ async function classifyImage(polygon){
             const bands = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'ST_B10'];
 
             // Load classifier model from assets
-            const newClassifier = ee.Classifier.load('projects/ee-ambientes/assets/Spekboom/testclassifier');
+            const newClassifier = ee.Classifier.load('projects/ee-ambientes/assets/SpekBoom/testclassifier');
 
             // Classify the image
             const classified = image.select(bands).classify(newClassifier);
 
             // Clip the classified image to the polygon
-            const classifiedClip = classified.clip(polygon);
+            const classifiedClip = classified.clip(eePolygon);
 
             // Map layer for visualization
             const classifiedMap = classifiedClip.getMap(
                 {
                     min: 0,
                     max: 2,
-                    palette: ['orange, green, blue']
+                    palette: ['orange', 'green', 'blue'],
                 }
             )
 
@@ -64,3 +67,8 @@ async function classifyImage(polygon){
         }
     });
 }
+
+// Default export
+export default {
+    classifyImage
+};
