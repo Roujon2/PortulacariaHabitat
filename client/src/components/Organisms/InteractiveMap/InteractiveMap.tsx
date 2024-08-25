@@ -46,7 +46,6 @@ const classifyPolygon = async (polygon: Polygon) => {
             data: {polygon: polygon},
             withCredentials: true,
         });
-        console.log(classifierData.data);
 
         return classifierData.data;
 
@@ -129,7 +128,6 @@ const InteractiveMap: React.FC = () => {
 
             // Make api call to get classifier data
             classifyPolygon(updatedPolygon).then(classifierData => {
-              console.log(classifierData);
               addOverlay(classifierData.urlFormat);
             });
 

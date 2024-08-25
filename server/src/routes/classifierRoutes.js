@@ -6,7 +6,7 @@ import validateData from '../middlewares/validateData.js';
 const router = express.Router();
 
 // Route to get classification for polygon
-router.post('/test', validateData.validatePolygonData, classifierController.testClassifier);
+router.post('/test', validateData.validatePolygonData, authMiddleware.authorizeToken, classifierController.testClassifier);
 
 
 export default router;

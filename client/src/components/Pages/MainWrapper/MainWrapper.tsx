@@ -1,16 +1,12 @@
 import React from "react";
 import { useLocation, Outlet } from "react-router-dom";
 import SideNavigation from "../../Organisms/SideNavigation/SideNavigation";
-import InteractiveMap from "../../Organisms/InteractiveMap/InteractiveMap";
 
 import './mainWrapper.css';
 
 // Content imports
 import Home from "../Home/Home";
-import HelpMenu from "../../Organisms/HelpMenu/HelpMenu";
-import ProfileMenu from "../../Organisms/ProfileMenu/ProfileMenu";
 
-import Resizable from 'react-resizable-layout';
 
 // Component to wrap all pages in
 const MainWrapper: React.FC = ({ }) => {
@@ -32,26 +28,7 @@ const MainWrapper: React.FC = ({ }) => {
             {showSideNav && <SideNavigation onNavigate={handleNav} />}
 
             <div className="main-content">
-                <Resizable axis="x" min={100}>
-                    {({ position, separatorProps }) => (
-                        <div className="resizable-container" >
-                            {/* Interactive Map */}
-                            <div className="map-container" style={{ width: position }}>
-                                <InteractiveMap />
-                            </div>
-
-                            {/* Resize Handle */}
-                            <div className="resize-handle" {...separatorProps} />
-
-                            {/* Content Wrapper */}
-                            <div className="content-wrapper" style={{ width: `calc(100% - ${position}px)` }}>
-                                {selectedMenu === 'map' && <Home />}
-                                {selectedMenu === 'help' && <HelpMenu />}
-                                {selectedMenu === 'profile' && <ProfileMenu />}
-                            </div>
-                        </div>
-                    )}
-                </Resizable>
+                <Home selectedMenu={selectedMenu} />
             </div>
         </div>
     );

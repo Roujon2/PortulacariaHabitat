@@ -7,3 +7,16 @@
     width: 100%;
     background-color: #f5f5f5;
 }
+
+.resize-handle {
+    width: 10px; /* Adjust handle width */
+    background-color: #ccc; /* Adjust handle color */
+    cursor: ew-resize; /* Cursor style */
+    height: 95%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
