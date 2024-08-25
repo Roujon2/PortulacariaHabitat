@@ -1,8 +1,6 @@
 import classifierService from "../services/classifierService.js";
 
 const testClassifier = async (req, res) => {
-    console.log(req);
-
     // Error if the request body is empty
     if (!req.body) {
         return res.status(400).json({
@@ -10,6 +8,12 @@ const testClassifier = async (req, res) => {
         });
     }
 
+    // Error if there is not polygon 
+    if (!req.body.polygon) {
+        return res.status(400).json({
+            error: 'Missing polygon in request body',
+        });
+    }
 
     try {
         const result = await classifierService.classifyImage(req.body.polygon);

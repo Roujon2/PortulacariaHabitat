@@ -1,5 +1,4 @@
 import ee from '@google/earthengine';
-import config from '../../config/config.js';
 
 // Helper function to prepare Landsat 8 surface reflectance images
 function prepSrL8(image){
