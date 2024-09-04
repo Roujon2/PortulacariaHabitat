@@ -5,4 +5,5 @@ export interface Polygon{
     startDate: string;
     endDate: string;
     coordinates: google.maps.LatLngLiteral[];
+    tags: string[];
 }

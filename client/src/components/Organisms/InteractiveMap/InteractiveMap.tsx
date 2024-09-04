@@ -98,6 +98,7 @@ const InteractiveMap: React.FC = () => {
             startDate: '',
             endDate: '',
             coordinates: polygon.getPath().getArray().map((coord) => ({ lat: coord.lat(), lng: coord.lng() })),
+            tags: [],
         }
 
         setSelectedPolygon(polygonObj);
