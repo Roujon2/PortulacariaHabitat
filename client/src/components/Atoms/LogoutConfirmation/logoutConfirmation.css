@@ -47,5 +47,11 @@
     background-color: rgb(104, 104, 104);
 }
 
+.logout-confirmation-subtext{
+    font-size: 0.8rem;
+    /* Make font not bold */
+    font-weight: 600;
+}
+
 
 

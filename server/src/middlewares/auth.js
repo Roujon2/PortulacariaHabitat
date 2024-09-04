@@ -10,7 +10,10 @@ const authorizeToken = (req, res, next) => {
         if (!token) return res.status(401).json({ message: 'Unauthorized access. Authorization token not found.' });
         
         // Verify token
-        jwt.verify(token, config.google.token_secret);
+        const decoded = jwt.verify(token, config.google.token_secret);
+
+        // Attach user info to request object
+        req.user = decoded;
 
         // Return and execute next middleware
         return next();

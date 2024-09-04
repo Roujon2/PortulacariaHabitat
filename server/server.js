@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import config from './config/config.js';
 import ndviRoute from './src/routes/ndviRoute.js';
 import classifierRoute from './src/routes/classifierRoutes.js';
+import sseRoutes from './src/routes/sseRoutes.js';
 
 const app = express();
 const PORT = config.server.port;
@@ -30,6 +31,9 @@ app.use('/ndvi', ndviRoute);
 
 // Route for Classifier
 app.use('/classifier', classifierRoute);
+
+// Routes for SSE
+app.use('/sse', sseRoutes);
 
 // Heath check
 app.get('/health', (req, res) => {

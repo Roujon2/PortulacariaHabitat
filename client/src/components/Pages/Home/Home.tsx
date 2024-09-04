@@ -12,6 +12,7 @@ import InteractiveMap from '../../Organisms/InteractiveMap/InteractiveMap';
 import HelpMenu from '../../Organisms/HelpMenu/HelpMenu';
 import ProfileMenu from '../../Organisms/ProfileMenu/ProfileMenu';
 import PolygonsMenu from '../../Organisms/PolygonsMenu/PolygonsMenu';
+import SSEComponent from '../../Atoms/SSEComponent/sseComponent';
 
 
 interface HomeProps {
@@ -42,6 +43,7 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
                     {selectedMenu === 'polygons' && <PolygonsMenu />}
                 </Panel>
             </PanelGroup>
+            <SSEComponent />
         </div>
     );
 };

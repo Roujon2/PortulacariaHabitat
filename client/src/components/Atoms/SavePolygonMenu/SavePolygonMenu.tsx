@@ -1,23 +1,28 @@
 import React, { useState } from "react";
 import './savePolygonMenu.css';
 
+import { TagsInput } from "react-tag-input-component";
+import { IoClose } from "react-icons/io5";
+
+
 // Property definition to be passed to SavePolygonMenu component
 export interface SavePolygonMenuProps {
     onSave: (formData: {
         name: string;
         description: string;
-        startDate: string;
-        endDate: string;
+        tags: string[];
     }) => void;
+
+    // On cancel
+    onCancel: () => void;
 }
 
 // SavePolygonMenu component
-const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave }: SavePolygonMenuProps) => {
+const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: SavePolygonMenuProps) => {
     // Menu variables
     const [polygonName, setPolygonName] = useState<string>("");
     const [polygonDescription, setPolygonDescription] = useState<string>("");
-    const [startDate, setStartDate] = useState<string>("");
-    const [endDate, setEndDate] = useState<string>("");
+    const [tags, setTags] = useState<string[]>([]);
 
     // Function to handle save button click
     const handleSave = (e: React.FormEvent) => {
@@ -25,13 +30,13 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave }: SavePolygon
         onSave({
             name: polygonName,
             description: polygonDescription,
-            startDate,
-            endDate,
+            tags: tags
         });
     }
 
     return (
         <div className="save-polygon-menu-container">
+            <div onClick={onCancel}><IoClose className="close-button"/></div>
             <h3>Polygon Details</h3>
             <form className="menu-fields" onSubmit={handleSave}>
 
@@ -46,16 +51,20 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave }: SavePolygon
                 </label>
 
                 <label className="menu-label">
-                    Start Date:
-                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required/>
+                    Tags:
+                    <TagsInput
+                        value={tags}
+                        onChange={setTags}
+                        name="tags"
+                        placeHolder="Add tags"
+                    />
                 </label>
 
-                <label className="menu-label">
-                    End Date:
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required/>
-                </label>
-
-                <button type="submit">Save</button>
+                <div className="menu-buttons">
+                    <button onClick={onCancel}>Cancel</button>
+                    <button type="submit">Save</button>
+                </div>
+            
 
             </form>
         </div>

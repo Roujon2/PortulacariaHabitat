@@ -38,7 +38,7 @@ const createTables = async (client) => {
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
             name VARCHAR(100) NOT NULL,
             description TEXT,
-            points JSONB NOT NULL,
+            coordinates JSONB NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
 
@@ -97,7 +97,7 @@ const insertUser = async (client, email, name) => {
 // Function to insert a polygon into the polygons table
 const insertPolygon = async (client, userId, name, description, points) => {
     const query = {
-        text: 'INSERT INTO polygons(user_id, name, description, points) VALUES($1, $2, $3, $4) RETURNING *',
+        text: 'INSERT INTO polygons(user_id, name, description, coordinates) VALUES($1, $2, $3, $4) RETURNING *',
         values: [userId, name, description, points]
     };
 

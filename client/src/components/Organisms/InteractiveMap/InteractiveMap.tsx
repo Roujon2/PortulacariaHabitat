@@ -85,6 +85,9 @@ const InteractiveMap: React.FC = () => {
 
     // Function to handle polygon complete
     const onPolygonComplete = (polygon: google.maps.Polygon) => {
+        // Change selected drawing cursor to hand
+        if (map) map.setOptions({ draggableCursor: 'hand' });
+
         console.log('Polygon complete. Coords: ', polygon.getPath().getArray());
         setShowSavePolygonMenu(true);
 
@@ -113,8 +116,7 @@ const InteractiveMap: React.FC = () => {
                 ...prev,
                 name: formData.name,
                 description: formData.description,
-                startDate: formData.startDate,
-                endDate: formData.endDate,
+                tags: formData.tags,
             }
             
             console.log('Updated polygon:', updatedPolygon);
@@ -186,9 +188,10 @@ const InteractiveMap: React.FC = () => {
                             },
                         }}
                         onPolygonComplete={onPolygonComplete}
+                        onLoad={(drawingManager) => console.log('Drawing manager loaded:', drawingManager)}
                     />
 
-                    {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} />}
+                    {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={() => setShowSavePolygonMenu(false)} />}
 
                 </GoogleMap>
             )}
