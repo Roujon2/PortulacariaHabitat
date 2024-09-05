@@ -27,6 +27,54 @@ const savePolygon = async (user_id, polygon) => {
 
 };
 
+// Function to update polygon data
+const updatePolygon = async (polygon_id, polygon) => {
+    // Params
+    const client = await pool.connect();
+
+    // Deconstruct polygon
+    const { name, description, coordinates } = polygon;
+
+    // Query
+    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3 WHERE id = $4 RETURNING *';
+
+    // Values
+    const values = [name, description, coordinates, polygon_id];
+
+    try{
+        // Query
+        const result = await client.query(query, values);
+        return result.rows[0];
+    }
+    catch(err){
+        console.error("Error updating polygon:", err);
+    }
+    finally{
+        client.release();
+    }
+};
+
+// Function to delete specific polygon
+const deletePolygon = async (polygon_id) => {
+    // Params
+    const client = await pool.connect();
+
+    // Query
+    const query = 'DELETE FROM polygons WHERE id = $1';
+    const values = [polygon_id];
+
+    try{
+        // Query
+        await client.query(query, values);
+    }
+    catch(err){
+        console.error("Error deleting polygon:", err);
+    }
+    finally{
+        client.release();
+    }
+};
+
 // Function to retrieve specific polygon
 const getPolygon = async (polygon_id) => {
     // Params
@@ -52,5 +100,7 @@ const getPolygon = async (polygon_id) => {
 
 export default {
     savePolygon,
-    getPolygon
+    getPolygon,
+    updatePolygon,
+    deletePolygon
 }
