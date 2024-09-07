@@ -4,12 +4,11 @@ import { DrawingManagerF, GoogleMap, useLoadScript } from "@react-google-maps/ap
 import { useMemo } from "react";
 import type { LoadScriptProps } from "@react-google-maps/api";
 import SavePolygonMenu, {SavePolygonMenuProps} from "../../Atoms/SavePolygonMenu/SavePolygonMenu";
-import {Polygon} from "../../../types/polygon";
+import {Polygon, NewPolygon } from "../../../types/polygon";
+
+import polygonApi from "../../../api/polygonApi";
 
 import axios from 'axios';
-import { url } from "inspector";
-import { get } from "http";
-import Callback from './../../Callback';
 
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
@@ -38,7 +37,7 @@ const getNDVIData = async (polygon: Polygon) => {
 }
 
 // Function to get classifier data from backend
-const classifyPolygon = async (polygon: Polygon) => {
+const classifyPolygon = async (polygon: NewPolygon) => {
     try{
         const classifierData = await axios({
             method: 'post',
@@ -62,7 +61,7 @@ const InteractiveMap: React.FC = () => {
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
     // State var for the selected drawn polygon
-    const [selectedPolygon, setSelectedPolygon] = useState<Polygon | null>(null);
+    const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
 
 
     // Load the google maps api script
@@ -92,7 +91,7 @@ const InteractiveMap: React.FC = () => {
         setShowSavePolygonMenu(true);
 
         // Create the polygon object
-        const polygonObj: Polygon = {
+        const polygonObj: NewPolygon = {
             name: '',
             description: '',
             startDate: '',
@@ -105,38 +104,31 @@ const InteractiveMap: React.FC = () => {
     }
 
     // Function to handle the save polygon form submission
-    const handleSave: SavePolygonMenuProps['onSave'] = (formData) => {
+    const handleSave: SavePolygonMenuProps['onSave'] = async (formData) => {
         console.log('Save polygon form data:', formData);
         setShowSavePolygonMenu(false);
 
-        // Add the form data to the selected polygon
-        setSelectedPolygon((prev) => {
-            if (!prev) return null;
+        // If there is no selected polygon, return
+        if (!selectedPolygon) return;
 
-            const updatedPolygon = {
-                ...prev,
-                name: formData.name,
-                description: formData.description,
-                tags: formData.tags,
-            }
+        // Extract the polygon data from the form data and create new polygon object
+        const newPolygon: NewPolygon = {
+            ...selectedPolygon,
+            name: formData.name,
+            description: formData.description,
+            tags: formData.tags,
+            coordinates: selectedPolygon.coordinates,
+        }
+        
+        try{
+            // Send polygon to backend and get polygon object
+            const savedPolygon : Polygon | undefined = await polygonApi.savePolygon(newPolygon);
             
-            console.log('Updated polygon:', updatedPolygon);
-
-            /*// Make api call to get ndvi data
-            getNDVIData(updatedPolygon).then(ndviData => {
-              // Add overlay to the map
-              addOverlay(ndviData.urlFormat);
-            });
-            */
-
-            // Make api call to get classifier data
-            classifyPolygon(updatedPolygon).then(classifierData => {
-              addOverlay(classifierData.urlFormat);
-            });
-
-            return updatedPolygon;
-        });
-
+            // Retrieve id and set to selected
+            setSelectedPolygon(savedPolygon || null);
+        }catch(error){
+            console.error("Error saving polygon:", error);
+        }
     }
 
     // Function to add an overlay to the map

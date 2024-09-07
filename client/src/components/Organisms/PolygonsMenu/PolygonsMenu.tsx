@@ -1,13 +1,13 @@
 import React from "react";
 
 import './polygonsMenu.css'
-import { Polygon } from "../../../types/polygon";
+import { Polygon, NewPolygon } from "../../../types/polygon";
 
 import PolygonCard from "../../Atoms/PolygonCard/PolygonCard";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const polygonData: Polygon = {
+    const polygonData: NewPolygon = {
         name: "Sample Polygon",
         description: "This is a sample polygon with negative coordinates.",
         startDate: "2023-01-01",

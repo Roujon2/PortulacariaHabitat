@@ -1,10 +1,10 @@
 import React from "react";
-import { Polygon } from "../../../types/polygon";
+import { Polygon, NewPolygon } from "../../../types/polygon";
 
 import './polygonCard.css'
 
 interface PolygonCardProps {
-    polygon: Polygon;
+    polygon: NewPolygon;
 }
 
 

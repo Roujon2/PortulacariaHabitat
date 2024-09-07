@@ -7,6 +7,7 @@ import config from './config/config.js';
 import ndviRoute from './src/routes/ndviRoute.js';
 import classifierRoute from './src/routes/classifierRoutes.js';
 import sseRoutes from './src/routes/sseRoutes.js';
+import polygonRoutes from './src/routes/polygonRoutes.js';
 
 const app = express();
 const PORT = config.server.port;
@@ -34,6 +35,9 @@ app.use('/classifier', classifierRoute);
 
 // Routes for SSE
 app.use('/sse', sseRoutes);
+
+// Routes for polygons
+app.use('/polygon', polygonRoutes);
 
 // Heath check
 app.get('/health', (req, res) => {

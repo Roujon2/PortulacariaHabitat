@@ -4,14 +4,11 @@ const savePolygon = async (user_id, polygon) => {
     // Params
     const client = await pool.connect();
 
-    // Deconstruct polygon
-    const { name, description, coordinates } = polygon;
-
     // Query
     const query = 'INSERT INTO polygons(user_id, name, description, coordinates) VALUES($1, $2, $3, $4) RETURNING *';
 
     // Values
-    const values = [user_id, name, description, coordinates];
+    const values = [user_id, polygon.name, polygon.description, JSON.stringify(polygon.coordinates)];
 
     try{
         // Query
@@ -32,14 +29,11 @@ const updatePolygon = async (polygon_id, polygon) => {
     // Params
     const client = await pool.connect();
 
-    // Deconstruct polygon
-    const { name, description, coordinates } = polygon;
-
     // Query
     const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3 WHERE id = $4 RETURNING *';
 
     // Values
-    const values = [name, description, coordinates, polygon_id];
+    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon_id];
 
     try{
         // Query
