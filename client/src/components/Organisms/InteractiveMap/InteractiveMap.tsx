@@ -18,50 +18,18 @@ const mapOptions = {
     disableDefaultUI: true,
 };
 
-// Function to get ndvi data from backend
-const getNDVIData = async (polygon: Polygon) => {
-    try{
-        const ndviData = await axios({
-            method: 'post',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/ndvi/polygon`,
-            data: polygon,
-            withCredentials: true,
-        });
-        console.log(ndviData.data);
-
-        return ndviData.data;
-
-    }catch(error){
-        console.error("Error getting ndvi data:", error);  
-    }
-}
-
-// Function to get classifier data from backend
-const classifyPolygon = async (polygon: NewPolygon) => {
-    try{
-        const classifierData = await axios({
-            method: 'post',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/test`,
-            data: {polygon: polygon},
-            withCredentials: true,
-        });
-
-        return classifierData.data;
-
-    }catch(error){
-        console.error("Error getting classifier data:", error);  
-    }
-}
-
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Map state var
     const [map, setMap] = useState<google.maps.Map | null>(null);
+    // Drawing manager state var
+    const [drawingManager, setDrawingManager] = useState<google.maps.drawing.DrawingManager | null>(null);
 
     // State var for the selected drawn polygon
     const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
+    const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
 
 
     // Load the google maps api script
@@ -82,10 +50,20 @@ const InteractiveMap: React.FC = () => {
         setMap(map);
     }
 
+    // Function to handle drawing manager load
+    const onDrawingManagerLoad = (drawingManager: google.maps.drawing.DrawingManager) => {
+        console.log('Drawing manager loaded:', drawingManager);
+
+        // Set the drawing manager state var
+        setDrawingManager(drawingManager);
+    }
+
     // Function to handle polygon complete
     const onPolygonComplete = (polygon: google.maps.Polygon) => {
         // Change selected drawing cursor to hand
-        if (map) map.setOptions({ draggableCursor: 'hand' });
+        if (drawingManager) {
+            drawingManager.setDrawingMode(null);
+        }
 
         console.log('Polygon complete. Coords: ', polygon.getPath().getArray());
         setShowSavePolygonMenu(true);
@@ -101,6 +79,9 @@ const InteractiveMap: React.FC = () => {
         }
 
         setSelectedPolygon(polygonObj);
+
+        // Set the drawn polygon to the polygon ref
+        setDrawnPolygon(polygon);
     }
 
     // Function to handle the save polygon form submission
@@ -129,6 +110,15 @@ const InteractiveMap: React.FC = () => {
         }catch(error){
             console.error("Error saving polygon:", error);
         }
+    }
+
+    // Function handling the cancel button on the save polygon form
+    const handleCancel = () => {
+        setShowSavePolygonMenu(false);
+        if (drawnPolygon) {
+            drawnPolygon.setMap(null);
+        }
+        setSelectedPolygon(null);
     }
 
     // Function to add an overlay to the map
@@ -181,10 +171,10 @@ const InteractiveMap: React.FC = () => {
                             },
                         }}
                         onPolygonComplete={onPolygonComplete}
-                        onLoad={(drawingManager) => console.log('Drawing manager loaded:', drawingManager)}
+                        onLoad={onDrawingManagerLoad}
                     />
 
-                    {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={() => setShowSavePolygonMenu(false)} />}
+                    {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
                 </GoogleMap>
             )}

@@ -1,20 +1,32 @@
 import React, { useEffect } from "react";
 
+import { usePolygonContext } from "../../../contexts/PolygonContext";
+
 function SSEComponent() {
+    const { fetchPolygons } = usePolygonContext();
+
     useEffect(() => {
         // Create a new EventSource instance
-        const eventSource = new EventSource('http://localhost:5000/sse/events', { withCredentials: true });
+        var eventSource = new EventSource('http://localhost:5000/sse/events', { withCredentials: true });
 
         // Listen for messages from the server
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Received event:', data);
+            fetchPolygons(0);
         };
 
         // Handle any errors (optional)
         eventSource.onerror = (error) => {
             console.error('SSE connection error:', error);
             // Optional: Close and retry connection on error
+            eventSource.close();
+            // Reconnect after 3 seconds
+            setTimeout(() => {
+                console.log('Reconnecting...');
+                eventSource = new EventSource('http://localhost:5000/sse/events', { withCredentials: true });
+            }, 3000);
+
         };
 
         // Cleanup on component unmount
@@ -23,11 +35,7 @@ function SSEComponent() {
         };
     }, []); // Empty dependency array to run once on mount
 
-    return (
-        <div>
-            <h1>Listening for SSE Events...</h1>
-        </div>
-    );
+    return null;
 }
 
 export default SSEComponent;
