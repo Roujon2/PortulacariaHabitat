@@ -37,7 +37,7 @@ app.use('/classifier', classifierRoute);
 app.use('/sse', sseRoutes);
 
 // Routes for polygons
-app.use('/polygon', polygonRoutes);
+app.use('/polygons', polygonRoutes);
 
 // Heath check
 app.get('/health', (req, res) => {

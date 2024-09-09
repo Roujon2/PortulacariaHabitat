@@ -4,7 +4,7 @@ import { Polygon, NewPolygon } from "../../../types/polygon";
 import './polygonCard.css'
 
 interface PolygonCardProps {
-    polygon: NewPolygon;
+    polygon: Polygon;
 }
 
 
@@ -41,11 +41,15 @@ const PolygonCard: React.FC<PolygonCardProps> = ({ polygon }) => {
             </svg>
             <h2 className="polygon-title">{polygon.name}</h2>
             <div className="polygon-tags">
-                {polygon.tags.map((tag, index) => (
-                    <span key={index} className="polygon-tag">
-                        {tag}
-                    </span>
-                ))}
+                {polygon.tags && polygon.tags.length > 0 ? (
+                    polygon.tags.map((tag, index) => (
+                        <span key={index} className="polygon-tag">
+                            {tag}
+                        </span>
+                    ))
+                ) : (
+                    <span className="polygon-tag">No tags</span>
+                )}
             </div>
         </div>
     );

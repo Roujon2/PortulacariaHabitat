@@ -7,7 +7,7 @@ const savePolygon = async (polygon: NewPolygon) => {
         // Save polygon to database
         const savedPolygon = await axios({
             method: 'post',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygon`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons`,
             data: polygon,
             withCredentials: true,
         });
@@ -35,7 +35,7 @@ const updatePolygon = async (polygon: Polygon) => {
         // Update polygon in database
         const updatedPolygon = await axios({
             method: 'put',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygon/${polygon.id}`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/${polygon.id}`,
             data: polygon,
             withCredentials: true,
         });
@@ -63,7 +63,7 @@ const deletePolygon = async (polygonId: number) => {
         // Delete polygon from database
         await axios({
             method: 'delete',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygon/${polygonId}`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/${polygonId}`,
             withCredentials: true,
         });
 
@@ -78,7 +78,7 @@ const getPolygon = async (polygonId: number) => {
         // Get polygon from database
         const polygon = await axios({
             method: 'get',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygon/${polygonId}`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/${polygonId}`,
             withCredentials: true,
         });
 
@@ -99,9 +99,36 @@ const getPolygon = async (polygonId: number) => {
     }
 }
 
+const getPolygons = async (offset: number) => {
+    try{
+        // Get polygons from database
+        const polygons = await axios({
+            method: 'get',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons?offset=${offset}`,
+            withCredentials: true,
+        });
+
+        // Create the Polygon object to be returned
+        const newPolygons: Polygon[] = polygons.data.map((polygon: any) => ({
+            id: polygon.id,
+            name: polygon.name,
+            description: polygon.description,
+            startDate: polygon.startDate,
+            endDate: polygon.endDate,
+            coordinates: polygon.coordinates,
+            tags: polygon.tags,
+        }));
+
+        return newPolygons;
+    }catch(error){
+        console.error("Error getting polygons:", error);
+    }
+};
+
 export default {
     savePolygon,
     updatePolygon,
     deletePolygon,
     getPolygon,
+    getPolygons,
 }

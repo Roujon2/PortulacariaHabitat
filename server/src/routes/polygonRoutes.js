@@ -18,4 +18,7 @@ router.put('/:id', authMiddleware.authorizeToken, polygonController.updatePolygo
 // Delete polygon
 router.delete('/:id', authMiddleware.authorizeToken, polygonController.deletePolygon);
 
+// Get polygons
+router.get('/', authMiddleware.authorizeToken, polygonController.getPolygons);
+
 export default router;

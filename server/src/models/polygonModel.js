@@ -91,10 +91,33 @@ const getPolygon = async (polygon_id) => {
     }
 };
 
+// Function to get polygons
+const getPolygons = async (user_id, limit, offset) => {
+    // Params
+    const client = await pool.connect();
+
+    // Query
+    const query = 'SELECT * FROM polygons WHERE user_id = $1 LIMIT $2 OFFSET $3';
+    const values = [user_id, limit, offset];
+
+    try{
+        // Query
+        const result = await client.query(query, values);
+        return result.rows;
+    }
+    catch(err){
+        console.error("Error fetching polygons:", err);
+    }
+    finally{
+        client.release();
+    }
+};
+
 
 export default {
     savePolygon,
     getPolygon,
     updatePolygon,
-    deletePolygon
+    deletePolygon,
+    getPolygons
 }

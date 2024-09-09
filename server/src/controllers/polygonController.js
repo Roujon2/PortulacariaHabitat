@@ -62,10 +62,24 @@ const getPolygon = async (req, res) => {
     }
 };
 
+const getPolygons = async (req, res) => {
+    const user_id = req.user.id;
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
+
+    try{
+        const polygons = await polygonModel.getPolygons(user_id, limit, offset);
+        return res.status(200).json(polygons);
+    }catch(err){
+        return res.status(500).json({error: "Failed to get polygons:", err});
+    }
+};
+
 
 export default {
     savePolygon,
     getPolygon,
     updatePolygon,
-    deletePolygon
+    deletePolygon,
+    getPolygons
 };
