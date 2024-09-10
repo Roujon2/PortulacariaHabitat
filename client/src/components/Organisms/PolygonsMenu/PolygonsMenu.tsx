@@ -21,16 +21,18 @@ const PolygonsMenu: React.FC = () => {
     }
 
     return (
-        <div className='polygons-menu'>
+        <div className='polygons-menu__content'>
             <h1>Polygons Menu</h1>
             <div className='polygons-menu__cards'>
                 {polygons.map((polygon: Polygon) => (
-                    <PolygonCard key={polygon.id} polygon={polygon} />
+                    <PolygonCard key={polygon.id} polygon={polygon} shape="card" />
                 ))}
+                <div className='polygons-menu__load-more-container'>
+                    <button className='polygons-menu__load-more' onClick={handleLoadMore} disabled={loading}>
+                        {loading ? 'Loading...' : 'Load more'}
+                    </button>
+                </div>
             </div>
-            <button className='polygons-menu__load-more' onClick={handleLoadMore} disabled={loading}>
-                {loading ? 'Loading...' : 'Load more'}
-            </button>
         </div>
     );
 };

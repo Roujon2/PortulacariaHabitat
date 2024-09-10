@@ -1,8 +1,7 @@
-.polygons_menu{
-    display: block;
-    margin: 0 auto;
-    width: 100%;
-    background-color: aliceblue;
+.polygons_menu__content{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .polygons-menu__cards{
@@ -12,10 +11,29 @@
     gap: 10px;
     margin: 1rem;
     width: fit-content;
-    max-height: 75vh;
+    max-height: 85vh;
     background-color: antiquewhite;
     border-radius: 10px;
     padding: 1rem;
     overflow-y: auto;
+}
+
+.polygons-menu__load-more-container{
+    width: 100%;
+}
+
+.polygons-menu__load-more{
+    text-align: center;
+    background-color: lightgray;
+    border: none;
+    cursor: pointer;
+    margin-top: 1rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+.polygons-menu__load-more:hover{
+    background-color: darkgray;
 }
 
