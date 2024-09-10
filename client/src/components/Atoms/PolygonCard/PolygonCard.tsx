@@ -35,11 +35,13 @@ const PolygonCard: React.FC<PolygonCardProps> = ({ polygon, shape }) => {
     // Scale coordinates to maintain relative shape
     const scaledCoords = scaleCoords(polygon.coordinates, boxWidth, boxHeight);
 
+    const [clicked, setClicked] = React.useState(false);
+
     // If shape is card view
     if (shape === 'card') {
 
         return (
-            <div className='polygon-card'>
+            <div className='polygon-card' onClick={() => setClicked(true)}>
                 <input type="checkbox" className="polygon-card__checkbox" />   
                 
                 <svg className="polygon-preview" viewBox={`0 0 ${boxWidth} ${boxHeight}`} width={boxWidth} height={boxHeight}>

@@ -1,0 +1,43 @@
+.polygon-details{
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+}
+
+.polygon-details__field{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.polygon-details__field label{
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.coordinates-container{
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.coordinate-row{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+.coordinate-row input {
+    width: 45%;
+}
+
+.polygon-details__buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
