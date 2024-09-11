@@ -72,10 +72,12 @@ const InteractiveMap: React.FC = () => {
         const polygonObj: NewPolygon = {
             name: '',
             description: '',
-            startDate: '',
-            endDate: '',
             coordinates: polygon.getPath().getArray().map((coord) => ({ lat: coord.lat(), lng: coord.lng() })),
-            tags: [],
+            locality: '',
+            ownershipType: '',
+            seriesName: '',
+            notes: '',
+            created: '',
         }
 
         setSelectedPolygon(polygonObj);
@@ -97,7 +99,6 @@ const InteractiveMap: React.FC = () => {
             ...selectedPolygon,
             name: formData.name,
             description: formData.description,
-            tags: formData.tags,
             coordinates: selectedPolygon.coordinates,
         }
         

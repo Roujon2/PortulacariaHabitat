@@ -2,10 +2,12 @@
 export interface NewPolygon{
     name: string;
     description: string;
-    startDate: string;
-    endDate: string;
     coordinates: google.maps.LatLngLiteral[];
-    tags: string[];
+    locality: string;
+    ownershipType: string;
+    seriesName: string;
+    notes: string;
+    created: string;
 }
 
 // Type for polygon after it is saved to database and retrieved an id

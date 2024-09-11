@@ -17,10 +17,12 @@ const savePolygon = async (polygon: NewPolygon) => {
             id: savedPolygon.data.id,
             name: polygon.name,
             description: polygon.description,
-            startDate: polygon.startDate,
-            endDate: polygon.endDate,
+            locality: polygon.locality,
+            ownershipType: polygon.ownershipType,
+            seriesName: polygon.seriesName,
+            notes: polygon.notes,
+            created: polygon.created,
             coordinates: polygon.coordinates,
-            tags: polygon.tags,
         }
 
         return newPolygon;
@@ -45,10 +47,12 @@ const updatePolygon = async (polygon: Polygon) => {
             id: updatedPolygon.data.id,
             name: polygon.name,
             description: polygon.description,
-            startDate: polygon.startDate,
-            endDate: polygon.endDate,
+            locality: polygon.locality,
+            ownershipType: polygon.ownershipType,
+            seriesName: polygon.seriesName,
+            notes: polygon.notes,
+            created: polygon.created,
             coordinates: polygon.coordinates,
-            tags: polygon.tags,
         }
 
         return newPolygon;
@@ -71,6 +75,23 @@ const deletePolygon = async (polygonId: number) => {
         console.error("Error deleting polygon:", error);
     }
 }
+// Function deleting multiple polygons
+const deletePolygons = async (polygonIds: number[]) => {
+    try{
+        // Delete polygons from database
+        const deletedPolygons = await axios({
+            method: 'delete',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons`,
+            data: polygonIds,
+            withCredentials: true,
+        });
+
+        return deletedPolygons.data;
+    }catch(error){
+        console.error("Error deleting polygons:", error);
+    }
+};
+
 
 // Function to get polygon from id
 const getPolygon = async (polygonId: number) => {
@@ -87,10 +108,12 @@ const getPolygon = async (polygonId: number) => {
             id: polygon.data.id,
             name: polygon.data.name,
             description: polygon.data.description,
-            startDate: polygon.data.startDate,
-            endDate: polygon.data.endDate,
+            locality: polygon.data.locality,
+            ownershipType: polygon.data.ownershipType,
+            seriesName: polygon.data.seriesName,
+            notes: polygon.data.notes,
+            created: polygon.data.created,
             coordinates: polygon.data.coordinates,
-            tags: polygon.data.tags,
         }
 
         return newPolygon;
@@ -131,4 +154,5 @@ export default {
     deletePolygon,
     getPolygon,
     getPolygons,
+    deletePolygons,
 }

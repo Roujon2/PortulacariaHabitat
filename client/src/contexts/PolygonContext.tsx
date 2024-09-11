@@ -7,6 +7,7 @@ interface PolygonContextProps {
     fetchPolygons: (offset: number) => void;
     loading: boolean;
     loadMorePolygons: () => void;
+    deletePolygons: (polygons: Polygon[]) => void;
 }
 
 const PolygonContext = createContext<PolygonContextProps | undefined>(undefined);
@@ -46,8 +47,30 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         setOffset(offset + 10);
     };
 
+    // Function to delete polygons
+    const deletePolygons = async (polygons: Polygon[]) => {
+        try {
+            setLoading(true);
+
+            // Get polygon ids
+            const polygonIds = polygons.map(polygon => polygon.id);
+
+            const deletedPolygons = await polygonApi.deletePolygons(polygonIds);
+
+            if (deletedPolygons) {
+                // Remove deleted polygons from state
+                const updatedPolygons = polygons.filter(polygon => !deletedPolygons.find((deletedPolygon: Polygon) => deletedPolygon.id === polygon.id));
+                setPolygons(updatedPolygons);
+            }
+        } catch (error) {
+            console.error("Error deleting polygons:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons }}>
+        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons }}>
             {children}
         </PolygonContext.Provider>
     );
