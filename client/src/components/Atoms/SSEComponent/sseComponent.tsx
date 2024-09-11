@@ -13,7 +13,7 @@ function SSEComponent() {
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Received event:', data);
-            fetchPolygons(0);
+            fetchPolygons(true);
         };
 
         // Handle any errors (optional)

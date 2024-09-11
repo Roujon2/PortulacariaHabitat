@@ -77,7 +77,6 @@ const InteractiveMap: React.FC = () => {
             ownershipType: '',
             seriesName: '',
             notes: '',
-            created: '',
         }
 
         setSelectedPolygon(polygonObj);
@@ -100,6 +99,10 @@ const InteractiveMap: React.FC = () => {
             name: formData.name,
             description: formData.description,
             coordinates: selectedPolygon.coordinates,
+            locality: formData.locality,
+            ownershipType: formData.ownershipType,
+            seriesName: formData.seriesName,
+            notes: formData.notes,
         }
         
         try{

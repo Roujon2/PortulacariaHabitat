@@ -7,10 +7,10 @@ export interface NewPolygon{
     ownershipType: string;
     seriesName: string;
     notes: string;
-    created: string;
 }
 
 // Type for polygon after it is saved to database and retrieved an id
 export interface Polygon extends NewPolygon{
     id: number;
+    created: string;
 }

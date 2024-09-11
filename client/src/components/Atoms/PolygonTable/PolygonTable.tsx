@@ -14,9 +14,10 @@ interface PolygonTableProps {
     onRowClicked: (polygon: Polygon) => void;
     onRowSelected: (selectedRows: Polygon[]) => void;
     loadMore: () => void;
+    hasMore: boolean;
 }
 
-const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loadMore, onRowSelected }) => {
+const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loadMore, onRowSelected, hasMore }) => {
     // Define columns for data table
     const columns: TableColumn<Polygon>[] = [
         {
@@ -60,7 +61,9 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loa
                 onSelectedRowsChange={(selected) => onRowSelected(selected.selectedRows)}
                 onRowClicked={(row) => onRowClicked(row)}
             />
-            <MdOutlineExpandMore className="load-more" onClick={loadMore} />
+            <button className="load-more" onClick={loadMore} disabled={!hasMore}>
+                <MdOutlineExpandMore className="load-more" />
+            </button>
         </div>
     );
 };

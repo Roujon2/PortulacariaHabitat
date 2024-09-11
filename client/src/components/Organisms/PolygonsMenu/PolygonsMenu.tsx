@@ -17,7 +17,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loading, loadMorePolygons, deletePolygons } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -46,7 +46,6 @@ const PolygonsMenu: React.FC = () => {
     }
 
 
-
     return (
         <div className='polygons-menu__content'>
             <h1>Polygons Menu</h1>
@@ -60,6 +59,7 @@ const PolygonsMenu: React.FC = () => {
                         loadMore={loadMorePolygons}
                         onRowSelected={handleSelectedRows}
                         onRowClicked={handleRowClicked}
+                        hasMore={hasMore}
                     />
                     {selectedPolygons.length > 0 && (
                         <button onClick={handleDeleteSelected}>Delete Selected</button>

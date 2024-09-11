@@ -76,10 +76,40 @@ const getPolygons = async (req, res) => {
 };
 
 
+const deletePolygons = async (req, res) => {
+    const user_id = req.user.id;
+    const polygon_ids = req.body;
+
+    try{
+        await polygonModel.deletePolygons(polygon_ids);
+
+        // Send SSE event
+        sseService.sendEvent(user_id, {action: "delete", data: polygon_ids});
+
+        return res.status(200).json({message: "Polygons deleted"});
+    }catch(err){
+        return res.status(500).json({error: "Failed to delete polygons:", err});
+    }
+}
+
+// Get polygons count 
+const getPolygonsCount = async (req, res) => {
+    const user_id = req.user.id;
+
+    try{
+        const count = await polygonModel.getPolygonsCount(user_id);
+        return res.status(200).json({count});
+    }catch(err){
+        return res.status(500).json({error: "Failed to get polygons count:", err});
+    }
+};
+
 export default {
     savePolygon,
     getPolygon,
     updatePolygon,
     deletePolygon,
-    getPolygons
+    getPolygons,
+    deletePolygons,
+    getPolygonsCount
 };

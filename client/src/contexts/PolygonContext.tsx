@@ -4,10 +4,11 @@ import { Polygon } from '../types/polygon';
 
 interface PolygonContextProps {
     polygons: Polygon[];
-    fetchPolygons: (offset: number) => void;
+    fetchPolygons: (refreshAll: boolean) => void;
     loading: boolean;
     loadMorePolygons: () => void;
     deletePolygons: (polygons: Polygon[]) => void;
+    hasMore: boolean;
 }
 
 const PolygonContext = createContext<PolygonContextProps | undefined>(undefined);
@@ -21,16 +22,46 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [offset, setOffset] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const fetchPolygons = async (offset: number) => {
+    // Check if there are more polygons to fetch
+    const [hasMore, setHasMore] = useState<boolean>(true);
+
+    const fetchPolygonCount = async () => {
+        try {
+            const polygonCount = await polygonApi.getPolygonCount();
+
+            return polygonCount;
+        } catch (error) {
+            console.error("Error fetching polygon count:", error);
+        }
+    }
+
+    const fetchPolygons = async (refreshAll: boolean) => {
         try {
             setLoading(true);
 
-            const fetchedPolygons = await polygonApi.getPolygons(offset);
+            let fetchedPolygons: Polygon[] | undefined;
+
+            if (refreshAll){
+
+                // Get all polygons from beginning until offset
+                fetchedPolygons = await polygonApi.getPolygons((offset || 10), 0);
+            }else{
+                // Get polygons from offset
+                fetchedPolygons = await polygonApi.getPolygons(10, offset);
+
+            }
 
             if (fetchedPolygons) {
                 // Check unique polygons and add them 
                 const uniquePolygons = fetchedPolygons.filter((polygon: Polygon) => !polygons.find(p => p.id === polygon.id));
                 setPolygons([...polygons, ...uniquePolygons]);
+
+                // Fetch polygon count
+                const polygonCount = await fetchPolygonCount();
+
+                if (polygonCount && polygons.length >= polygonCount.count) {
+                    setHasMore(false);
+                }
             }
         } catch (error) {
             console.error("Error fetching polygons:", error);
@@ -40,7 +71,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     };
 
     useEffect(() => {
-        fetchPolygons(offset);
+        fetchPolygons(false);
     }, [offset]);
 
     const loadMorePolygons = () => {
@@ -69,8 +100,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }
     };
 
+    console.log(polygons);
+
     return (
-        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons }}>
+        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons, hasMore }}>
             {children}
         </PolygonContext.Provider>
     );

@@ -21,7 +21,7 @@ const savePolygon = async (polygon: NewPolygon) => {
             ownershipType: polygon.ownershipType,
             seriesName: polygon.seriesName,
             notes: polygon.notes,
-            created: polygon.created,
+            created: savedPolygon.data.created_at,
             coordinates: polygon.coordinates,
         }
 
@@ -122,12 +122,12 @@ const getPolygon = async (polygonId: number) => {
     }
 }
 
-const getPolygons = async (offset: number) => {
+const getPolygons = async (limit: number, offset: number) => {
     try{
         // Get polygons from database
         const polygons = await axios({
             method: 'get',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons?offset=${offset}`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons?limit=${limit}&offset=${offset}`,
             withCredentials: true,
         });
 
@@ -136,10 +136,12 @@ const getPolygons = async (offset: number) => {
             id: polygon.id,
             name: polygon.name,
             description: polygon.description,
-            startDate: polygon.startDate,
-            endDate: polygon.endDate,
             coordinates: polygon.coordinates,
-            tags: polygon.tags,
+            locality: polygon.locality,
+            ownershipType: polygon.ownership_type,
+            seriesName: polygon.farm_series_name,
+            notes: polygon.notes,
+            created: polygon.created_at,
         }));
 
         return newPolygons;
@@ -148,6 +150,21 @@ const getPolygons = async (offset: number) => {
     }
 };
 
+const getPolygonCount = async () => {
+    try{
+        // Get polygon count from database
+        const polygonCount = await axios({
+            method: 'get',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/count`,
+            withCredentials: true,
+        });
+
+        return polygonCount.data;
+    }catch(error){
+        console.error("Error getting polygon count:", error);
+    }
+}
+
 export default {
     savePolygon,
     updatePolygon,
@@ -155,4 +172,5 @@ export default {
     getPolygon,
     getPolygons,
     deletePolygons,
+    getPolygonCount,
 }

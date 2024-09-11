@@ -10,7 +10,6 @@ export interface SavePolygonMenuProps {
     onSave: (formData: {
         name: string;
         description: string;
-        tags: string[];
         locality: string;
         ownershipType: string;
         notes: string;
@@ -26,7 +25,6 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
     // Menu variables
     const [polygonName, setPolygonName] = useState<string>("");
     const [polygonDescription, setPolygonDescription] = useState<string>("");
-    const [tags, setTags] = useState<string[]>([]);
     const [locality, setLocality] = useState<string>("");
     const [ownershipType, setOwnershipType] = useState<string>("");
     const [notes, setNotes] = useState<string>("");
@@ -41,7 +39,6 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
         onSave({
             name: polygonName,
             description: polygonDescription,
-            tags: tags,
             locality: locality,
             ownershipType: ownershipType,
             notes: notes,
@@ -100,23 +97,6 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                                 value={polygonDescription}
                                 onChange={(e) => setPolygonDescription(e.target.value)}
                                 className="textarea"
-                            />
-                        </label>
-
-                        <label className="menu-label">
-                            Tags:
-                            <TagsInput
-                                value={tags}
-                                onChange={setTags}
-                                name="tags"
-                                placeHolder="Add tags"
-                                classNames={
-                                    {
-                                        input: "tags-input",
-                                        tag: "tag",
-                                        
-                                    }
-                                }
                             />
                         </label>
 
