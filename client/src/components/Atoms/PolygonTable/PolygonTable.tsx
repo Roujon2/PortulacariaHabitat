@@ -32,17 +32,17 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loa
         },
         {
             name: 'Ownership Type',
-            selector: (row: Polygon) => row.ownershipType,
+            selector: (row: Polygon) => row.ownership_type,
             sortable: true,
         },
         {
             name: 'Farm/Series Name',
-            selector: (row: Polygon) => row.seriesName,
+            selector: (row: Polygon) => row.farm_series_name,
             sortable: true,
         },
         {
             name: 'Date Created',
-            selector: (row: Polygon) => row.created,
+            selector: (row: Polygon) => row.created_at,
             sortable: true,
         }
         

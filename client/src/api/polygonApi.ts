@@ -18,10 +18,10 @@ const savePolygon = async (polygon: NewPolygon) => {
             name: polygon.name,
             description: polygon.description,
             locality: polygon.locality,
-            ownershipType: polygon.ownershipType,
-            seriesName: polygon.seriesName,
+            ownership_type: polygon.ownership_type,
+            farm_series_name: polygon.farm_series_name,
             notes: polygon.notes,
-            created: savedPolygon.data.created_at,
+            created_at: savedPolygon.data.created_at,
             coordinates: polygon.coordinates,
         }
 
@@ -48,10 +48,10 @@ const updatePolygon = async (polygon: Polygon) => {
             name: polygon.name,
             description: polygon.description,
             locality: polygon.locality,
-            ownershipType: polygon.ownershipType,
-            seriesName: polygon.seriesName,
+            ownership_type: polygon.ownership_type,
+            farm_series_name: polygon.farm_series_name,
             notes: polygon.notes,
-            created: polygon.created,
+            created_at: polygon.created_at,
             coordinates: polygon.coordinates,
         }
 
@@ -109,10 +109,10 @@ const getPolygon = async (polygonId: number) => {
             name: polygon.data.name,
             description: polygon.data.description,
             locality: polygon.data.locality,
-            ownershipType: polygon.data.ownershipType,
-            seriesName: polygon.data.seriesName,
+            ownership_type: polygon.data.ownerShipType,
+            farm_series_name: polygon.data.farm_series_name,
             notes: polygon.data.notes,
-            created: polygon.data.created,
+            created_at: polygon.data.created_at,
             coordinates: polygon.data.coordinates,
         }
 
@@ -132,16 +132,16 @@ const getPolygons = async (limit: number, offset: number) => {
         });
 
         // Create the Polygon object to be returned
-        const newPolygons: Polygon[] = polygons.data.map((polygon: any) => ({
+        const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({
             id: polygon.id,
             name: polygon.name,
             description: polygon.description,
             coordinates: polygon.coordinates,
             locality: polygon.locality,
-            ownershipType: polygon.ownership_type,
-            seriesName: polygon.farm_series_name,
+            ownership_type: polygon.ownership_type,
+            farm_series_name: polygon.farm_series_name,
             notes: polygon.notes,
-            created: polygon.created_at,
+            created_at: polygon.created_at,
         }));
 
         return newPolygons;

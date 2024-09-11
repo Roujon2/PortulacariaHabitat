@@ -8,7 +8,7 @@ const savePolygon = async (user_id, polygon) => {
     const query = 'INSERT INTO polygons(user_id, name, description, coordinates, locality, ownership_type, farm_series_name, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
 
     // Values
-    const values = [user_id, polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownershipType, polygon.seriesName, polygon.notes];
+    const values = [user_id, polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes];
 
     try{
         // Query

@@ -11,9 +11,9 @@ export interface SavePolygonMenuProps {
         name: string;
         description: string;
         locality: string;
-        ownershipType: string;
+        ownership_type: string;
         notes: string;
-        seriesName: string;
+        farm_series_name: string;
     }) => void;
 
     // On cancel
@@ -26,9 +26,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
     const [polygonName, setPolygonName] = useState<string>("");
     const [polygonDescription, setPolygonDescription] = useState<string>("");
     const [locality, setLocality] = useState<string>("");
-    const [ownershipType, setOwnershipType] = useState<string>("");
+    const [ownership_type, setOwnershipType] = useState<string>("");
     const [notes, setNotes] = useState<string>("");
-    const [seriesName, setSeriesName] = useState<string>("");
+    const [farm_series_name, setSeriesName] = useState<string>("");
 
     // State var handling cancel state
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
@@ -40,9 +40,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
             name: polygonName,
             description: polygonDescription,
             locality: locality,
-            ownershipType: ownershipType,
+            ownership_type: ownership_type,
             notes: notes,
-            seriesName: seriesName
+            farm_series_name: farm_series_name
         });
     }
 
@@ -104,7 +104,7 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                             Ownership Type:
                             <input
                                 type="text"
-                                value={ownershipType}
+                                value={ownership_type}
                                 onChange={(e) => setOwnershipType(e.target.value)}
                                 required
                             />
@@ -114,7 +114,7 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                             Farm/Series Name:
                             <input
                                 type="text"
-                                value={seriesName}
+                                value={farm_series_name}
                                 onChange={(e) => setSeriesName(e.target.value)}
                                 required
                             />

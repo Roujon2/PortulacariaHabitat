@@ -52,8 +52,6 @@ const InteractiveMap: React.FC = () => {
 
     // Function to handle drawing manager load
     const onDrawingManagerLoad = (drawingManager: google.maps.drawing.DrawingManager) => {
-        console.log('Drawing manager loaded:', drawingManager);
-
         // Set the drawing manager state var
         setDrawingManager(drawingManager);
     }
@@ -65,7 +63,6 @@ const InteractiveMap: React.FC = () => {
             drawingManager.setDrawingMode(null);
         }
 
-        console.log('Polygon complete. Coords: ', polygon.getPath().getArray());
         setShowSavePolygonMenu(true);
 
         // Create the polygon object
@@ -74,8 +71,8 @@ const InteractiveMap: React.FC = () => {
             description: '',
             coordinates: polygon.getPath().getArray().map((coord) => ({ lat: coord.lat(), lng: coord.lng() })),
             locality: '',
-            ownershipType: '',
-            seriesName: '',
+            ownership_type: '',
+            farm_series_name: '',
             notes: '',
         }
 
@@ -87,7 +84,6 @@ const InteractiveMap: React.FC = () => {
 
     // Function to handle the save polygon form submission
     const handleSave: SavePolygonMenuProps['onSave'] = async (formData) => {
-        console.log('Save polygon form data:', formData);
         setShowSavePolygonMenu(false);
 
         // If there is no selected polygon, return
@@ -100,8 +96,8 @@ const InteractiveMap: React.FC = () => {
             description: formData.description,
             coordinates: selectedPolygon.coordinates,
             locality: formData.locality,
-            ownershipType: formData.ownershipType,
-            seriesName: formData.seriesName,
+            ownership_type: formData.ownership_type,
+            farm_series_name: formData.farm_series_name,
             notes: formData.notes,
         }
         

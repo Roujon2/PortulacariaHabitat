@@ -86,21 +86,14 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             // Get polygon ids
             const polygonIds = polygons.map(polygon => polygon.id);
 
-            const deletedPolygons = await polygonApi.deletePolygons(polygonIds);
+            await polygonApi.deletePolygons(polygonIds);
 
-            if (deletedPolygons) {
-                // Remove deleted polygons from state
-                const updatedPolygons = polygons.filter(polygon => !deletedPolygons.find((deletedPolygon: Polygon) => deletedPolygon.id === polygon.id));
-                setPolygons(updatedPolygons);
-            }
         } catch (error) {
             console.error("Error deleting polygons:", error);
         } finally {
             setLoading(false);
         }
     };
-
-    console.log(polygons);
 
     return (
         <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons, hasMore }}>

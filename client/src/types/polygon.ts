@@ -4,13 +4,13 @@ export interface NewPolygon{
     description: string;
     coordinates: google.maps.LatLngLiteral[];
     locality: string;
-    ownershipType: string;
-    seriesName: string;
+    ownership_type: string;
+    farm_series_name: string;
     notes: string;
 }
 
 // Type for polygon after it is saved to database and retrieved an id
 export interface Polygon extends NewPolygon{
     id: number;
-    created: string;
+    created_at: string;
 }

@@ -24,9 +24,6 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({selectedMenu}) => {
     const { user } = useContext(AuthContext) as AuthContextProps;
 
-
-    console.log(user);
-
     if (!user) {
         return <p>Loading from Home...</p>;
     }
