@@ -16,16 +16,26 @@ import { FaTrashCan } from "react-icons/fa6";
 import { FaMapLocationDot } from "react-icons/fa6";
 
 import { PanelGroup, PanelResizeHandle, Panel } from 'react-resizable-panels';
+import { MdOutlineExpandMore } from "react-icons/md";
 
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
     const [viewPolygonDetails, setViewPolygonDetails] = React.useState<boolean>(false);
     const [editPolygonSelected, setEditPolygonSelected] = React.useState<Polygon>();
+
+    // State var controlling toggle of clearing rows on table (after any kind of polygon modification the rows should be cleared)
+    const [toggleClearedRows, setToggleClearedRows] = React.useState<boolean>(false);
+
+    // Function handling toggle cleared rows on table and removing selected polygons
+    const handleToggleClearedRows = () => {
+        setToggleClearedRows(!toggleClearedRows);
+        setSelectedPolygons([]);
+    }
 
     const handleLoadMore = async () => {
         loadMorePolygons();
@@ -40,13 +50,10 @@ const PolygonsMenu: React.FC = () => {
     const handleRowClicked = (polygon: Polygon) => {
         setEditPolygonSelected(polygon);
         setViewPolygonDetails(true);
-        console.log('Polygon clicked:', polygon);
     }
 
     // Function to handle deleting selected polygons
     const handleDeleteSelected = () => {
-        console.log('Deleting selected polygons');
-
         // Check if the editPolygonSelected is in the selectedPolygons
         if (editPolygonSelected && selectedPolygons.find(p => p.id === editPolygonSelected.id)) {
             setEditPolygonSelected(undefined);
@@ -55,7 +62,30 @@ const PolygonsMenu: React.FC = () => {
 
         // Delete selected polygons
         deletePolygons(selectedPolygons);
-        setSelectedPolygons([]);
+        
+        // Toggle cleared rows
+        handleToggleClearedRows();
+    }
+
+    // Function to handle deletion from the polygon details
+    const handleDelete = (polygon: Polygon) => {
+        if (editPolygonSelected && editPolygonSelected.id === polygon.id) {
+            setEditPolygonSelected(undefined);
+            setViewPolygonDetails(false);
+        }
+
+        deletePolygons([polygon]);
+
+        // Toggle cleared rows
+        handleToggleClearedRows();
+    }
+
+    // Function to handle polygon update
+    const handleUpdate = (polygon: Polygon) => {
+        updatePolygon(polygon);
+
+        // Toggle cleared rows
+        handleToggleClearedRows();
     }
 
 
@@ -65,21 +95,38 @@ const PolygonsMenu: React.FC = () => {
 
             <PanelGroup direction='vertical'>
                 {/* Polygon Table */}
-                <Panel defaultSize={60} minSize={30}>
+                <Panel defaultSize={80} minSize={30}>
                     <PolygonTable
                         polygons={polygons}
                         loadMore={loadMorePolygons}
                         onRowSelected={handleSelectedRows}
                         onRowClicked={handleRowClicked}
                         hasMore={hasMore}
+                        toggleClearedRows={toggleClearedRows}
                     />
                     <div className="buttons-container">
                      
-                        <button onClick={handleDeleteSelected} disabled={selectedPolygons.length < 1} className="button-delete">
+                        <button 
+                            onClick={handleDeleteSelected} 
+                            disabled={selectedPolygons.length < 1} 
+                            className={selectedPolygons.length < 1 ? 'button-delete-disabled' : 'button-delete'}
+                        >
                             <FaTrashCan />
                         </button>
 
-                        <button onClick={() => console.log('View on map')} disabled={selectedPolygons.length < 1} className="button-map">
+                        <button 
+                            className={hasMore ? 'button-load-more' : 'button-load-more-disabled'} 
+                            onClick={handleLoadMore} 
+                            disabled={!hasMore}
+                        >
+                            <MdOutlineExpandMore className="load-more" />
+                        </button>
+
+                        <button 
+                            onClick={() => console.log('View on map')} 
+                            disabled={selectedPolygons.length < 1} 
+                            className={selectedPolygons.length < 1 ? 'button-view-on-map-disabled' : 'button-view-on-map'}
+                        >
                             <FaMapLocationDot />
                         </button> 
                       
@@ -89,15 +136,15 @@ const PolygonsMenu: React.FC = () => {
                 <PanelResizeHandle className='resize-handle__polygons-menu' />
 
                 {/* Polygon Details */}
-                <Panel defaultSize={40} minSize={20}>
+                <Panel defaultSize={20} minSize={20}>
                     {editPolygonSelected ? (
                         <PolygonDetails
                             polygon={editPolygonSelected}
-                            handleEdit={polygonApi.updatePolygon}
-                            handleDelete={polygonApi.deletePolygon}
+                            handleEdit={handleUpdate}
+                            handleDelete={handleDelete}
                         />
                     ) : (
-                        <p>Select a polygon to view details.</p>
+                        <p className="polygon-details-empty">Select a polygon to view details.</p>
                     )}
                 </Panel>
             </PanelGroup>

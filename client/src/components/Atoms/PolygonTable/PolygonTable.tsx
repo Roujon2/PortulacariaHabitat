@@ -15,9 +15,16 @@ interface PolygonTableProps {
     onRowSelected: (selectedRows: Polygon[]) => void;
     loadMore: () => void;
     hasMore: boolean;
+    toggleClearedRows: boolean;
 }
 
-const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loadMore, onRowSelected, hasMore }) => {
+const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, onRowSelected, toggleClearedRows }) => {
+
+    // UseEffect to refresh the table when the polygons change
+    React.useEffect(() => {
+    }, [polygons]);
+
+
     // Define columns for data table
     const columns: TableColumn<Polygon>[] = [
         {
@@ -60,10 +67,8 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, onRowClicked, loa
                 selectableRows
                 onSelectedRowsChange={(selected) => onRowSelected(selected.selectedRows)}
                 onRowClicked={(row) => onRowClicked(row)}
+                clearSelectedRows={toggleClearedRows}
             />
-            <button className="load-more" onClick={loadMore} disabled={!hasMore}>
-                <MdOutlineExpandMore className="load-more" />
-            </button>
         </div>
     );
 };

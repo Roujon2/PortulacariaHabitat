@@ -8,7 +8,7 @@ import { start } from "repl";
 
 interface PolygonDetailsProps {
     polygon: Polygon;
-    handleDelete: (polygonId: number ) => void;
+    handleDelete: (polygon: Polygon ) => void;
     handleEdit: (polygon: Polygon) => void;
 }
 
@@ -70,7 +70,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
             </div>
 
             <div className="polygon-details__buttons">
-                <button className="polygon-details__button-delete" onClick={() => handleDelete(polygon.id)}>
+                <button className="polygon-details__button-delete" onClick={() => handleDelete(polygon)}>
                     Delete
                 </button>
 

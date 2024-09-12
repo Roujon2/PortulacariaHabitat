@@ -9,6 +9,7 @@ interface PolygonContextProps {
     loadMorePolygons: () => void;
     deletePolygons: (polygons: Polygon[]) => void;
     hasMore: boolean;
+    updatePolygon: (polygon: Polygon) => void;
 }
 
 const PolygonContext = createContext<PolygonContextProps | undefined>(undefined);
@@ -59,7 +60,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                 // Fetch polygon count
                 const polygonCount = await fetchPolygonCount();
 
-                if (polygonCount && polygons.length >= polygonCount.count) {
+                if (polygonCount && [...polygons, ...uniquePolygons].length >= polygonCount.count) {
                     setHasMore(false);
                 }
             }
@@ -95,8 +96,24 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }
     };
 
+    // Function to update polygon
+    const updatePolygon = async (polygon: Polygon) => {
+        const updatedPolygons = polygons.map(p => {
+            if (p.id === polygon.id) {
+                return polygon;
+            }
+
+            return p;
+        });
+
+        // Call api to update in database
+        await polygonApi.updatePolygon(polygon);
+
+        setPolygons(updatedPolygons);
+    };
+
     return (
-        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons, hasMore }}>
+        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon }}>
             {children}
         </PolygonContext.Provider>
     );

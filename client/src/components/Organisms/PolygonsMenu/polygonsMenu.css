@@ -2,39 +2,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-
-.polygons-menu__cards{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 10px;
-    margin: 1rem;
-    width: fit-content;
-    max-height: 85vh;
-    background-color: antiquewhite;
-    border-radius: 10px;
-    padding: 1rem;
-    overflow-y: auto;
-}
-
-.polygons-menu__load-more-container{
-    width: 100%;
-}
-
-.polygons-menu__load-more{
-    text-align: center;
-    background-color: lightgray;
-    border: none;
-    cursor: pointer;
-    margin-top: 1rem;
-    padding: 0.3rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-.polygons-menu__load-more:hover{
-    background-color: darkgray;
+    background-color: #f6fcfc;
 }
 
 .resize-handle__polygons-menu{
@@ -48,5 +16,89 @@
     margin-left: 1rem;
     margin-right: 1rem;
     border-radius: 5px;
+}
 
+.buttons-container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-top: 0.3rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.buttons-container>button{
+    font-size: 1rem;
+}
+
+.button-delete{
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.button-delete:hover{
+    background-color: #a52525;
+}
+.button-delete-disabled{
+    background-color: #aaaaaa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+}
+
+.button-view-on-map{
+    background-color: #4CAF50;
+    color: rgb(222, 245, 250);
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.button-view-on-map:hover{
+    background-color: #296a2d;
+}
+.button-view-on-map-disabled{
+    background-color: #aaaaaa;
+    color: rgb(222, 245, 250);
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    transition: all 0.3s ease;
+}
+
+.button-load-more{
+    background-color: #96caf4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.button-load-more:hover{
+    background-color: #3c5267;
+}
+.button-load-more-disabled{
+    background-color: #aaaaaa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+}
+
+
+.polygon-details-empty{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #bbbbbb;
 }
