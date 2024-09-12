@@ -1,4 +1,4 @@
-.polygons_menu__content{
+.polygons-menu__content{
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -37,3 +37,16 @@
     background-color: darkgray;
 }
 
+.resize-handle__polygons-menu{
+    height: 10px;
+    background-color: #ccc; /* Adjust handle color */
+    cursor: ew-resize; /* Cursor style */
+    width: 90%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: 5px;
+
+}

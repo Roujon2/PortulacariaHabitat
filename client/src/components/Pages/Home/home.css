@@ -8,7 +8,7 @@
     background-color: #f5f5f5;
 }
 
-.resize-handle {
+.resize-handle__home {
     width: 10px; /* Adjust handle width */
     background-color: #ccc; /* Adjust handle color */
     cursor: ew-resize; /* Cursor style */

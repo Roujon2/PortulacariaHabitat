@@ -12,7 +12,10 @@ import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 import polygonApi from "../../../api/polygonApi";
 
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { FaTrashCan } from "react-icons/fa6";
+import { FaMapLocationDot } from "react-icons/fa6";
+
+import { PanelGroup, PanelResizeHandle, Panel } from 'react-resizable-panels';
 
 
 // Polygons menu component
@@ -37,23 +40,32 @@ const PolygonsMenu: React.FC = () => {
     const handleRowClicked = (polygon: Polygon) => {
         setEditPolygonSelected(polygon);
         setViewPolygonDetails(true);
+        console.log('Polygon clicked:', polygon);
     }
 
     // Function to handle deleting selected polygons
     const handleDeleteSelected = () => {
         console.log('Deleting selected polygons');
+
+        // Check if the editPolygonSelected is in the selectedPolygons
+        if (editPolygonSelected && selectedPolygons.find(p => p.id === editPolygonSelected.id)) {
+            setEditPolygonSelected(undefined);
+            setViewPolygonDetails(false);
+        }
+
+        // Delete selected polygons
         deletePolygons(selectedPolygons);
+        setSelectedPolygons([]);
     }
 
 
     return (
         <div className='polygons-menu__content'>
             <h1>Polygons Menu</h1>
-            {(viewPolygonDetails && editPolygonSelected) ? (
-                // Show polygon details when a row is clicked
-                <PolygonDetails polygon={editPolygonSelected}  handleEdit={polygonApi.updatePolygon} handleDelete={polygonApi.deletePolygon} />
-            ) : (
-                <>
+
+            <PanelGroup direction='vertical'>
+                {/* Polygon Table */}
+                <Panel defaultSize={60} minSize={30}>
                     <PolygonTable
                         polygons={polygons}
                         loadMore={loadMorePolygons}
@@ -61,11 +73,34 @@ const PolygonsMenu: React.FC = () => {
                         onRowClicked={handleRowClicked}
                         hasMore={hasMore}
                     />
-                    {selectedPolygons.length > 0 && (
-                        <button onClick={handleDeleteSelected}>Delete Selected</button>
+                    <div className="buttons-container">
+                     
+                        <button onClick={handleDeleteSelected} disabled={selectedPolygons.length < 1} className="button-delete">
+                            <FaTrashCan />
+                        </button>
+
+                        <button onClick={() => console.log('View on map')} disabled={selectedPolygons.length < 1} className="button-map">
+                            <FaMapLocationDot />
+                        </button> 
+                      
+                    </div>
+                </Panel>
+
+                <PanelResizeHandle className='resize-handle__polygons-menu' />
+
+                {/* Polygon Details */}
+                <Panel defaultSize={40} minSize={20}>
+                    {editPolygonSelected ? (
+                        <PolygonDetails
+                            polygon={editPolygonSelected}
+                            handleEdit={polygonApi.updatePolygon}
+                            handleDelete={polygonApi.deletePolygon}
+                        />
+                    ) : (
+                        <p>Select a polygon to view details.</p>
                     )}
-                </>
-            )}
+                </Panel>
+            </PanelGroup>
         </div>
     );
 };

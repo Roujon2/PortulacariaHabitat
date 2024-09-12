@@ -35,7 +35,7 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
                     <Panel defaultSize={80} minSize={30}>
                         <InteractiveMap />
                     </Panel>
-                    <PanelResizeHandle className='resize-handle'/>
+                    <PanelResizeHandle className='resize-handle__home'/>
                     <Panel defaultSize={20} minSize={10} maxSize={50}>
                         {selectedMenu === 'help' && <HelpMenu />}
                         {selectedMenu === 'profile' && <ProfileMenu />}

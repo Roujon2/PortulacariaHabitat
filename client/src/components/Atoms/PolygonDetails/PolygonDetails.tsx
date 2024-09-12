@@ -15,6 +15,11 @@ interface PolygonDetailsProps {
 const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
 
+    // UseEffect to update edited polygon when polygon changes
+    React.useEffect(() => {
+        setEditedPolygon(polygon);
+    }, [polygon]);
+
     // Handle input change
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof Polygon) => {
         setEditedPolygon({
