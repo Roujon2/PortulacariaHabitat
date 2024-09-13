@@ -91,14 +91,75 @@ const getPolygon = async (polygon_id) => {
     }
 };
 
-// Function to get polygons
-const getPolygons = async (user_id, limit, offset) => {
+// Function to lod more polygons past a certain timestamp
+const loadMorePolygons = async (user_id, limit, last_updated_at) => {
     // Params
     const client = await pool.connect();
 
-    // Query
-    const query = 'SELECT * FROM polygons WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3';
-    const values = [user_id, limit, offset];
+    let query;
+    let values;
+
+    if (last_updated_at){
+        query = `
+            SELECT * FROM polygons
+            WHERE user_id = $1
+            AND updated_at < $2
+            ORDER BY updated_at DESC
+            LIMIT $3;
+        `;
+
+        values = [user_id, last_updated_at, limit];
+    }else{
+        query = `
+            SELECT * FROM polygons
+            WHERE user_id = $1
+            ORDER BY updated_at DESC
+            LIMIT $2;
+        `;
+
+        values = [user_id, limit];
+    }
+
+    try{
+        // Query
+        const result = await client.query(query, values);
+        return result.rows;
+    }
+    catch(err){
+        console.error("Error loading more polygons:", err);
+    }
+    finally{
+        client.release();
+    }
+};
+
+// Function to refresh a list of polygons based on a last updated at timestamp
+const refreshPolygons = async (user_id, last_updated_at, limit) => {
+    // Params
+    const client = await pool.connect();
+    
+    let query;
+    let values;
+
+    if(last_updated_at){
+        query = `
+            SELECT * FROM polygons
+            WHERE user_id = $1
+            AND updated_at > $2
+            ORDER BY updated_at DESC
+        `;
+
+        values = [user_id, last_updated_at];
+    }else{
+        query = `
+            SELECT * FROM polygons
+            WHERE user_id = $1
+            ORDER BY updated_at DESC
+            LIMIT $2
+        `;
+
+        values = [user_id, limit];
+    }
 
     try{
         // Query
@@ -163,7 +224,8 @@ export default {
     getPolygon,
     updatePolygon,
     deletePolygon,
-    getPolygons,
+    loadMorePolygons,
+    refreshPolygons,
     deletePolygons,
     getPolygonsCount
 }

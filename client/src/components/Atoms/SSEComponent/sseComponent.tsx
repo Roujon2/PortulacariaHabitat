@@ -3,17 +3,17 @@ import React, { useEffect } from "react";
 import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 function SSEComponent() {
-    const { fetchPolygons } = usePolygonContext();
+    const { refreshPolygons } = usePolygonContext();
 
     useEffect(() => {
         // Create a new EventSource instance
-        var eventSource = new EventSource('http://localhost:5000/sse/events', { withCredentials: true });
+        var eventSource = new EventSource(`${process.env.REACT_APP_BACKEND_SERVER_URL}/sse/events`, { withCredentials: true });
 
         // Listen for messages from the server
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Received event:', data);
-            fetchPolygons(true);
+            refreshPolygons();
         };
 
         // Handle any errors (optional)
@@ -24,7 +24,7 @@ function SSEComponent() {
             // Reconnect after 3 seconds
             setTimeout(() => {
                 console.log('Reconnecting...');
-                eventSource = new EventSource('http://localhost:5000/sse/events', { withCredentials: true });
+                eventSource = new EventSource(`${process.env.REACT_APP_BACKEND_SERVER_URL}/sse/events`, { withCredentials: true });
             }, 3000);
 
         };

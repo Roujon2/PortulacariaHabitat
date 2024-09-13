@@ -62,13 +62,26 @@ const getPolygon = async (req, res) => {
     }
 };
 
-const getPolygons = async (req, res) => {
+const loadMorePolygons = async (req, res) => {
     const user_id = req.user.id;
     const limit = req.query.limit || 10;
-    const offset = req.query.offset || 0;
+    const last_updated_at = req.query.last_updated_at || null;
 
     try{
-        const polygons = await polygonModel.getPolygons(user_id, limit, offset);
+        const polygons = await polygonModel.loadMorePolygons(user_id, limit, last_updated_at);
+        return res.status(200).json(polygons);
+    }catch(err){
+        return res.status(500).json({error: "Failed to get polygons:", err});
+    }
+};
+
+const refreshPolygons = async (req, res) => {
+    const user_id = req.user.id;
+    const limit = req.query.limit || 10;
+    const last_updated_at = req.query.last_updated_at || null;
+
+    try{
+        const polygons = await polygonModel.refreshPolygons(user_id, last_updated_at, limit);
         return res.status(200).json(polygons);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons:", err});
@@ -109,7 +122,8 @@ export default {
     getPolygon,
     updatePolygon,
     deletePolygon,
-    getPolygons,
+    loadMorePolygons,
+    refreshPolygons,
     deletePolygons,
     getPolygonsCount
 };

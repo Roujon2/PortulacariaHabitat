@@ -23,6 +23,7 @@ const savePolygon = async (polygon: NewPolygon) => {
             notes: polygon.notes,
             created_at: savedPolygon.data.created_at,
             coordinates: polygon.coordinates,
+            updated_at: savedPolygon.data.updated_at,
         }
 
         return newPolygon;
@@ -53,6 +54,7 @@ const updatePolygon = async (polygon: Polygon) => {
             notes: polygon.notes,
             created_at: polygon.created_at,
             coordinates: polygon.coordinates,
+            updated_at: updatedPolygon.data.updated_at,
         }
 
         return newPolygon;
@@ -114,6 +116,7 @@ const getPolygon = async (polygonId: number) => {
             notes: polygon.data.notes,
             created_at: polygon.data.created_at,
             coordinates: polygon.data.coordinates,
+            updated_at: polygon.data.updated_at,
         }
 
         return newPolygon;
@@ -122,13 +125,16 @@ const getPolygon = async (polygonId: number) => {
     }
 }
 
-const getPolygons = async (limit: number, offset: number) => {
+// Function to refresh the table of polygons
+const refreshPolygons = async (last_updated_at: string | null, limit: number) => {
     try{
         // Get polygons from database
         const polygons = await axios({
             method: 'get',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons?limit=${limit}&offset=${offset}`,
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/refresh`,
             withCredentials: true,
+            // Build params object (last_updated_at may be null)
+            params: last_updated_at ? { last_updated_at, limit } : { limit },
         });
 
         // Create the Polygon object to be returned
@@ -142,11 +148,44 @@ const getPolygons = async (limit: number, offset: number) => {
             farm_series_name: polygon.farm_series_name,
             notes: polygon.notes,
             created_at: polygon.created_at,
+            updated_at: polygon.updated_at,
         }));
 
         return newPolygons;
     }catch(error){
-        console.error("Error getting polygons:", error);
+        console.error("Error refreshing polygons:", error);
+    }
+};
+
+// Function to load more polygons to list
+const loadMorePolygons = async (last_updated_at: string | null, limit: number) => {
+    try{
+        // Get polygons from database
+        const polygons = await axios({
+            method: 'get',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/loadmore`,
+            withCredentials: true,
+            // Build params object (last_updated_at may be null)
+            params: last_updated_at ? { last_updated_at, limit } : { limit },
+        });
+
+        // Create the Polygon object to be returned
+        const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({
+            id: polygon.id,
+            name: polygon.name,
+            description: polygon.description,
+            coordinates: polygon.coordinates,
+            locality: polygon.locality,
+            ownership_type: polygon.ownership_type,
+            farm_series_name: polygon.farm_series_name,
+            notes: polygon.notes,
+            created_at: polygon.created_at,
+            updated_at: polygon.updated_at,
+        }));
+
+        return newPolygons;
+    }catch(error){
+        console.error("Error loading more polygons:", error);
     }
 };
 
@@ -170,7 +209,8 @@ export default {
     updatePolygon,
     deletePolygon,
     getPolygon,
-    getPolygons,
     deletePolygons,
     getPolygonCount,
+    refreshPolygons,
+    loadMorePolygons,
 }

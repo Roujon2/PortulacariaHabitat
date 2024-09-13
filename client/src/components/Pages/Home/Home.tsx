@@ -32,11 +32,11 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
         <PolygonContextProvider>
             <div className='home-page'>
                 <PanelGroup direction='horizontal'>
-                    <Panel defaultSize={80} minSize={30}>
+                    <Panel defaultSize={60} minSize={30}>
                         <InteractiveMap />
                     </Panel>
                     <PanelResizeHandle className='resize-handle__home'/>
-                    <Panel defaultSize={20} minSize={10} maxSize={50}>
+                    <Panel defaultSize={40} minSize={20} maxSize={70}>
                         {selectedMenu === 'help' && <HelpMenu />}
                         {selectedMenu === 'profile' && <ProfileMenu />}
                         {selectedMenu === 'polygons' && <PolygonsMenu />}

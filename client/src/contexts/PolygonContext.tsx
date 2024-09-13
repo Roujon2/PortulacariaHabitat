@@ -4,13 +4,18 @@ import { Polygon } from '../types/polygon';
 
 interface PolygonContextProps {
     polygons: Polygon[];
-    fetchPolygons: (refreshAll: boolean) => void;
+    refreshPolygons: () => void;
     loading: boolean;
     loadMorePolygons: () => void;
     deletePolygons: (polygons: Polygon[]) => void;
     hasMore: boolean;
     updatePolygon: (polygon: Polygon) => void;
+    putOnMap: (polygons: Polygon[]) => void;
+    polygonsOnMap: Polygon[];
+    resetMapPolygons: () => void;
 }
+
+const call_limit = 10;
 
 const PolygonContext = createContext<PolygonContextProps | undefined>(undefined);
 
@@ -20,8 +25,13 @@ interface PolygonContextProviderProps {
 
 export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ children }) => {
     const [polygons, setPolygons] = useState<Polygon[]>([]);
-    const [offset, setOffset] = useState<number>(0);
+    // Polygons on the map
+    const [polygonsOnMap, setPolygonsOnMap] = useState<Polygon[]>([]);
+
     const [loading, setLoading] = useState<boolean>(false);
+
+    // Statevar for last updated polygon for dynamic pagination
+    const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
     // Check if there are more polygons to fetch
     const [hasMore, setHasMore] = useState<boolean>(true);
@@ -36,47 +46,78 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }
     }
 
-    const fetchPolygons = async (refreshAll: boolean) => {
-        try {
+    // Function to refresh list on map
+    const resetMapPolygons = async () => {
+        setPolygonsOnMap([]);
+    }
+
+    // Function to refresh the list of polygons
+    const refreshPolygons = async () => {
+        try{
             setLoading(true);
 
-            let fetchedPolygons: Polygon[] | undefined;
+            // Fetch polygons from the database
+            const fetchedPolygons = await polygonApi.refreshPolygons(lastUpdated, call_limit);
 
-            if (refreshAll){
-
-                // Get all polygons from beginning until offset
-                fetchedPolygons = await polygonApi.getPolygons((offset || 10), 0);
-            }else{
-                // Get polygons from offset
-                fetchedPolygons = await polygonApi.getPolygons(10, offset);
-
-            }
-
-            if (fetchedPolygons) {
-                // Check unique polygons and add them 
-                const uniquePolygons = fetchedPolygons.filter((polygon: Polygon) => !polygons.find(p => p.id === polygon.id));
-                setPolygons([...polygons, ...uniquePolygons]);
-
+            if(fetchedPolygons && fetchedPolygons.length > 0){
                 // Fetch polygon count
                 const polygonCount = await fetchPolygonCount();
 
-                if (polygonCount && [...polygons, ...uniquePolygons].length >= polygonCount.count) {
+                // Set last_updated to the last polygon
+                setLastUpdated(fetchedPolygons[fetchedPolygons.length - 1].updated_at);
+  
+                // Check if there are more polygons to fetch
+                if(fetchedPolygons.length < polygonCount.count){
+                    setHasMore(true);
+                }else{
                     setHasMore(false);
                 }
+
+                // Reset polygon list
+                setPolygons(fetchedPolygons);
+            }else{
+                setHasMore(false);
             }
-        } catch (error) {
-            console.error("Error fetching polygons:", error);
-        } finally {
-            setLoading(false);
+        }catch(error){
+            console.error("Error refreshing polygons:", error);
         }
     };
 
-    useEffect(() => {
-        fetchPolygons(false);
-    }, [offset]);
+    // Function to load more polygons
+    const loadMorePolygons = async () => {
+        if(!hasMore){
+            return;
+        }
 
-    const loadMorePolygons = () => {
-        setOffset(offset + 10);
+        try{
+            setLoading(true);
+
+            // Fetch older polygons from the database
+            const fetchedPolygons = await polygonApi.loadMorePolygons(lastUpdated, call_limit);
+
+            if(fetchedPolygons && fetchedPolygons.length > 0){
+                // Fetch polygon count
+                const polygonCount = await fetchPolygonCount();
+
+                // Set last_updated to the last polygon
+                setLastUpdated(fetchedPolygons[fetchedPolygons.length - 1].updated_at);
+
+                // Check if there are more polygons to fetch
+                if([...polygons, ...fetchedPolygons].length < polygonCount.count){
+                    setHasMore(true);
+                }else{
+                    setHasMore(false);
+                }
+
+                // Add the fetched polygons to the list
+                setPolygons([...polygons, ...fetchedPolygons]);
+            }else{
+                setHasMore(false);
+            }
+
+        }catch(error){
+            console.error("Error loading more polygons:", error);
+        }
     };
 
     // Function to delete polygons
@@ -109,11 +150,22 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         // Call api to update in database
         await polygonApi.updatePolygon(polygon);
 
-        setPolygons(updatedPolygons);
     };
 
+
+    // Function to put polygon on map
+    const putOnMap = (polygons: Polygon[]) => {
+        // Put polygons on map without duplicates
+        const newPolygons = polygons.filter(polygon => !polygonsOnMap.find(p => p.id === polygon.id));
+
+        if (newPolygons.length > 0) {
+            setPolygonsOnMap([...polygonsOnMap, ...newPolygons]);
+        }
+    };
+
+
     return (
-        <PolygonContext.Provider value={{ polygons, fetchPolygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon }}>
+        <PolygonContext.Provider value={{ polygons, refreshPolygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, polygonsOnMap, putOnMap, resetMapPolygons }}>
             {children}
         </PolygonContext.Provider>
     );

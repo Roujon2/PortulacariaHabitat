@@ -6,6 +6,12 @@ const router = express.Router();
 
 // Polygon routes
 
+// Fetching polygons
+// Refreshing list
+router.get('/refresh', authMiddleware.authorizeToken, polygonController.refreshPolygons);
+// Loading more
+router.get('/loadmore', authMiddleware.authorizeToken, polygonController.loadMorePolygons);
+
 // Get polygons count
 router.get('/count', authMiddleware.authorizeToken, polygonController.getPolygonsCount);
 
@@ -22,7 +28,5 @@ router.put('/:id', authMiddleware.authorizeToken, polygonController.updatePolygo
 router.delete('/:id', authMiddleware.authorizeToken, polygonController.deletePolygon);
 router.delete('/', authMiddleware.authorizeToken, polygonController.deletePolygons);
 
-// Get polygons
-router.get('/', authMiddleware.authorizeToken, polygonController.getPolygons);
 
 export default router;

@@ -13,4 +13,5 @@ export interface NewPolygon{
 export interface Polygon extends NewPolygon{
     id: number;
     created_at: string;
+    updated_at: string;
 }

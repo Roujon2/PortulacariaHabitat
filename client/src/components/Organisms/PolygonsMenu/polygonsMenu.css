@@ -3,6 +3,7 @@
     flex-direction: column;
     height: 100%;
     background-color: #f6fcfc;
+    box-sizing: border-box;
 }
 
 .resize-handle__polygons-menu{
@@ -13,85 +14,14 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    margin-left: 1rem;
+    margin-left: 2rem;
     margin-right: 1rem;
     border-radius: 5px;
 }
 
-.buttons-container{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    margin-top: 0.3rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
+.polygon-table_container{
+    background-color: #f6fcfc;
 }
-
-.buttons-container>button{
-    font-size: 1rem;
-}
-
-.button-delete{
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.button-delete:hover{
-    background-color: #a52525;
-}
-.button-delete-disabled{
-    background-color: #aaaaaa;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-}
-
-.button-view-on-map{
-    background-color: #4CAF50;
-    color: rgb(222, 245, 250);
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.button-view-on-map:hover{
-    background-color: #296a2d;
-}
-.button-view-on-map-disabled{
-    background-color: #aaaaaa;
-    color: rgb(222, 245, 250);
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-    transition: all 0.3s ease;
-}
-
-.button-load-more{
-    background-color: #96caf4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.button-load-more:hover{
-    background-color: #3c5267;
-}
-.button-load-more-disabled{
-    background-color: #aaaaaa;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-}
-
 
 .polygon-details-empty{
     display: flex;

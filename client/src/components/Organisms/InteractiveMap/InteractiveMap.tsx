@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './interactiveMap.css';
 import { DrawingManagerF, GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { useMemo } from "react";
@@ -9,6 +9,7 @@ import {Polygon, NewPolygon } from "../../../types/polygon";
 import polygonApi from "../../../api/polygonApi";
 
 import axios from 'axios';
+import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
@@ -22,6 +23,12 @@ const mapOptions = {
 const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
+    // Access polygons to be on map from context
+    const { polygonsOnMap, resetMapPolygons } = usePolygonContext();
+
+    // Local state var for the polygons currently drawn on the map
+    const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
+
     // Map state var
     const [map, setMap] = useState<google.maps.Map | null>(null);
     // Drawing manager state var
@@ -30,6 +37,30 @@ const InteractiveMap: React.FC = () => {
     // State var for the selected drawn polygon
     const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
     const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
+
+    useEffect(() => {
+        // Add polygons to the map
+        if (polygonsOnMap && polygonsOnMap.length > 0) {
+            polygonsOnMap.forEach(polygon => {
+                addPolygonToMap(polygon);
+            });
+
+            // Center map to the last polygon drawn
+            const lastPolygon = polygonsOnMap[polygonsOnMap.length - 1];
+            if (lastPolygon) {
+                const centroid = calculateCentroid(lastPolygon);
+                map?.setCenter(centroid);
+                // Zoom to fit bounds of polygon
+                const bounds = new google.maps.LatLngBounds();
+                lastPolygon.coordinates.forEach(coord => {
+                    bounds.extend(coord);
+                });
+                map?.fitBounds(bounds);
+            }
+
+        }
+    }
+    , [polygonsOnMap]);
 
 
     // Load the google maps api script
@@ -45,6 +76,9 @@ const InteractiveMap: React.FC = () => {
     // Function to handle map loaded
     const onMapLoad = (map: google.maps.Map) => {
         console.log('Map loaded.');
+
+        // Reset map polygons
+        resetMapPolygons();
 
         // Set the map state var
         setMap(map);
@@ -141,8 +175,39 @@ const InteractiveMap: React.FC = () => {
         map.overlayMapTypes.push(overlayMapParams);
     };
 
+    // Function to add polygon to the map
+    const addPolygonToMap = (polygon: Polygon) => {
+        if (map) {
+            const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
+
+            const newPolygon = new google.maps.Polygon({
+                paths: polygonCoords,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+            });
+
+            newPolygon.setMap(map);
+        }
+    }
+
+    // Function to calculate polygon centroid
+    const calculateCentroid = (polygon: Polygon) => {
+        const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
+
+        const polygonBounds = new google.maps.LatLngBounds();
+        polygonCoords.forEach(coord => {
+            polygonBounds.extend(coord);
+        });
+
+        return polygonBounds.getCenter();
+    }
+
     // If there is an error loading the script
     if (loadError) return <div>Error loading maps</div>;
+
 
     return (
         <div className='interactive-map-container'>
