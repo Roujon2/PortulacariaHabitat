@@ -15,6 +15,7 @@ interface PolygonContextProps {
     resetMapPolygons: () => void;
     selectedPolygonDetails: Polygon | null;
     setSelectedPolygonDetails: (polygon: Polygon | null) => void;
+    polygonToUpdate: Polygon | null;
 }
 
 const call_limit = 10;
@@ -29,6 +30,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygons, setPolygons] = useState<Polygon[]>([]);
     // Polygons on the map
     const [polygonsOnMap, setPolygonsOnMap] = useState<Polygon[]>([]);
+
+    // Polygon to be updated 
+    const [polygonToUpdate, setPolygonToUpdate] = useState<Polygon | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetails, setSelectedPolygonDetails] = useState<Polygon | null>(null);
@@ -148,20 +152,20 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Function to update polygon
     const updatePolygon = async (polygon: Polygon) => {
-        const updatedPolygons = polygons.map(p => {
-            if (p.id === polygon.id) {
-                return polygon;
-            }
-
-            return p;
-        });
-
         // Call api to update in database
         await polygonApi.updatePolygon(polygon);
 
-        // First remove polygon from map then add back with updated info
-        removeFromMap(polygon);
-        putOnMap([polygon]);
+        // Set polygon to update
+        setPolygonToUpdate(polygon);
+        // Change the updated polygon in the list
+        setPolygonsOnMap((currentPolygons) => {
+            return currentPolygons.map(p => {
+                if(p.id === polygon.id){
+                    return polygon;
+                }
+                return p;
+            });
+        });
 
     };
 
@@ -188,7 +192,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         loading, loadMorePolygons, 
                                         deletePolygons, hasMore, updatePolygon, 
                                         polygonsOnMap, putOnMap, resetMapPolygons, 
-                                        selectedPolygonDetails, setSelectedPolygonDetails }}>
+                                        selectedPolygonDetails, setSelectedPolygonDetails,
+                                        polygonToUpdate }}>
             {children}
         </PolygonContext.Provider>
     );

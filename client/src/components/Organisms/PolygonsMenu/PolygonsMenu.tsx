@@ -96,6 +96,7 @@ const PolygonsMenu: React.FC = () => {
     useEffect(() => {
         if (selectedPolygonDetails) {
             setEditPolygonSelected(selectedPolygonDetails);
+            setSelectedPolygonDetails(null);
         }
     }
     , [selectedPolygonDetails]);

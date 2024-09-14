@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails } = usePolygonContext();
+    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails, polygonToUpdate } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -74,6 +74,52 @@ const InteractiveMap: React.FC = () => {
         }
     }
     , [polygonsOnMap, drawnPolygons]);
+
+    // UseEffect tracking polygon to update
+    useEffect(() => {
+        if (polygonToUpdate) {
+            console.log('Polygon to update:', polygonToUpdate);
+            const polygonToUpdateIndex = drawnPolygons.findIndex(p => p.get('id') === polygonToUpdate.id);
+            if (polygonToUpdateIndex >= 0) {
+                const polygonOnMap = drawnPolygons[polygonToUpdateIndex];
+
+                // Update polygon on map
+                polygonOnMap.setOptions({
+                    paths: polygonToUpdate.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng })),
+                });
+                // Update polygonOnMap listener
+                polygonOnMap.addListener('click', () => {
+                    console.log('Polygon clicked:', polygonOnMap.get('id'));
+                    // Find polygon object 
+                    const selectedPolygon = polygonsOnMap.find(p => p.id === polygonOnMap.get('id'));
+
+                    // Set the selected polygon details if found
+                    if (selectedPolygon){
+                        setSelectedPolygonDetails(selectedPolygon);
+                    }
+                });
+
+                // Update drawnPolygons
+                setDrawnPolygons(prev => {
+                    const newDrawnPolygons = [...prev];
+                    newDrawnPolygons[polygonToUpdateIndex] = polygonOnMap;
+                    return newDrawnPolygons;
+                });
+
+                // Center map to the updated polygon
+                const centroid = calculateCentroid(polygonToUpdate);
+                map?.setCenter(centroid);
+                // Zoom to fit bounds of polygon
+                const bounds = new google.maps.LatLngBounds();
+                polygonToUpdate.coordinates.forEach(coord => {
+                    bounds.extend(coord);
+                });
+                map?.fitBounds(bounds);
+
+
+            }
+        }
+    }, [polygonToUpdate]);
 
 
     // Load the google maps api script
