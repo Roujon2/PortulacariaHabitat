@@ -13,6 +13,8 @@ interface PolygonContextProps {
     putOnMap: (polygons: Polygon[]) => void;
     polygonsOnMap: Polygon[];
     resetMapPolygons: () => void;
+    selectedPolygonDetails: Polygon | null;
+    setSelectedPolygonDetails: (polygon: Polygon | null) => void;
 }
 
 const call_limit = 10;
@@ -27,6 +29,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygons, setPolygons] = useState<Polygon[]>([]);
     // Polygons on the map
     const [polygonsOnMap, setPolygonsOnMap] = useState<Polygon[]>([]);
+
+    // Selected polygon for showing details
+    const [selectedPolygonDetails, setSelectedPolygonDetails] = useState<Polygon | null>(null);
 
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -130,6 +135,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
             await polygonApi.deletePolygons(polygonIds);
 
+            // Remove polygons from map 
+            const newPolygonsOnMap = polygonsOnMap.filter(polygon => !polygonIds.includes(polygon.id));
+            setPolygonsOnMap(newPolygonsOnMap);
+
         } catch (error) {
             console.error("Error deleting polygons:", error);
         } finally {
@@ -150,22 +159,36 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         // Call api to update in database
         await polygonApi.updatePolygon(polygon);
 
+        // First remove polygon from map then add back with updated info
+        removeFromMap(polygon);
+        putOnMap([polygon]);
+
     };
 
 
     // Function to put polygon on map
     const putOnMap = (polygons: Polygon[]) => {
-        // Put polygons on map without duplicates
-        const newPolygons = polygons.filter(polygon => !polygonsOnMap.find(p => p.id === polygon.id));
-
-        if (newPolygons.length > 0) {
-            setPolygonsOnMap([...polygonsOnMap, ...newPolygons]);
-        }
+        setPolygonsOnMap((currentPolygons) => {
+            // Filter out polygons that are already on map
+            const newPolygons = polygons.filter(p => !currentPolygons.find(cp => cp.id === p.id));
+            return [...currentPolygons, ...newPolygons];
+        });
+    };
+    // Function to delete from map
+    const removeFromMap = (polygon: Polygon) => {
+        setPolygonsOnMap((currentPolygons) => { 
+            // Filter out polygons
+            return currentPolygons.filter(p => p.id !== polygon.id);
+        });
     };
 
 
     return (
-        <PolygonContext.Provider value={{ polygons, refreshPolygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, polygonsOnMap, putOnMap, resetMapPolygons }}>
+        <PolygonContext.Provider value={{ polygons, refreshPolygons, 
+                                        loading, loadMorePolygons, 
+                                        deletePolygons, hasMore, updatePolygon, 
+                                        polygonsOnMap, putOnMap, resetMapPolygons, 
+                                        selectedPolygonDetails, setSelectedPolygonDetails }}>
             {children}
         </PolygonContext.Provider>
     );

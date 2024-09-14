@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { polygonsOnMap, resetMapPolygons } = usePolygonContext();
+    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -39,10 +39,23 @@ const InteractiveMap: React.FC = () => {
     const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
 
     useEffect(() => {
-        // Add polygons to the map
-        if (polygonsOnMap && polygonsOnMap.length > 0) {
+        if (polygonsOnMap) {
+            // Get ids from drawn polygons and polygons that should be on map
+            const drawnPolygonIds = drawnPolygons.map(p => p.get('id'));
+            const polygonsOnMapIds = polygonsOnMap.map(p => p.id);
+
+            // Remove any polygons that should not be on the map
+            drawnPolygons.forEach(polygon => {
+                if (!polygonsOnMapIds.includes(polygon.get('id'))) {
+                    removePolygonFromMap(polygon.get('id'));
+                }
+            });
+
+            // Add any new polygons to the map
             polygonsOnMap.forEach(polygon => {
-                addPolygonToMap(polygon);
+                if (!drawnPolygonIds.includes(polygon.id)) {
+                    addPolygonToMap(polygon);
+                }
             });
 
             // Center map to the last polygon drawn
@@ -60,7 +73,7 @@ const InteractiveMap: React.FC = () => {
 
         }
     }
-    , [polygonsOnMap]);
+    , [polygonsOnMap, drawnPolygons]);
 
 
     // Load the google maps api script
@@ -178,6 +191,10 @@ const InteractiveMap: React.FC = () => {
     // Function to add polygon to the map
     const addPolygonToMap = (polygon: Polygon) => {
         if (map) {
+            // If polygon is already drawn, skip
+            if (drawnPolygons.find(p => p.get('id') === polygon.id)) return;
+
+
             const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
 
             const newPolygon = new google.maps.Polygon({
@@ -189,7 +206,33 @@ const InteractiveMap: React.FC = () => {
                 fillOpacity: 0.35,
             });
 
+            newPolygon.set('id', polygon.id);
+
+            newPolygon.addListener('click', () => {
+                console.log('Polygon clicked:', newPolygon.get('id'));
+                // Find polygon object 
+                const selectedPolygon = polygonsOnMap.find(p => p.id === newPolygon.get('id'));
+
+                // Set the selected polygon details if found
+                if (selectedPolygon){
+                    setSelectedPolygonDetails(selectedPolygon);
+                }
+            });
+
+            // Add polygon to drawn polygons
+            setDrawnPolygons(prev => [...prev, newPolygon]);
+
             newPolygon.setMap(map);
+        }
+    }
+    // Function to remove polygon from the map
+    const removePolygonFromMap = (id: number) => {
+        if (map) {
+            const polygonToRemove = drawnPolygons.find(p => p.get('id') === id);
+            if (polygonToRemove) {
+                polygonToRemove.setMap(null);
+                setDrawnPolygons(prev => prev.filter(p => p.get('id') !== id));
+            }
         }
     }
 

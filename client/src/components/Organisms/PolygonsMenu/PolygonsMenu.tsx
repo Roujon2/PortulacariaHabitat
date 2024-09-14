@@ -21,11 +21,10 @@ import { MdOutlineExpandMore } from "react-icons/md";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetails, setSelectedPolygonDetails } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
-    const [viewPolygonDetails, setViewPolygonDetails] = React.useState<boolean>(false);
     const [editPolygonSelected, setEditPolygonSelected] = React.useState<Polygon>();
 
     // State var controlling toggle of clearing rows on table (after any kind of polygon modification the rows should be cleared)
@@ -49,7 +48,6 @@ const PolygonsMenu: React.FC = () => {
     // Function to handle when a row is clicked to show polygon details
     const handleRowClicked = (polygon: Polygon) => {
         setEditPolygonSelected(polygon);
-        setViewPolygonDetails(true);
     }
 
     // Function to handle deleting selected polygons
@@ -57,7 +55,6 @@ const PolygonsMenu: React.FC = () => {
         // Check if the editPolygonSelected is in the selectedPolygons
         if (editPolygonSelected && selectedPolygons.find(p => p.id === editPolygonSelected.id)) {
             setEditPolygonSelected(undefined);
-            setViewPolygonDetails(false);
         }
 
         // Delete selected polygons
@@ -71,7 +68,6 @@ const PolygonsMenu: React.FC = () => {
     const handleDelete = (polygon: Polygon) => {
         if (editPolygonSelected && editPolygonSelected.id === polygon.id) {
             setEditPolygonSelected(undefined);
-            setViewPolygonDetails(false);
         }
 
         deletePolygons([polygon]);
@@ -96,6 +92,13 @@ const PolygonsMenu: React.FC = () => {
         // Toggle cleared rows
         handleToggleClearedRows();
     }
+
+    useEffect(() => {
+        if (selectedPolygonDetails) {
+            setEditPolygonSelected(selectedPolygonDetails);
+        }
+    }
+    , [selectedPolygonDetails]);
 
 
     return (
