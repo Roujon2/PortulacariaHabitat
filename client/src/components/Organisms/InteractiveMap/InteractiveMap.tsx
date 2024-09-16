@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails, polygonToUpdate, putOnMap } = usePolygonContext();
+    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -58,19 +58,6 @@ const InteractiveMap: React.FC = () => {
                 }
             });
 
-            // Center map to the last polygon drawn
-            const lastPolygon = polygonsOnMap[polygonsOnMap.length - 1];
-            if (lastPolygon) {
-                const centroid = calculateCentroid(lastPolygon);
-                map?.setCenter(centroid);
-                // Zoom to fit bounds of polygon
-                const bounds = new google.maps.LatLngBounds();
-                lastPolygon.coordinates.forEach(coord => {
-                    bounds.extend(coord);
-                });
-                map?.fitBounds(bounds);
-            }
-
         }
     }
     , [polygonsOnMap, drawnPolygons]);
@@ -78,7 +65,6 @@ const InteractiveMap: React.FC = () => {
     // UseEffect tracking polygon to update
     useEffect(() => {
         if (polygonToUpdate) {
-            console.log('Polygon to update:', polygonToUpdate);
             const polygonToUpdateIndex = drawnPolygons.findIndex(p => p.get('id') === polygonToUpdate.id);
             if (polygonToUpdateIndex >= 0) {
                 const polygonOnMap = drawnPolygons[polygonToUpdateIndex];
@@ -86,17 +72,6 @@ const InteractiveMap: React.FC = () => {
                 // Update polygon on map
                 polygonOnMap.setOptions({
                     paths: polygonToUpdate.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng })),
-                });
-                // Update polygonOnMap listener
-                polygonOnMap.addListener('click', () => {
-                    console.log('Polygon clicked:', polygonOnMap.get('id'));
-                    // Find polygon object 
-                    const selectedPolygon = polygonsOnMap.find(p => p.id === polygonOnMap.get('id'));
-
-                    // Set the selected polygon details if found
-                    if (selectedPolygon){
-                        setSelectedPolygonDetails(selectedPolygon);
-                    }
                 });
 
                 // Update drawnPolygons
@@ -115,7 +90,6 @@ const InteractiveMap: React.FC = () => {
                     bounds.extend(coord);
                 });
                 map?.fitBounds(bounds);
-
 
             }
         }
@@ -259,21 +233,13 @@ const InteractiveMap: React.FC = () => {
                 strokeColor: '#FF0000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
             });
 
             newPolygon.set('id', polygon.id);
 
             newPolygon.addListener('click', () => {
-                console.log('Polygon clicked:', newPolygon.get('id'));
-                // Find polygon object 
-                const selectedPolygon = polygonsOnMap.find(p => p.id === newPolygon.get('id'));
-
-                // Set the selected polygon details if found
-                if (selectedPolygon){
-                    setSelectedPolygonDetails(selectedPolygon);
-                }
+                // Selecte details for clicked polygon
+                setSelectedPolygonDetailsId(newPolygon.get('id'));
             });
 
             // Add polygon to drawn polygons
