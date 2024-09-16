@@ -2,9 +2,10 @@ import React from "react";
 
 import { Polygon } from "../../../types/polygon";
 import { FiSave } from "react-icons/fi";
+import { FaTrashCan } from "react-icons/fa6";
 
 import './polygonDetails.css';
-import { start } from "repl";
+
 
 interface PolygonDetailsProps {
     polygon: Polygon;
@@ -52,7 +53,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
 
             <div className="polygon-details__field">
                 <label htmlFor="description">Description</label>
-                <textarea id="description" value={editedPolygon.description || ""} onChange={(e) => handleChange(e, 'description')} />
+                <textarea className='textarea' id="description" value={editedPolygon.description || ""} onChange={(e) => handleChange(e, 'description')} />
             </div>
 
             <div className="polygon-details__field polygon-coordinates">
@@ -71,12 +72,11 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
 
             <div className="polygon-details__buttons">
                 <button className="polygon-details__button-delete" onClick={() => handleDelete(polygon)}>
-                    Delete
+                    <FaTrashCan />
                 </button>
 
                 <button className="polygon-details__button-save" onClick={() => handleEdit(editedPolygon)}>
                     <FiSave />
-                    Save
                 </button>
             </div>
 
