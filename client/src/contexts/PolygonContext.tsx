@@ -140,8 +140,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             await polygonApi.deletePolygons(polygonIds);
 
             // Remove polygons from map 
-            const newPolygonsOnMap = polygonsOnMap.filter(polygon => !polygonIds.includes(polygon.id));
-            setPolygonsOnMap(newPolygonsOnMap);
+            polygons.forEach(p => removeFromMap(p));
 
         } catch (error) {
             console.error("Error deleting polygons:", error);

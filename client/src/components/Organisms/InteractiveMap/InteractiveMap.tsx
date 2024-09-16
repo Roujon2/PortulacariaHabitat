@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails, polygonToUpdate } = usePolygonContext();
+    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetails, polygonToUpdate, putOnMap } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -174,7 +174,7 @@ const InteractiveMap: React.FC = () => {
         // Set the drawn polygon to the polygon ref
         setDrawnPolygon(polygon);
     }
-
+    
     // Function to handle the save polygon form submission
     const handleSave: SavePolygonMenuProps['onSave'] = async (formData) => {
         setShowSavePolygonMenu(false);
@@ -200,6 +200,16 @@ const InteractiveMap: React.FC = () => {
             
             // Retrieve id and set to selected
             setSelectedPolygon(savedPolygon || null);
+            
+            // Remove the drawn polygon from the map
+            if (savedPolygon && drawnPolygon) {
+                drawnPolygon.setMap(null);
+                // Reset drawn polygon
+                setDrawnPolygon(null);
+
+                // Add the polygon to the map
+                putOnMap([savedPolygon]);
+            }
         }catch(error){
             console.error("Error saving polygon:", error);
         }
@@ -210,6 +220,7 @@ const InteractiveMap: React.FC = () => {
         setShowSavePolygonMenu(false);
         if (drawnPolygon) {
             drawnPolygon.setMap(null);
+            setDrawnPolygon(null);
         }
         setSelectedPolygon(null);
     }
