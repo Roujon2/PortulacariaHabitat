@@ -7,15 +7,22 @@ interface PolygonContextProps {
     refreshPolygons: () => void;
     loading: boolean;
     loadMorePolygons: () => void;
-    deletePolygons: (polygons: Polygon[]) => void;
     hasMore: boolean;
     updatePolygon: (polygon: Polygon) => void;
-    putOnMap: (polygons: Polygon[]) => void;
     polygonsOnMap: Polygon[];
     resetMapPolygons: () => void;
     selectedPolygonDetailsId: number | null;
     setSelectedPolygonDetailsId: (id: number | null) => void;
     polygonToUpdate: Polygon | null;
+    centerOnPolygon: Polygon | null;
+    setCenterOnPolygon: (polygon: Polygon | null) => void;
+
+    putOnMap: (polygons: Polygon[]) => void;
+    deletePolygons: (polygons: Polygon[]) => void;
+    polygonsToMap: Polygon[];
+    polygonsToDelete: Polygon[];
+    setPolygonsToMap: (polygons: Polygon[]) => void;
+    setPolygonsToDelete: (polygons: Polygon[]) => void;
 }
 
 const call_limit = 10;
@@ -33,6 +40,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Polygon to be updated 
     const [polygonToUpdate, setPolygonToUpdate] = useState<Polygon | null>(null);
+    // Polygons to add on map
+    const [polygonsToMap, setPolygonsToMap] = useState<Polygon[]>([]);
+    // Polygons to delete on map
+    const [polygonsToDelete, setPolygonsToDelete] = useState<Polygon[]>([]);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -44,6 +55,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Check if there are more polygons to fetch
     const [hasMore, setHasMore] = useState<boolean>(true);
+
+    // Var handling polygon to center on
+    const [centerOnPolygon, setCenterOnPolygon] = useState<Polygon | null>(null);
 
     const fetchPolygonCount = async () => {
         try {
@@ -140,7 +154,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             await polygonApi.deletePolygons(polygonIds);
 
             // Remove polygons from map 
-            polygons.forEach(p => removeFromMap(p));
+            removeFromMap(polygons);
 
         } catch (error) {
             console.error("Error deleting polygons:", error);
@@ -171,17 +185,23 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Function to put polygon on map
     const putOnMap = (polygons: Polygon[]) => {
+        // Add the polygons to the list and queue them to be added to the map
+        setPolygonsToMap(polygons);
+
         setPolygonsOnMap((currentPolygons) => {
             // Filter out polygons that are already on map
             const newPolygons = polygons.filter(p => !currentPolygons.find(cp => cp.id === p.id));
             return [...currentPolygons, ...newPolygons];
         });
     };
-    // Function to delete from map
-    const removeFromMap = (polygon: Polygon) => {
+    // Function to delete polygons from map
+    const removeFromMap = (polygons: Polygon[]) => {
+        // Add polygons to list to be deleted from map
+        setPolygonsToDelete(polygons);
+
         setPolygonsOnMap((currentPolygons) => { 
             // Filter out polygons
-            return currentPolygons.filter(p => p.id !== polygon.id);
+            return currentPolygons.filter(p => !polygons.find(cp => cp.id === p.id));
         });
     };
 
@@ -190,9 +210,11 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         <PolygonContext.Provider value={{ polygons, refreshPolygons, 
                                         loading, loadMorePolygons, 
                                         deletePolygons, hasMore, updatePolygon, 
-                                        polygonsOnMap, putOnMap, resetMapPolygons, 
+                                        polygonsOnMap, putOnMap, resetMapPolygons, polygonsToDelete, polygonsToMap,
+                                        setPolygonsToMap, setPolygonsToDelete,
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
-                                        polygonToUpdate }}>
+                                        polygonToUpdate,
+                                        centerOnPolygon, setCenterOnPolygon }}>
             {children}
         </PolygonContext.Provider>
     );

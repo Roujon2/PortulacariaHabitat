@@ -21,7 +21,7 @@ import { MdOutlineExpandMore } from "react-icons/md";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygon, polygonsOnMap } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -80,6 +80,9 @@ const PolygonsMenu: React.FC = () => {
     const handleUpdate = (polygon: Polygon) => {
         updatePolygon(polygon);
 
+        // Set center on polygon
+        setCenterOnPolygon(polygon);
+
         // Toggle cleared rows
         handleToggleClearedRows();
     }
@@ -133,6 +136,8 @@ const PolygonsMenu: React.FC = () => {
                             polygon={editPolygonSelected}
                             handleEdit={handleUpdate}
                             handleDelete={handleDelete}
+                            handleCenter={setCenterOnPolygon}
+                            onMap={polygonsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
                         />
                     ) : (
                         <p className="polygon-details-empty">Select a polygon to view details.</p>

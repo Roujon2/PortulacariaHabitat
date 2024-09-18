@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { polygonsOnMap, resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -37,30 +37,6 @@ const InteractiveMap: React.FC = () => {
     // State var for the selected drawn polygon
     const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
     const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
-
-    useEffect(() => {
-        if (polygonsOnMap) {
-            // Get ids from drawn polygons and polygons that should be on map
-            const drawnPolygonIds = drawnPolygons.map(p => p.get('id'));
-            const polygonsOnMapIds = polygonsOnMap.map(p => p.id);
-
-            // Remove any polygons that should not be on the map
-            drawnPolygons.forEach(polygon => {
-                if (!polygonsOnMapIds.includes(polygon.get('id'))) {
-                    removePolygonFromMap(polygon.get('id'));
-                }
-            });
-
-            // Add any new polygons to the map
-            polygonsOnMap.forEach(polygon => {
-                if (!drawnPolygonIds.includes(polygon.id)) {
-                    addPolygonToMap(polygon);
-                }
-            });
-
-        }
-    }
-    , [polygonsOnMap, drawnPolygons]);
 
     // UseEffect tracking polygon to update
     useEffect(() => {
@@ -82,18 +58,58 @@ const InteractiveMap: React.FC = () => {
                 });
 
                 // Center map to the updated polygon
-                const centroid = calculateCentroid(polygonToUpdate);
-                map?.setCenter(centroid);
-                // Zoom to fit bounds of polygon
-                const bounds = new google.maps.LatLngBounds();
-                polygonToUpdate.coordinates.forEach(coord => {
-                    bounds.extend(coord);
-                });
-                map?.fitBounds(bounds);
+                setCenterOnPolygon(polygonToUpdate);
 
             }
         }
     }, [polygonToUpdate]);
+
+    // UseEffect tracking the polygon to center on
+    useEffect(() => {
+        if (centerOnPolygon) {
+            const polygonToCenterOn = drawnPolygons.find(p => p.get('id') === centerOnPolygon.id);
+            if (polygonToCenterOn) {
+                // Center map to the updated polygon
+                const centroid = calculateCentroid(centerOnPolygon);
+                map?.setCenter(centroid);
+                // Zoom to fit bounds of polygon
+                const bounds = new google.maps.LatLngBounds();
+                centerOnPolygon.coordinates.forEach(coord => {
+                    bounds.extend(coord);
+                });
+                map?.fitBounds(bounds);
+                setCenterOnPolygon(null);
+            }
+        }
+    }, [centerOnPolygon]);
+
+    // UseEffect tracking polygons to map
+    useEffect(() => {
+        if (polygonsToMap.length > 0) {
+            // Filter out polygons that are already on map
+            const newPolygons = polygonsToMap.filter(p => !drawnPolygons.find(dp => dp.get('id') === p.id));
+
+            // Add new polygons to the map
+            newPolygons.forEach(polygon => {
+                addPolygonToMap(polygon);
+            });
+
+            // Reset polygons to map
+            setPolygonsToMap([]);
+        }
+    }, [polygonsToMap]);
+
+    // UseEffect tracking polygons to delete
+    useEffect(() => {
+        if (polygonsToDelete.length > 0) {
+            polygonsToDelete.forEach(polygon => {
+                removePolygonFromMap(polygon.id);
+            });
+
+            // Reset polygons to delete
+            setPolygonsToDelete([]);
+        }
+    }, [polygonsToDelete]);
 
 
     // Load the google maps api script
@@ -242,10 +258,11 @@ const InteractiveMap: React.FC = () => {
                 setSelectedPolygonDetailsId(newPolygon.get('id'));
             });
 
-            // Add polygon to drawn polygons
-            setDrawnPolygons(prev => [...prev, newPolygon]);
 
             newPolygon.setMap(map);
+
+            // Add polygon to drawn polygons
+            setDrawnPolygons(prev => [...prev, newPolygon]);
         }
     }
     // Function to remove polygon from the map

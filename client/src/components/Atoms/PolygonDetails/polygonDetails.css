@@ -1,10 +1,19 @@
-.polygon-details{
+.polygon-details__container{
     background-color: rgb(255, 255, 255);
-    padding: 20px;
+    padding: 1rem;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.polygon-details__content{
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 0.5rem;
+    padding-right: 0.3rem;
 }
 
 .polygon-details__field{
@@ -66,6 +75,26 @@
 }
 .polygon-details__button-save:hover{
     background-color: #183367;
+}
+
+.polygon-details__button-center{
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.polygon-details__button-center:hover{
+    background-color: #235025;
+}
+.polygon-details__button-center-disabled{
+    background-color: #747474;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
 }
 
 .textarea{

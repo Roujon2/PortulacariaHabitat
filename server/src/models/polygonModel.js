@@ -30,10 +30,10 @@ const updatePolygon = async (polygon_id, polygon) => {
     const client = await pool.connect();
 
     // Query
-    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3 WHERE id = $4 RETURNING *';
+    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7 WHERE id = $8 RETURNING *';
 
     // Values
-    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon_id];
+    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, polygon_id];
 
     try{
         // Query
