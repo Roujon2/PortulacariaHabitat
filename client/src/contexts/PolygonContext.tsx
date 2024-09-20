@@ -23,6 +23,9 @@ interface PolygonContextProps {
     polygonsToDelete: Polygon[];
     setPolygonsToMap: (polygons: Polygon[]) => void;
     setPolygonsToDelete: (polygons: Polygon[]) => void;
+
+    polygonToClassify: Polygon | null;
+    classifyPolygon: (polygon: Polygon) => void;
 }
 
 const call_limit = 10;
@@ -44,6 +47,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonsToMap, setPolygonsToMap] = useState<Polygon[]>([]);
     // Polygons to delete on map
     const [polygonsToDelete, setPolygonsToDelete] = useState<Polygon[]>([]);
+    // Polygon to classify
+    const [polygonToClassify, setPolygonToClassify] = useState<Polygon | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -205,6 +210,21 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         });
     };
 
+    // Function to classify polygon
+    const classifyPolygon = async (polygon: Polygon) => {
+        // Set polygon to classify
+        setPolygonToClassify(polygon);
+        // Change the classified polygon in the list
+        setPolygonsOnMap((currentPolygons) => {
+            return currentPolygons.map(p => {
+                if(p.id === polygon.id){
+                    return polygon;
+                }
+                return p;
+            });
+        });
+    };
+
 
     return (
         <PolygonContext.Provider value={{ polygons, refreshPolygons, 
@@ -214,7 +234,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         setPolygonsToMap, setPolygonsToDelete,
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,
-                                        centerOnPolygon, setCenterOnPolygon }}>
+                                        centerOnPolygon, setCenterOnPolygon,
+                                        polygonToClassify, classifyPolygon }}>
             {children}
         </PolygonContext.Provider>
     );

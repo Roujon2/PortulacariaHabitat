@@ -16,9 +16,10 @@ interface PolygonDetailsProps {
     handleEdit: (polygon: Polygon) => void;
     handleCenter: (polygon: Polygon) => void;
     onMap: boolean;
+    handleClassify: (polygon: Polygon) => void;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit, handleCenter, onMap }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit, handleCenter, onMap, handleClassify }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon); 
  
 
@@ -53,6 +54,10 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
     return (
         <div className="polygon-details__container">
             <h2>Polygon Details</h2>
+
+            <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
+                    <FaLocationCrosshairs />
+            </button>
 
             <div className="polygon-details__content">
 
@@ -107,8 +112,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
                     <FaTrashCan />
                 </button>
 
-                <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
-                    <FaLocationCrosshairs />
+                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon)}>
+                    Classify
                 </button>
 
                 <button className="polygon-details__button-save" onClick={() => handleEdit(editedPolygon)}>

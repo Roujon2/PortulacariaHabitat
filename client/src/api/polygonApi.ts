@@ -24,6 +24,7 @@ const savePolygon = async (polygon: NewPolygon) => {
             created_at: savedPolygon.data.created_at,
             coordinates: polygon.coordinates,
             updated_at: savedPolygon.data.updated_at,
+            classified: polygon.classified,
         }
 
         return newPolygon;
@@ -55,6 +56,7 @@ const updatePolygon = async (polygon: Polygon) => {
             created_at: polygon.created_at,
             coordinates: polygon.coordinates,
             updated_at: updatedPolygon.data.updated_at,
+            classified: polygon.classified,
         }
 
         return newPolygon;
@@ -117,6 +119,7 @@ const getPolygon = async (polygonId: number) => {
             created_at: polygon.data.created_at,
             coordinates: polygon.data.coordinates,
             updated_at: polygon.data.updated_at,
+            classified: polygon.data.classified,
         }
 
         return newPolygon;
@@ -204,6 +207,25 @@ const getPolygonCount = async () => {
     }
 }
 
+// Function to classify a polygon
+const classifyPolygon = async (polygon: Polygon) => {
+    try{
+        // Post polygon to classification endpoint
+        const classifiedPolygon = await axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/test`,
+            data: {polygon: polygon},
+            withCredentials: true,
+        });
+
+        // Return overlay data
+        return classifiedPolygon.data;
+
+    }catch(error){
+        console.error("Error classifying polygon:", error);
+    }
+};
+
 export default {
     savePolygon,
     updatePolygon,
@@ -213,4 +235,5 @@ export default {
     getPolygonCount,
     refreshPolygons,
     loadMorePolygons,
+    classifyPolygon,
 }

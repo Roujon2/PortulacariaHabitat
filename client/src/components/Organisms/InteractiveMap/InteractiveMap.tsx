@@ -24,7 +24,7 @@ const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -94,6 +94,9 @@ const InteractiveMap: React.FC = () => {
                 addPolygonToMap(polygon);
             });
 
+            // Put polygon details for first polygon added
+            setSelectedPolygonDetailsId(polygonsToMap[0].id);
+
             // Reset polygons to map
             setPolygonsToMap([]);
         }
@@ -110,6 +113,25 @@ const InteractiveMap: React.FC = () => {
             setPolygonsToDelete([]);
         }
     }, [polygonsToDelete]);
+
+    // UseEffect tracking polygon to classify
+    useEffect(() => {
+        if (polygonToClassify) {
+            // Call backend to classify polygon
+            polygonApi.classifyPolygon(polygonToClassify)
+                .then((classifyData) => {
+                    // Overlay the classified polygon on the map
+                    if(classifyData.urlFormat){
+                        addOverlay(classifyData.urlFormat);
+                    }else{
+                        console.error("No url format found in classify data.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error classifying polygon:", error);
+                });
+        }
+    }, [polygonToClassify]);
 
 
     // Load the google maps api script
@@ -157,6 +179,7 @@ const InteractiveMap: React.FC = () => {
             ownership_type: '',
             farm_series_name: '',
             notes: '',
+            classified: false,
         }
 
         setSelectedPolygon(polygonObj);
@@ -228,7 +251,7 @@ const InteractiveMap: React.FC = () => {
                     .replace('{z}', zoom.toString());
             },
             tileSize: new google.maps.Size(256, 256),
-            opacity: 0.5,
+            opacity: 0.8,
             name: 'NDVI'
         });
 
@@ -249,6 +272,8 @@ const InteractiveMap: React.FC = () => {
                 strokeColor: '#FF0000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0,
             });
 
             newPolygon.set('id', polygon.id);
