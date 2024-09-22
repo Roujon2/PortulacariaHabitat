@@ -69,7 +69,7 @@ const verifyGoogleAuth = async (req, res) => {
         // Generate a new JWT token for the user
         const token = jwt.sign(user, config.google.token_secret, { expiresIn: config.google.token_expiration });
         // Set user info in the cookie
-        res.cookie('user', token, {httpOnly: true, maxAge: config.google.token_expiration});
+        res.cookie('user', token, {httpOnly: true, maxAge: config.google.token_expiration, sameSite: 'None', secure: true});
         res.json({user});
     }catch(error){
         console.error('Error: ', error.message);
@@ -99,7 +99,7 @@ const checkLoggedIn = (req, res) => {
         const newToken = jwt.sign(userDetails, config.google.token_secret, { expiresIn: config.google.token_expiration });
 
         // Reset token in cookie
-        res.cookie('user', newToken, {httpOnly: true, maxAge: config.google.token_expiration});
+        res.cookie('user', newToken, {httpOnly: true, maxAge: config.google.token_expiration, sameSite: 'None', secure: true});
         res.json({ loggedIn: true, user: decoded });
     }catch(error){
         console.error('Error: ', error.message);
@@ -110,7 +110,7 @@ const checkLoggedIn = (req, res) => {
 
 // Function to log out the user
 const logout = (req, res) => {
-    res.clearCookie('user');
+    res.clearCookie('user', {httpOnly: true, sameSite: 'None', secure: true, path: '/'});
     res.json({message: "Logged out successfully.", loggedIn: false});
 };
 
