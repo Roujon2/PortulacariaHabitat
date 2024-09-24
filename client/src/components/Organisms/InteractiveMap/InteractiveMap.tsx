@@ -8,8 +8,10 @@ import {Polygon, NewPolygon } from "../../../types/polygon";
 
 import polygonApi from "../../../api/polygonApi";
 
-import axios from 'axios';
 import { usePolygonContext } from "../../../contexts/PolygonContext";
+
+import { TbReload } from "react-icons/tb";
+
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 
@@ -23,6 +25,9 @@ const mapOptions = {
 
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
+    // State var map key to force reload
+    const [mapKey, setMapKey] = useState<number>(0);
+
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
 
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
@@ -347,6 +352,22 @@ const InteractiveMap: React.FC = () => {
         return polygonBounds.getCenter();
     }
 
+    // Function to reload the map
+    const reloadMap = () => {
+        // Reset everything
+        setDrawnPolygons([]);
+        setOverlays({});
+        setCenterOnPolygon(null);
+        setSelectedPolygon(null);
+        setDrawnPolygon(null);
+        setShowSavePolygonMenu(false);
+        setShowErrorBox(false);
+
+        // Reload the map
+        setMapKey(prev => prev + 1);
+
+    }
+
     // If there is an error loading the script
     if (loadError) return <div>Error loading maps</div>;
 
@@ -360,6 +381,7 @@ const InteractiveMap: React.FC = () => {
                     zoom={8}
                     onLoad={onMapLoad}
                     options={mapOptions}
+                    key={mapKey}
                 >
                     <DrawingManagerF
                         options={{
@@ -380,6 +402,10 @@ const InteractiveMap: React.FC = () => {
                         onPolygonComplete={onPolygonComplete}
                         onLoad={onDrawingManagerLoad}
                     />
+
+                    <button className='reload-button' onClick={reloadMap}>
+                        <TbReload />
+                    </button>
 
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 

@@ -15,3 +15,19 @@
     height: 100%;
     border-radius: 0.5rem;
 }
+
+.reload-button{
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    background-color: #f2ffff;
+    border: none;
+    font-size: 1.3rem;
+    border-radius: 5px;
+    padding: 0.3rem 0.3rem 0 0.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.reload-button:hover{
+    background-color: #9baaaa;
+}
