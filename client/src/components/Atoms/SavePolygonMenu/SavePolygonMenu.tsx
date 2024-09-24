@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import './savePolygonMenu.css';
 
-import { TagsInput } from "react-tag-input-component";
 import { IoClose } from "react-icons/io5";
+
+import { RiArrowGoBackLine } from "react-icons/ri";
+import { FaCheck } from "react-icons/fa6";
+
 
 
 // Property definition to be passed to SavePolygonMenu component
@@ -144,8 +147,12 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                         <h5>All changes will be lost</h5>
                     </div>
                     <div className="confirmation-buttons">
-                        <button onClick={goBack}>Back</button>
-                        <button onClick={confirmCancel}>Yes</button>
+                        <button type="button" onClick={goBack}>
+                            <RiArrowGoBackLine />
+                        </button>
+                        <button onClick={confirmCancel}>
+                            <FaCheck />
+                        </button>
                     </div>
                 </div>
             )}
