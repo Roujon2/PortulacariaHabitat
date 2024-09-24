@@ -109,7 +109,7 @@ const PolygonsMenu: React.FC = () => {
 
     return (
         <div className='polygons-menu__content'>
-            <h1>Polygons Menu</h1>
+            <h1>Polygons</h1>
 
             <PanelGroup direction='vertical'>
                 {/* Polygon Table */}

@@ -38,6 +38,10 @@ const InteractiveMap: React.FC = () => {
     const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
     const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
 
+    // Map var for overlays on map linked to polygon id
+    const [overlays, setOverlays] = useState<{ [key: number]: google.maps.ImageMapType }>({});
+
+
     // UseEffect tracking polygon to update
     useEffect(() => {
         if (polygonToUpdate) {
@@ -122,7 +126,7 @@ const InteractiveMap: React.FC = () => {
                 .then((classifyData) => {
                     // Overlay the classified polygon on the map
                     if(classifyData.urlFormat){
-                        addOverlay(classifyData.urlFormat);
+                        addOverlay(classifyData.urlFormat, polygonToClassify);
                     }else{
                         console.error("No url format found in classify data.");
                     }
@@ -239,7 +243,7 @@ const InteractiveMap: React.FC = () => {
     }
 
     // Function to add an overlay to the map
-    const addOverlay = (url: string) => {
+    const addOverlay = (url: string, polygon: Polygon) => {
         // If there is no map, return
         if (!map) return;
 
@@ -256,6 +260,9 @@ const InteractiveMap: React.FC = () => {
         });
 
         map.overlayMapTypes.push(overlayMapParams);
+        
+        // Add overlay to overlays
+        setOverlays(prev => ({ ...prev, [polygon.id]: overlayMapParams }));
     };
 
     // Function to add polygon to the map
@@ -297,6 +304,19 @@ const InteractiveMap: React.FC = () => {
             if (polygonToRemove) {
                 polygonToRemove.setMap(null);
                 setDrawnPolygons(prev => prev.filter(p => p.get('id') !== id));
+
+                // Remove overlay if exists
+                if (overlays[id]) {
+                    const overlayIndex = map.overlayMapTypes.getArray().indexOf(overlays[id]);
+                    if (overlayIndex > -1) {
+                        map.overlayMapTypes.removeAt(overlayIndex);
+                    }
+                    setOverlays(prev => {
+                        const newOverlays = { ...prev };
+                        delete newOverlays[id];
+                        return newOverlays;
+                    });
+                }
             }
         }
     }

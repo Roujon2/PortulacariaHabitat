@@ -28,6 +28,8 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
         return <p>Loading from Home...</p>;
     }
 
+    console.log('Home user:', user);
+
     return (
         <PolygonContextProvider>
             <div className='home-page'>
@@ -38,7 +40,7 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
                     <PanelResizeHandle className='resize-handle__home'/>
                     <Panel defaultSize={40} minSize={20} maxSize={70}>
                         {selectedMenu === 'help' && <HelpMenu />}
-                        {selectedMenu === 'profile' && <ProfileMenu />}
+                        {selectedMenu === 'profile' && <ProfileMenu user={user}/>}
                         {selectedMenu === 'polygons' && <PolygonsMenu />}
                     </Panel>
                 </PanelGroup>

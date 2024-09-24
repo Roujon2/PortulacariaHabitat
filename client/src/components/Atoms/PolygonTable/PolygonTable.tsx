@@ -63,7 +63,6 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
     return (
         <div className="polygon-table">
             <DataTable
-                title="Polygons"
                 columns={columns}
                 data={polygons}
                 pagination={false}
