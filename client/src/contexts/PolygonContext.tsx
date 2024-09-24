@@ -25,7 +25,7 @@ interface PolygonContextProps {
     setPolygonsToDelete: (polygons: Polygon[]) => void;
 
     polygonToClassify: Polygon | null;
-    classifyPolygon: (polygon: Polygon) => void;
+    classifyPolygon: (polygonId: number) => void;
 }
 
 const call_limit = 10;
@@ -216,7 +216,14 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     };
 
     // Function to classify polygon
-    const classifyPolygon = async (polygon: Polygon) => {
+    const classifyPolygon = async (polygonId: number) => {
+        // Find polygon in list polygons
+        const polygon = polygons.find(p => p.id === polygonId);
+
+        if(!polygon){
+            return;
+        }
+
         // Set polygon to classify
         setPolygonToClassify(polygon);
         // Change the classified polygon in the list

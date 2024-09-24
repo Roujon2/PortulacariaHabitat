@@ -11,6 +11,8 @@ import polygonApi from "../../../api/polygonApi";
 import axios from 'axios';
 import { usePolygonContext } from "../../../contexts/PolygonContext";
 
+import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
+
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
 const mapOptions = {
@@ -22,6 +24,8 @@ const mapOptions = {
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
     const [showSavePolygonMenu, setShowSavePolygonMenu] = useState<boolean>(false);
+
+    const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
     const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify } = usePolygonContext();
@@ -170,6 +174,16 @@ const InteractiveMap: React.FC = () => {
         // Change selected drawing cursor to hand
         if (drawingManager) {
             drawingManager.setDrawingMode(null);
+        }
+
+        // If the polygon has less then 3 vertices, show error message and return
+        if (polygon.getPath().getLength() < 3) {    
+            setShowErrorBox(true);
+
+            // Remove the polygon
+            polygon.setMap(null);
+
+            return;
         }
 
         setShowSavePolygonMenu(true);
@@ -368,6 +382,8 @@ const InteractiveMap: React.FC = () => {
                     />
 
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
+
+                    {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
 
                 </GoogleMap>
             )}

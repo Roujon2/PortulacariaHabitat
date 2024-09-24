@@ -16,7 +16,7 @@ interface PolygonDetailsProps {
     handleEdit: (polygon: Polygon) => void;
     handleCenter: (polygon: Polygon) => void;
     onMap: boolean;
-    handleClassify: (polygon: Polygon) => void;
+    handleClassify: (polygonId: number) => void;
 }
 
 const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit, handleCenter, onMap, handleClassify }) => {
@@ -112,7 +112,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
                     <FaTrashCan />
                 </button>
 
-                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon)}>
+                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
                     Classify
                 </button>
 
