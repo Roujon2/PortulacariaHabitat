@@ -28,8 +28,6 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
         return <p>Loading from Home...</p>;
     }
 
-    console.log('Home user:', user);
-
     return (
         <PolygonContextProvider>
             <div className='home-page'>

@@ -12,7 +12,7 @@ import Home from "../Home/Home";
 const MainWrapper: React.FC = ({ }) => {
     const location = useLocation();
 
-    const [selectedMenu, setSelectedMenu] = React.useState<string>('help');
+    const [selectedMenu, setSelectedMenu] = React.useState<string>('polygons');
 
     const handleNav = (menu: string) => {
         setSelectedMenu(menu);

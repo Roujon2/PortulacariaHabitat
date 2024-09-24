@@ -65,6 +65,7 @@
 .polygon-details__button-delete:hover{
     background-color: #a52525;
 }
+
 .polygon-details__button-save{
     background-color: #363cf4;
     color: white;
@@ -76,6 +77,13 @@
 }
 .polygon-details__button-save:hover{
     background-color: #183367;
+}
+.polygon-details__button-save-disabled{
+    background-color: #aaaaaa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
 }
 
 .polygon-details__button-center{

@@ -47,6 +47,23 @@ const createTables = async (client) => {
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
 
+        CREATE TABLE IF NOT EXISTS jobs (
+            job_id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            polygon_id INTEGER REFERENCES polygons(id) ON DELETE CASCADE,
+            status VARCHAR(20) NOT NULL CHECK (status IN ('pending', 'in_progress', 'completed', 'failed')),
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        );
+
+        CREATE TABLE IF NOT EXISTS results (
+            result_id SERIAL PRIMARY KEY,
+            job_id INTEGER REFERENCES jobs(job_id) ON DELETE CASCADE,
+            polygon_id INTEGER REFERENCES polygons(id) ON DELETE CASCADE,
+            result JSONB NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+
     `);
 
     console.log('Tables created');

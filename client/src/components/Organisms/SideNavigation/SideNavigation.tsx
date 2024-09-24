@@ -38,7 +38,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({onNavigate}) => {
     const [collapsed, setCollapsed] = React.useState<boolean>(true);
 
     // Selected menu for navigation
-    const [selectedMenu, setSelectedMenu] = React.useState<string>('help');
+    const [selectedMenu, setSelectedMenu] = React.useState<string>('polygons');
 
     // Logout confirmation
     const [showLogoutConfirmation, setShowLogoutConfirmation] = React.useState<boolean>(false);

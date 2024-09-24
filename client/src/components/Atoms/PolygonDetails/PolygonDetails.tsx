@@ -20,13 +20,26 @@ interface PolygonDetailsProps {
 }
 
 const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit, handleCenter, onMap, handleClassify }) => {
-    const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon); 
+    const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
+    
+    // State var to track if there are any differences to save
+    const [isEdited, setIsEdited] = React.useState(false);
+
+    console.log('Edited polygon', editedPolygon);
+    console.log('Is edited', isEdited);
  
 
     // UseEffect to update edited polygon when polygon changes
     React.useEffect(() => {
         setEditedPolygon(polygon);
+        setIsEdited(false);
     }, [polygon]);
+
+    // On save
+    const onSave = () => {
+        handleEdit(editedPolygon);
+        setIsEdited(false);
+    };
 
     // Handle input change
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: keyof Polygon) => {
@@ -36,6 +49,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
             [field]: e.target.value,
         } as Polygon)
         )
+
+        setIsEdited(true);
     };
 
     // Handle coordinates change
@@ -49,6 +64,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
             ...editedPolygon,
             coordinates: updatedCoords,
         });
+
+        setIsEdited(true);
     };
 
     return (
@@ -116,7 +133,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
                     Classify
                 </button>
 
-                <button className="polygon-details__button-save" onClick={() => handleEdit(editedPolygon)}>
+                <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} onClick={onSave} disabled={!isEdited}>
                     <FiSave />
                 </button>
             </div>
