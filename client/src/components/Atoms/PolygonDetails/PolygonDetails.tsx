@@ -24,9 +24,6 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
     
     // State var to track if there are any differences to save
     const [isEdited, setIsEdited] = React.useState(false);
-
-    console.log('Edited polygon', editedPolygon);
-    console.log('Is edited', isEdited);
  
 
     // UseEffect to update edited polygon when polygon changes

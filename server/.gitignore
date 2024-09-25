@@ -30,3 +30,6 @@ logs
 
 # Database files
 *.sql
+
+# Private folder
+private/

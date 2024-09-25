@@ -16,7 +16,9 @@ const config = {
         ee_key: process.env.GOOGLE_EE_SERVICE_ACCOUNT_KEY
     },
     server: {
-        port: process.env.PORT || 5000
+        port: process.env.PORT || 5000,
+        cert: process.env.SSL_CERT_PATH,
+        key: process.env.SSL_KEY_PATH
     },
     db: {
         user: process.env.DB_USER,

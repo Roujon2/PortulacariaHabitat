@@ -9,6 +9,9 @@ import classifierRoute from './src/routes/classifierRoutes.js';
 import sseRoutes from './src/routes/sseRoutes.js';
 import polygonRoutes from './src/routes/polygonRoutes.js';
 
+import https from 'https';
+import fs from 'fs';
+
 const app = express();
 const PORT = config.server.port;
 
@@ -17,6 +20,13 @@ app.use(cors({
     origin: config.google.client_url,
     credentials: true
 }));
+
+// SSL cert and key
+const options = {
+    key: fs.readFileSync(config.server.key),
+    cert: fs.readFileSync(config.server.cert)
+};
+
 
 // Parsing cookies
 app.use(cookieParser());
@@ -44,8 +54,10 @@ app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString() });
 });
 
+// Create https server
+const server = https.createServer(options, app);
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
