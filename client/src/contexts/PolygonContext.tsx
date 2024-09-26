@@ -30,6 +30,7 @@ interface PolygonContextProps {
     classifyPolygon: (polygonId: number) => void;
 
     setSuccessMessage: (message: string) => void;
+    successMessage: string;
 }
 
 const call_limit = 10;
@@ -255,9 +256,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         polygonToUpdate,
                                         centerOnPolygon, setCenterOnPolygon,
                                         polygonToClassify, classifyPolygon,
-                                        setSuccessMessage }}>
+                                        setSuccessMessage, successMessage }}>
             {children}
-            {successMessage && <SuccessConfirmationBox message={successMessage} duration={3000} onClose={() => setSuccessMessage('')} />}
         </PolygonContext.Provider>
     );
 };

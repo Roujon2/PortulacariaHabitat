@@ -35,7 +35,7 @@ const InteractiveMap: React.FC = () => {
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -74,10 +74,6 @@ const InteractiveMap: React.FC = () => {
 
                 // Center map to the updated polygon
                 setCenterOnPolygon(polygonToUpdate);
-                
-                // Set success message
-                setSuccessMessage("Polygon updated successfully.");
-
             }
         }
     }, [polygonToUpdate]);
@@ -117,6 +113,16 @@ const InteractiveMap: React.FC = () => {
 
             // Put polygon details for first polygon added
             setSelectedPolygonDetailsId(polygonsToMap[0].id);
+
+            // Set success message
+            if (newPolygons.length === 1) {
+                setSuccessMessage('Polygon added to map');
+            }else if(newPolygons.length > 1){
+                setSuccessMessage(`${newPolygons.length} polygons added to map`);
+            }else{
+                setSuccessMessage('Polygon/s already on map');
+            }
+
         }
     }, [polygonsToMap]);
 
@@ -418,7 +424,8 @@ const InteractiveMap: React.FC = () => {
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
-
+                    
+                    {successMessage && <SuccessConfirmationBox message={successMessage} duration={2500} onClose={() => setSuccessMessage('')} />}
                 </GoogleMap>
             )}
         </div>

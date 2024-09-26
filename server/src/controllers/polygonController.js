@@ -9,7 +9,7 @@ const savePolygon = async (req, res) => {
         const savedPolygon = await polygonModel.savePolygon(user_id, polygon);
 
         // Send SSE event
-        sseService.sendEvent(user_id, {action: "save", data: savedPolygon});
+        sseService.sendEvent(user_id, {action: "polygon_save", data: savedPolygon});
 
         return res.status(201).json(savedPolygon);
     }catch(err){
@@ -26,7 +26,7 @@ const updatePolygon = async (req, res) => {
         const updatedPolygon = await polygonModel.updatePolygon(polygon_id, polygon);
 
         // Send SSE event
-        sseService.sendEvent(user_id, {action: "update", data: updatedPolygon});
+        sseService.sendEvent(user_id, {action: "polygon_update", data: updatedPolygon});
 
         return res.status(200).json(updatedPolygon);
     }catch(err){
@@ -42,7 +42,7 @@ const deletePolygon = async (req, res) => {
         const deletedPolygon = await polygonModel.deletePolygon(polygon_id);
 
         // Send SSE event
-        sseService.sendEvent(user_id, {action: "delete", data: deletedPolygon});
+        sseService.sendEvent(user_id, {action: "polygon_delete", data: deletedPolygon});
 
         return res.status(200).json(deletedPolygon);
     }catch(err){
@@ -97,7 +97,7 @@ const deletePolygons = async (req, res) => {
         await polygonModel.deletePolygons(polygon_ids);
 
         // Send SSE event
-        sseService.sendEvent(user_id, {action: "delete", data: polygon_ids});
+        sseService.sendEvent(user_id, {action: "polygon_delete", data: polygon_ids});
 
         return res.status(200).json({message: "Polygons deleted"});
     }catch(err){

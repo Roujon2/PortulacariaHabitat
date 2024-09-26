@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 function SSEComponent() {
-    const { refreshPolygons } = usePolygonContext();
+    const { refreshPolygons, setSuccessMessage } = usePolygonContext();
 
     useEffect(() => {
         // Create a new EventSource instance
@@ -16,9 +16,23 @@ function SSEComponent() {
             refreshPolygons();
 
             // Switch statement to set success message based on event type
+            switch (data.action){
+                case 'polygon_update':
+                    setSuccessMessage('Polygon updated');
+                    break;
+
+                case 'polygon_delete':
+                    setSuccessMessage('Polygon deleted');
+                    break;
+
+                case 'polygon_save':
+                    setSuccessMessage('Polygon saved');
+                    break;
+
+                default:
+                    break;
+            }
             
-
-
         };
 
         // Handle any errors (optional)
