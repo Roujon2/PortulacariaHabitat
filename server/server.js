@@ -21,13 +21,6 @@ app.use(cors({
     credentials: true
 }));
 
-// SSL cert and key
-const options = {
-    key: fs.readFileSync(config.server.key),
-    cert: fs.readFileSync(config.server.cert)
-};
-
-
 // Parsing cookies
 app.use(cookieParser());
 
@@ -54,10 +47,27 @@ app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString() });
 });
 
-// Create https server
-const server = https.createServer(options, app);
 
-// Start server
-server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// HTTPS server in production
+if(process.env.NODE_ENV === 'production') {
+    // SSL certificate and key
+    const ssl_cert = fs.readFileSync(config.server.cert);
+    const ssl_key = fs.readFileSync(config.server.key);
+
+    const credentials = { key: ssl_key, cert: ssl_cert };
+
+    // Create https server
+    const server = https.createServer(credentials, app);
+
+    // Start server
+    server.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}else if(process.env.NODE_ENV === 'development') {
+    // Start server
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}else{
+    console.error('Environment not set');
+}

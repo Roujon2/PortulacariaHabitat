@@ -69,10 +69,6 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
         <div className="polygon-details__container">
             <h2>Polygon Details</h2>
 
-            <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
-                    <FaLocationCrosshairs />
-            </button>
-
             <div className="polygon-details__content">
 
                 <div className="polygon-details__field">
@@ -122,8 +118,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
             </div>
 
             <div className="polygon-details__buttons">
-                <button className="polygon-details__button-delete" onClick={() => handleDelete(polygon)}>
-                    <FaTrashCan />
+                <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
+                        <FaLocationCrosshairs />
                 </button>
 
                 <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>

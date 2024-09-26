@@ -12,6 +12,8 @@ import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 import { TbReload } from "react-icons/tb";
 
+import SuccessConfirmationBox from "../../Atoms/SuccessConfirmationBox/SuccessConfirmationBox";
+
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 
@@ -33,7 +35,7 @@ const InteractiveMap: React.FC = () => {
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -72,6 +74,9 @@ const InteractiveMap: React.FC = () => {
 
                 // Center map to the updated polygon
                 setCenterOnPolygon(polygonToUpdate);
+                
+                // Set success message
+                setSuccessMessage("Polygon updated successfully.");
 
             }
         }
@@ -107,11 +112,11 @@ const InteractiveMap: React.FC = () => {
                 addPolygonToMap(polygon);
             });
 
-            // Put polygon details for first polygon added
-            setSelectedPolygonDetailsId(polygonsToMap[0].id);
-
             // Reset polygons to map
             setPolygonsToMap([]);
+
+            // Put polygon details for first polygon added
+            setSelectedPolygonDetailsId(polygonsToMap[0].id);
         }
     }, [polygonsToMap]);
 
@@ -245,6 +250,7 @@ const InteractiveMap: React.FC = () => {
 
                 // Add the polygon to the map
                 putOnMap([savedPolygon]);
+
             }
         }catch(error){
             console.error("Error saving polygon:", error);
@@ -362,11 +368,13 @@ const InteractiveMap: React.FC = () => {
         setDrawnPolygon(null);
         setShowSavePolygonMenu(false);
         setShowErrorBox(false);
+        setSelectedPolygonDetailsId(null);
 
         // Reload the map
         setMapKey(prev => prev + 1);
 
     }
+
 
     // If there is an error loading the script
     if (loadError) return <div>Error loading maps</div>;

@@ -75,17 +75,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                     <h3>Polygon Details</h3>
                     <form className="menu-fields" onSubmit={handleSave}>
                         <label className="menu-label">
-                            Locality:
-                            <input
-                                type="text"
-                                value={locality}
-                                onChange={(e) => setLocality(e.target.value)}
-                                required
-                            />
-                        </label>
-
-                        <label className="menu-label">
-                            Name:
+                            <div className="menu-type">
+                                Name: <span className="required">*</span>
+                            </div>
                             <input
                                 type="text"
                                 value={polygonName}
@@ -95,7 +87,21 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                         </label>
 
                         <label className="menu-label">
-                            Description:
+                            <div className="menu-type">
+                                Locality: <span className="required">*</span>
+                            </div>
+                            <input
+                                type="text"
+                                value={locality}
+                                onChange={(e) => setLocality(e.target.value)}
+                                required
+                            />
+                        </label>
+
+                        <label className="menu-label">
+                            <div className="menu-type">
+                                Description:
+                            </div>
                             <textarea
                                 value={polygonDescription}
                                 onChange={(e) => setPolygonDescription(e.target.value)}
@@ -104,7 +110,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                         </label>
 
                         <label className="menu-label">
-                            Ownership Type:
+                            <div className="menu-type">
+                                Ownership Type: <span className="required">*</span>
+                            </div>
                             <input
                                 type="text"
                                 value={ownership_type}
@@ -114,7 +122,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                         </label>
 
                         <label className="menu-label">
-                            Farm/Series Name:
+                            <div className="menu-type">
+                                Farm/Series Name: <span className="required">*</span>
+                            </div>
                             <input
                                 type="text"
                                 value={farm_series_name}
@@ -124,7 +134,9 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                         </label>
 
                         <label className="menu-label">
+                            <div className="menu-type">
                             Notes/Observations:
+                            </div>
                             <textarea
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}

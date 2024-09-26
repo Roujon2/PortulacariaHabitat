@@ -75,12 +75,12 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
             />
             <div className="buttons-container"> 
                 <button 
-                    onClick={handleDeleteSelected} 
+                    onClick={handlePutOnMap} 
                     disabled={selectedPolygons.length < 1} 
-                    className={selectedPolygons.length < 1 ? 'button-delete-disabled' : 'button-delete'}
+                    className={selectedPolygons.length < 1 ? 'button-view-on-map-disabled' : 'button-view-on-map'}
                 >
-                    <FaTrashCan />
-                </button>
+                    <FaMapLocationDot />
+                </button> 
 
                 <button 
                     className={hasMore ? 'button-load-more' : 'button-load-more-disabled'} 
@@ -91,12 +91,12 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
                 </button>
 
                 <button 
-                    onClick={handlePutOnMap} 
+                    onClick={handleDeleteSelected} 
                     disabled={selectedPolygons.length < 1} 
-                    className={selectedPolygons.length < 1 ? 'button-view-on-map-disabled' : 'button-view-on-map'}
+                    className={selectedPolygons.length < 1 ? 'button-delete-disabled' : 'button-delete'}
                 >
-                    <FaMapLocationDot />
-                </button> 
+                    <FaTrashCan />
+                </button>
             </div>
 
 

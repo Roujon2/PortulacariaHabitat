@@ -1,0 +1,20 @@
+.success-message{
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    padding: 1rem;
+    background-color: #4caf4fe6;
+    color: rgb(255, 255, 255);
+    border-radius: 0.5rem;
+    box-shadow: 0 0 0.5rem 0.1rem rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1000;
+}
+
+.success-message.visible{
+    opacity: 1;
+    transition: opcacity 0.5s ease;
+}

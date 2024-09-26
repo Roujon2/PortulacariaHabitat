@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import polygonApi from '../api/polygonApi';
 import { Polygon } from '../types/polygon';
 
+import SuccessConfirmationBox from '../components/Atoms/SuccessConfirmationBox/SuccessConfirmationBox';
+
 interface PolygonContextProps {
     polygons: Polygon[];
     refreshPolygons: () => void;
@@ -26,6 +28,8 @@ interface PolygonContextProps {
 
     polygonToClassify: Polygon | null;
     classifyPolygon: (polygonId: number) => void;
+
+    setSuccessMessage: (message: string) => void;
 }
 
 const call_limit = 10;
@@ -63,6 +67,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Var handling polygon to center on
     const [centerOnPolygon, setCenterOnPolygon] = useState<Polygon | null>(null);
+
+    // Success message for polygon operations
+    const [successMessage, setSuccessMessage] = useState<string>('');
 
     const fetchPolygonCount = async () => {
         try {
@@ -247,8 +254,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,
                                         centerOnPolygon, setCenterOnPolygon,
-                                        polygonToClassify, classifyPolygon }}>
+                                        polygonToClassify, classifyPolygon,
+                                        setSuccessMessage }}>
             {children}
+            {successMessage && <SuccessConfirmationBox message={successMessage} duration={3000} onClose={() => setSuccessMessage('')} />}
         </PolygonContext.Provider>
     );
 };

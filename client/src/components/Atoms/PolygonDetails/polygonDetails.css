@@ -71,7 +71,7 @@
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    padding: 0.3rem 0.4rem 0.1rem 0.4rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -83,18 +83,15 @@
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    padding: 0.3rem 0.4rem 0.1rem 0.4rem;
 }
 
 .polygon-details__button-center{
-    position: absolute;
-    top: 0.8rem;
-    left: 0.8rem;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    padding: 0.3rem 0.4rem 0.1rem 0.4rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -102,9 +99,6 @@
     background-color: #235025;
 }
 .polygon-details__button-center-disabled{
-    position: absolute;
-    top: 0.8rem;
-    left: 0.8rem;
     background-color: #aaaaaa;
     color: white;
     border: none;

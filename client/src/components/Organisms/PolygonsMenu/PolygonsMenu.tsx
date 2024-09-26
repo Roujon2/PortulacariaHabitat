@@ -47,7 +47,7 @@ const PolygonsMenu: React.FC = () => {
 
     // Function to handle when a row is clicked to show polygon details
     const handleRowClicked = (polygon: Polygon) => {
-        setEditPolygonSelected(polygon);
+        setSelectedPolygonDetailsId(polygon.id);
     }
 
     // Function to handle deleting selected polygons
@@ -100,8 +100,15 @@ const PolygonsMenu: React.FC = () => {
         if (selectedPolygonDetailsId) {
             // Find the polygon with the selected id
             const selectedPolygonDetails = polygons.find(p => p.id === selectedPolygonDetailsId);
-            setEditPolygonSelected(selectedPolygonDetails);
-            setSelectedPolygonDetailsId(null);
+
+            // If the polygon is found, set it as the editPolygonSelected
+            if (selectedPolygonDetails){
+                setEditPolygonSelected(selectedPolygonDetails);
+            }else{
+                setSelectedPolygonDetailsId(null);
+            }
+        }else if (selectedPolygonDetailsId === null) {
+            setEditPolygonSelected(undefined);
         }
     }
     , [selectedPolygonDetailsId]);

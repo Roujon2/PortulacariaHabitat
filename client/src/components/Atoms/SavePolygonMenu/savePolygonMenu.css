@@ -14,6 +14,10 @@
     resize: none;
 }
 
+.required{
+    color: red;
+}
+
 .save-polygon-menu-container{
     position: absolute;
     width: fit-content;

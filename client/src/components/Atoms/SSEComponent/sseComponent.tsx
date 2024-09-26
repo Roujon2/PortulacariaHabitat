@@ -14,6 +14,11 @@ function SSEComponent() {
             const data = JSON.parse(event.data);
             console.log('Received event:', data);
             refreshPolygons();
+
+            // Switch statement to set success message based on event type
+            
+
+
         };
 
         // Handle any errors (optional)
@@ -33,7 +38,7 @@ function SSEComponent() {
         return () => {
             eventSource.close();
         };
-    }, []); // Empty dependency array to run once on mount
+        }, []); // Empty dependency array to run once on mount
 
     return null;
 }
