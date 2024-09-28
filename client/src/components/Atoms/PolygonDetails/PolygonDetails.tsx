@@ -9,6 +9,8 @@ import './polygonDetails.css';
 
 import { PolygonContextProvider } from "../../../contexts/PolygonContext";
 
+import HoverText from './../HoverText/HoverText';
+
 
 interface PolygonDetailsProps {
     polygon: Polygon;
@@ -118,10 +120,12 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
             </div>
 
             <div className="polygon-details__buttons">
-                <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
-                        <FaLocationCrosshairs />
-                </button>
-
+                <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
+                    <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
+                            <FaLocationCrosshairs />
+                    </button>
+                </HoverText>
+            
                 <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
                     Classify
                 </button>

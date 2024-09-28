@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spekboom Mapping API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #1e1717;
+        }
+        header {
+            background-color: #174b2ac3;
+            color: white;
+            padding: 0.4rem;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        p {
+            line-height: 1.6;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .method {
+            display: inline-block;
+            background-color: #43985b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .endpoint {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            /* Gradient background */
+
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Spekboom Mapping API Documentation</h1>
+</header>
+
+<div class="container">
+    <section>
+        <h2>Introduction</h2>
+        <p>Spekboom Mapping is a web application that allows users to draw and classify polygons on a map. 
+            This API allows the app to authenticate and authorize users; and to retrieve and create polygon data.</p>
+    </section>
+
+    <section>
+        <h2>Authentication</h2>
+        <p>To authenticate, you need to include your API key in the headers of all requests.</p>
+    </section>
+
+    <section>
+        <h2>Endpoints</h2>
+
+        <div class="endpoint">
+            <h3><span class="method">GET</span> /api/v1/users</h3>
+            <p>Retrieve a list of all users.</p>
+            <p><strong>Request:</strong></p>
+            <pre><code>GET /api/v1/users</code></pre>
+            <p><strong>Response:</strong></p>
+            <pre><code>{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    {
+      "id": 2,
+      "name": "Jane Doe",
+      "email": "jane@example.com"
+    }
+  ]
+}</code></pre>
+        </div>
+
+        <div class="endpoint">
+            <h3><span class="method">POST</span> /api/v1/users</h3>
+            <p>Create a new user.</p>
+            <p><strong>Request:</strong></p>
+            <pre><code>POST /api/v1/users
+Content-Type: application/json
+
+{
+  "name": "New User",
+  "email": "newuser@example.com"
+}</code></pre>
+            <p><strong>Response:</strong></p>
+            <pre><code>{
+  "id": 3,
+  "name": "New User",
+  "email": "newuser@example.com"
+}</code></pre>
+        </div>
+
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2024 Your Company Name</p>
+</footer>
+
+</body>
+</html>

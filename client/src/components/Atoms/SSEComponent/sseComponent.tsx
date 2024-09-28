@@ -22,7 +22,15 @@ function SSEComponent() {
                     break;
 
                 case 'polygon_delete':
-                    setSuccessMessage('Polygon deleted');
+                    // data is an array of deleted polygon ids
+                    const countDeleted = data.data.length;
+                    if (countDeleted > 1){
+                        setSuccessMessage(`${countDeleted} polygons deleted`);
+                    }else if(countDeleted === 1){
+                        setSuccessMessage('Polygon deleted');
+                    }else{
+                        setSuccessMessage('No polygons deleted');
+                    }
                     break;
 
                 case 'polygon_save':
