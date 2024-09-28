@@ -84,6 +84,14 @@ const PolygonsMenu: React.FC = () => {
         handleToggleClearedRows();
     }
 
+    // Function to handle centering selected on map
+    const handleCenterOnMap = () => {
+        // Center first selected polygon on map for now
+        if (selectedPolygons.length > 0) {
+            setCenterOnPolygon(selectedPolygons[0]);
+        }
+    }
+
     useEffect(() => {
         if (selectedPolygonDetailsId) {
             // Find the polygon with the selected id
@@ -119,6 +127,7 @@ const PolygonsMenu: React.FC = () => {
                         handleDeleteSelected={handleDeleteSelected}
                         selectedPolygons={selectedPolygons}
                         handlePutOnMap={handlePutOnMap}
+                        handleCenterOnMap={handleCenterOnMap}
                     />
                 </Panel>
 

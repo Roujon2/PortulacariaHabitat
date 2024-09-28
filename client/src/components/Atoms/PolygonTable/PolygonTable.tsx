@@ -6,8 +6,12 @@ import { Polygon } from "../../../types/polygon";
 import { MdOutlineExpandMore } from "react-icons/md";
 import { FaTrashCan } from "react-icons/fa6";
 import { FaMapLocationDot } from "react-icons/fa6";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+
 
 import HoverText from "../HoverText/HoverText";
+
+import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 
 import './polygonTable.css';
@@ -23,13 +27,22 @@ interface PolygonTableProps {
     handleDeleteSelected: () => void;
     toggleClearedRows: boolean;
     handlePutOnMap: () => void;
+    handleCenterOnMap: () => void;
 }
 
-const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons, onRowClicked, onRowSelected, toggleClearedRows, handleDeleteSelected, hasMore, handleLoadMore, handlePutOnMap }) => {
+const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons, onRowClicked, onRowSelected, toggleClearedRows, handleDeleteSelected, hasMore, handleLoadMore, handlePutOnMap, handleCenterOnMap }) => {
+    // PolygonContext
+    const { polygonsOnMap } = usePolygonContext();
 
     // UseEffect to refresh the table when the polygons change
     React.useEffect(() => {
     }, [polygons]);
+
+    // Function to check if any selected are currently on the map
+    const isSelectedOnMap = () => {
+        return selectedPolygons.some(p => polygonsOnMap.some(pMap => pMap.id === p.id));
+    }
+
 
 
     // Define columns for data table
@@ -76,34 +89,54 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
                 className="polygon-table__table"
             />
             <div className="buttons-container"> 
-                <HoverText title={selectedPolygons.length < 1 ? "No polygons selected" : "Map selected"}>
-                    <button 
-                        onClick={handlePutOnMap} 
-                        disabled={selectedPolygons.length < 1} 
-                        className={selectedPolygons.length < 1 ? 'button-view-on-map-disabled' : 'button-view-on-map'}
-                    >
-                        <FaMapLocationDot />
-                    </button> 
-                </HoverText>
+                <div className="buttons-map-container">
+                    <HoverText title={selectedPolygons.length < 1 ? "No polygons selected" : "Map selected"}>
+                        <span>
+                            <button 
+                                onClick={handlePutOnMap} 
+                                disabled={selectedPolygons.length < 1} 
+                                className={selectedPolygons.length < 1 ? 'button-view-on-map-disabled' : 'button-view-on-map'}
+                            >
+                                <FaMapLocationDot />
+                            </button> 
+                        </span>
+                    </HoverText>
+
+                    <HoverText title={selectedPolygons.length < 1 ? "No polygons selected" : "Center on map"}>
+                        <span>
+                            <button 
+                                onClick={handleCenterOnMap} 
+                                disabled={!isSelectedOnMap()}
+                                className={!isSelectedOnMap() ? 'button-center-on-map-disabled' : 'button-center-on-map'}
+                            >
+                                <FaLocationCrosshairs />
+                            </button> 
+                        </span>
+                    </HoverText>
+                </div>
 
                 <HoverText title={hasMore ? "Load more" : "No more polygons to load"}>
-                    <button 
-                        className={hasMore ? 'button-load-more' : 'button-load-more-disabled'} 
-                        onClick={handleLoadMore} 
-                        disabled={!hasMore}
-                    >
-                        <MdOutlineExpandMore className="load-more" />
-                    </button>
+                    <span>
+                        <button 
+                            className={hasMore ? 'button-load-more' : 'button-load-more-disabled'} 
+                            onClick={handleLoadMore} 
+                            disabled={!hasMore}
+                        >
+                            <MdOutlineExpandMore className="load-more" />
+                        </button>
+                    </span>
                 </HoverText>
 
                 <HoverText title={selectedPolygons.length < 1 ? "No polygons selected" : "Delete selected"}>
-                    <button 
-                        onClick={handleDeleteSelected} 
-                        disabled={selectedPolygons.length < 1} 
-                        className={selectedPolygons.length < 1 ? 'button-delete-disabled' : 'button-delete'}
-                    >
-                        <FaTrashCan />
-                    </button>
+                    <span>
+                        <button 
+                            onClick={handleDeleteSelected} 
+                            disabled={selectedPolygons.length < 1} 
+                            className={selectedPolygons.length < 1 ? 'button-delete-disabled' : 'button-delete'}
+                        >
+                            <FaTrashCan />
+                        </button>
+                    </span>
                 </HoverText>
             </div>
 

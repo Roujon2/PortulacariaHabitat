@@ -376,6 +376,9 @@ const InteractiveMap: React.FC = () => {
         setShowErrorBox(false);
         setSelectedPolygonDetailsId(null);
 
+        // Reset map polygons
+        resetMapPolygons();
+
         // Reload the map
         setMapKey(prev => prev + 1);
 
