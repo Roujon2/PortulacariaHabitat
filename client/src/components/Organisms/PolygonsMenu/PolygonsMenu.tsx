@@ -64,18 +64,6 @@ const PolygonsMenu: React.FC = () => {
         handleToggleClearedRows();
     }
 
-    // Function to handle deletion from the polygon details
-    const handleDelete = (polygon: Polygon) => {
-        if (editPolygonSelected && editPolygonSelected.id === polygon.id) {
-            setEditPolygonSelected(undefined);
-        }
-
-        deletePolygons([polygon]);
-
-        // Toggle cleared rows
-        handleToggleClearedRows();
-    }
-
     // Function to handle polygon update
     const handleUpdate = (polygon: Polygon) => {
         updatePolygon(polygon);
@@ -142,7 +130,6 @@ const PolygonsMenu: React.FC = () => {
                         <PolygonDetails
                             polygon={editPolygonSelected}
                             handleEdit={handleUpdate}
-                            handleDelete={handleDelete}
                             handleCenter={setCenterOnPolygon}
                             onMap={polygonsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
                             handleClassify={classifyPolygon}

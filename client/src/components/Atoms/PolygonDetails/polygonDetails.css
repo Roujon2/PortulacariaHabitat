@@ -131,3 +131,30 @@
 .textarea{
     resize: none;
 }
+
+.polygon-details__save-confirmation-overlay{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(200, 200, 200, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.polygon-details__save-confirmation-content{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    gap: 1rem;
+}
+
+.polygon-details__save-confirmation-buttons{
+    display: flex;
+    justify-content: space-around;
+}

@@ -14,30 +14,57 @@ import HoverText from './../HoverText/HoverText';
 
 interface PolygonDetailsProps {
     polygon: Polygon;
-    handleDelete: (polygon: Polygon ) => void;
     handleEdit: (polygon: Polygon) => void;
     handleCenter: (polygon: Polygon) => void;
     onMap: boolean;
     handleClassify: (polygonId: number) => void;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, handleEdit, handleCenter, onMap, handleClassify }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
     
     // State var to track if there are any differences to save
     const [isEdited, setIsEdited] = React.useState(false);
  
+    // Var to track to show save confirmation
+    const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
+    const [prevPolygon, setPrevPolygon] = React.useState<Polygon>();
 
     // UseEffect to update edited polygon when polygon changes
     React.useEffect(() => {
-        setEditedPolygon(polygon);
-        setIsEdited(false);
+        // If the polygon was edited but unsaved
+        if(isEdited) {
+            setShowSaveConfirmation(true);
+        } else{
+            setEditedPolygon(polygon);
+            setPrevPolygon(polygon);
+        }
+
     }, [polygon]);
 
     // On save
     const onSave = () => {
         handleEdit(editedPolygon);
         setIsEdited(false);
+        setPrevPolygon(editedPolygon);
+        setShowSaveConfirmation(false);
+    };
+
+    // On save confirmation
+    const onSaveConfirmation = () => {
+        handleEdit(editedPolygon);
+        setIsEdited(false);
+        setPrevPolygon(editedPolygon);
+        setShowSaveConfirmation(false);
+
+        setEditedPolygon(polygon);
+    }
+
+    // Discard changes
+    const onDiscard = () => {
+        setEditedPolygon(polygon);
+        setIsEdited(false);
+        setShowSaveConfirmation(false);
     };
 
     // Handle input change
@@ -69,6 +96,27 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
 
     return (
         <div className="polygon-details__container">
+
+            {showSaveConfirmation && (
+                <div className="polygon-details__save-confirmation-overlay">
+                    <div className="polygon-details__save-confirmation-content">
+                        <p>Any unsaved changes will be lost.</p>
+                        <div className="polygon-details__save-confirmation-buttons">
+                            <button className="polygon-details__button-delete" onClick={onDiscard}>
+                                <HoverText title="Discard changes">
+                                    <FaTrashCan />
+                                </HoverText>
+                            </button>
+                            <button className="polygon-details__button-save" onClick={onSaveConfirmation}>
+                                <HoverText title="Save changes">
+                                    <FiSave />
+                                </HoverText>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>Polygon Details</h2>
 
             <div className="polygon-details__content">
@@ -121,9 +169,11 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleDelete, 
 
             <div className="polygon-details__buttons">
                 <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
-                    <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
-                            <FaLocationCrosshairs />
-                    </button>
+                    <span>
+                        <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
+                                <FaLocationCrosshairs />
+                        </button>
+                    </span>
                 </HoverText>
             
                 <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>

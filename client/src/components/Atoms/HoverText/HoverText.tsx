@@ -4,10 +4,11 @@ import { Tooltip, TooltipProps } from "@mui/material";
 import './hoverText.css';
 
 // Custom tooltip settings
-const defaultTooltipSettings = {
-    enterDelay: 500,
+const defaultTooltipSettings: Partial<TooltipProps> = {
+    enterDelay: 1200,
     leaveDelay: 200,
     arrow: true,
+    placement: "bottom",
 }
 
 interface HoverTextProps extends TooltipProps {
