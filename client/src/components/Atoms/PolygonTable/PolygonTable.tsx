@@ -43,6 +43,17 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
         return selectedPolygons.some(p => polygonsOnMap.some(pMap => pMap.id === p.id));
     }
 
+    // Conditional row styles to highlight rows on map
+    const conditionalRowStyles = [
+        {
+            when: (row: Polygon) => polygonsOnMap.some(p => p.id === row.id),
+            style: {
+                // Light green highlight
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+            },
+        },
+    ];
+
 
 
     // Define columns for data table
@@ -87,6 +98,7 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
                 onRowClicked={(row) => onRowClicked(row)}
                 clearSelectedRows={toggleClearedRows}
                 className="polygon-table__table"
+                conditionalRowStyles={conditionalRowStyles}
             />
             <div className="buttons-container"> 
                 <div className="buttons-map-container">
