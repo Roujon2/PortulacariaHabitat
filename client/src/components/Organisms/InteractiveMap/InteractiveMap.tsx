@@ -35,7 +35,7 @@ const InteractiveMap: React.FC = () => {
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygon, setCenterOnPolygon, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -73,29 +73,37 @@ const InteractiveMap: React.FC = () => {
                 });
 
                 // Center map to the updated polygon
-                setCenterOnPolygon(polygonToUpdate);
+                setCenterOnPolygons([polygonToUpdate]);
             }
         }
     }, [polygonToUpdate]);
 
     // UseEffect tracking the polygon to center on
     useEffect(() => {
-        if (centerOnPolygon) {
-            const polygonToCenterOn = drawnPolygons.find(p => p.get('id') === centerOnPolygon.id);
-            if (polygonToCenterOn) {
-                // Center map to the updated polygon
-                const centroid = calculateCentroid(centerOnPolygon);
-                map?.setCenter(centroid);
-                // Zoom to fit bounds of polygon
+        if (centerOnPolygons) {
+            if(centerOnPolygons.length > 0 && map){
+                // Get map bounds
                 const bounds = new google.maps.LatLngBounds();
-                centerOnPolygon.coordinates.forEach(coord => {
-                    bounds.extend(coord);
+
+                // Find the polygons in drawn polygons
+                centerOnPolygons.forEach(polygon => {
+                    const drawnPolygon = drawnPolygons.find(p => p.get('id') === polygon.id);
+                    if (drawnPolygon) {
+                        const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
+                        polygonCoords.forEach(coord => {
+                            bounds.extend(coord);
+                        });
+                    }
                 });
-                map?.fitBounds(bounds);
-                setCenterOnPolygon(null);
+
+                // Center map to bounds
+                map.fitBounds(bounds);
+
+                // Reset center on polygons
+                setCenterOnPolygons([]);
             }
         }
-    }, [centerOnPolygon]);
+    }, [centerOnPolygons]);
 
     // UseEffect tracking polygons to map
     useEffect(() => {
@@ -369,7 +377,7 @@ const InteractiveMap: React.FC = () => {
         // Reset everything
         setDrawnPolygons([]);
         setOverlays({});
-        setCenterOnPolygon(null);
+        setCenterOnPolygons([]);
         setSelectedPolygon(null);
         setDrawnPolygon(null);
         setShowSavePolygonMenu(false);

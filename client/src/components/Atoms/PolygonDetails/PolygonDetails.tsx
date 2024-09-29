@@ -15,7 +15,7 @@ import HoverText from './../HoverText/HoverText';
 interface PolygonDetailsProps {
     polygon: Polygon;
     handleEdit: (polygon: Polygon) => void;
-    handleCenter: (polygon: Polygon) => void;
+    handleCenter: (polygons: Polygon[]) => void;
     onMap: boolean;
     handleClassify: (polygonId: number) => void;
 }
@@ -170,7 +170,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
             <div className="polygon-details__buttons">
                 <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
                     <span>
-                        <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter(polygon)} disabled={!onMap}>
+                        <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter([polygon])} disabled={!onMap}>
                                 <FaLocationCrosshairs />
                         </button>
                     </span>

@@ -21,7 +21,7 @@ import { MdOutlineExpandMore } from "react-icons/md";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygon, polygonsOnMap, classifyPolygon } = usePolygonContext();
+    const { polygons, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -69,7 +69,7 @@ const PolygonsMenu: React.FC = () => {
         updatePolygon(polygon);
 
         // Set center on polygon
-        setCenterOnPolygon(polygon);
+        setCenterOnPolygons([polygon]);
 
         // Toggle cleared rows
         handleToggleClearedRows();
@@ -86,9 +86,9 @@ const PolygonsMenu: React.FC = () => {
 
     // Function to handle centering selected on map
     const handleCenterOnMap = () => {
-        // Center first selected polygon on map for now
+        // Center all selected on map
         if (selectedPolygons.length > 0) {
-            setCenterOnPolygon(selectedPolygons[0]);
+            setCenterOnPolygons(selectedPolygons);
         }
     }
 
@@ -139,7 +139,7 @@ const PolygonsMenu: React.FC = () => {
                         <PolygonDetails
                             polygon={editPolygonSelected}
                             handleEdit={handleUpdate}
-                            handleCenter={setCenterOnPolygon}
+                            handleCenter={setCenterOnPolygons}
                             onMap={polygonsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
                             handleClassify={classifyPolygon}
                         />

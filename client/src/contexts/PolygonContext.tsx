@@ -16,8 +16,8 @@ interface PolygonContextProps {
     selectedPolygonDetailsId: number | null;
     setSelectedPolygonDetailsId: (id: number | null) => void;
     polygonToUpdate: Polygon | null;
-    centerOnPolygon: Polygon | null;
-    setCenterOnPolygon: (polygon: Polygon | null) => void;
+    centerOnPolygons: Polygon[];
+    setCenterOnPolygons: (polygons: Polygon[]) => void;
 
     putOnMap: (polygons: Polygon[]) => void;
     deletePolygons: (polygons: Polygon[]) => void;
@@ -67,7 +67,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [hasMore, setHasMore] = useState<boolean>(true);
 
     // Var handling polygon to center on
-    const [centerOnPolygon, setCenterOnPolygon] = useState<Polygon | null>(null);
+    const [centerOnPolygons, setCenterOnPolygons] = useState<Polygon[]>([]);
 
     // Success message for polygon operations
     const [successMessage, setSuccessMessage] = useState<string>('');
@@ -254,7 +254,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         setPolygonsToMap, setPolygonsToDelete,
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,
-                                        centerOnPolygon, setCenterOnPolygon,
+                                        centerOnPolygons, setCenterOnPolygons,
                                         polygonToClassify, classifyPolygon,
                                         setSuccessMessage, successMessage }}>
             {children}
