@@ -18,6 +18,9 @@ import { FaMapLocationDot } from "react-icons/fa6";
 import { PanelGroup, PanelResizeHandle, Panel } from 'react-resizable-panels';
 import { MdOutlineExpandMore } from "react-icons/md";
 
+import { TiUpload } from "react-icons/ti";
+import PolygonUpload from "../../Atoms/PolygonUpload/PolygonUpload";
+
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
@@ -29,6 +32,8 @@ const PolygonsMenu: React.FC = () => {
 
     // State var controlling toggle of clearing rows on table (after any kind of polygon modification the rows should be cleared)
     const [toggleClearedRows, setToggleClearedRows] = React.useState<boolean>(false);
+
+    const [viewPolygonUpload, setViewPolygonUpload] = React.useState<boolean>(false);
 
     // Function handling toggle cleared rows on table and removing selected polygons
     const handleToggleClearedRows = () => {
@@ -113,6 +118,13 @@ const PolygonsMenu: React.FC = () => {
     return (
         <div className='polygons-menu__content'>
             <h1>Polygons</h1>
+
+            <button className='polygon-upload__button' onClick={() => setViewPolygonUpload(true)}>
+                <TiUpload />
+                <span>Upload</span>
+            </button>
+
+            {viewPolygonUpload && (<PolygonUpload onClose={() => setViewPolygonUpload(false)} onUpload={() => console.log('File uploaded')}/>)}
 
             <PanelGroup direction='vertical'>
                 {/* Polygon Table */}
