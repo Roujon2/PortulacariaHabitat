@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken'
-import config from '../../config/config.js'
+import config from '../../config/config.js';
+import pool from '../../config/dbConfig.js';
 
 // Auth middleware verification
-const authorizeToken = (req, res, next) => {
+const authorizeToken = async (req, res, next) => {
     try {
         // User token from cookies
         const token = req.cookies.user;
@@ -14,6 +15,13 @@ const authorizeToken = (req, res, next) => {
 
         // Attach user info to request object
         req.user = decoded;
+
+        // Set session id for postgres rls
+        const client = await pool.connect();
+        await client.query(`SET session.user_id = ${decoded.id}`);
+
+        // Attach client to res
+        res.locals.dbClient = client;
 
         // Return and execute next middleware
         return next();

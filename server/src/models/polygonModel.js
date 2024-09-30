@@ -1,9 +1,6 @@
 import pool from '../../config/dbConfig.js';
 
-const savePolygon = async (user_id, polygon) => {
-    // Params
-    const client = await pool.connect();
-
+const savePolygon = async (client, user_id, polygon) => {
     // Query
     const query = 'INSERT INTO polygons(user_id, name, description, coordinates, locality, ownership_type, farm_series_name, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
 
@@ -16,19 +13,12 @@ const savePolygon = async (user_id, polygon) => {
         return result.rows[0];
     }
     catch(err){
-        console.error("Error saving polygon:", err);
+        throw err;
     }
-    finally{
-        client.release();
-    }
-
 };
 
 // Function to update polygon data
-const updatePolygon = async (polygon_id, polygon) => {
-    // Params
-    const client = await pool.connect();
-
+const updatePolygon = async (client, polygon_id, polygon) => {
     // Query
     const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7 WHERE id = $8 RETURNING *';
 
@@ -41,18 +31,12 @@ const updatePolygon = async (polygon_id, polygon) => {
         return result.rows[0];
     }
     catch(err){
-        console.error("Error updating polygon:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 // Function to delete specific polygon
-const deletePolygon = async (polygon_id) => {
-    // Params
-    const client = await pool.connect();
-
+const deletePolygon = async (client, polygon_id) => {
     // Query
     const query = 'DELETE FROM polygons WHERE id = $1';
     const values = [polygon_id];
@@ -62,18 +46,12 @@ const deletePolygon = async (polygon_id) => {
         await client.query(query, values);
     }
     catch(err){
-        console.error("Error deleting polygon:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 // Function to retrieve specific polygon
-const getPolygon = async (polygon_id) => {
-    // Params
-    const client = await pool.connect();
-
+const getPolygon = async (client, polygon_id) => {
     // Query
     const query = 'SELECT * FROM polygons WHERE id = $1';
     const values = [polygon_id];
@@ -84,18 +62,12 @@ const getPolygon = async (polygon_id) => {
         return result.rows[0];
     }
     catch(err){
-        console.error("Error fetching polygon:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 // Function to lod more polygons past a certain timestamp
-const loadMorePolygons = async (user_id, limit, last_updated_at) => {
-    // Params
-    const client = await pool.connect();
-
+const loadMorePolygons = async (client, user_id, limit, last_updated_at) => {
     let query;
     let values;
 
@@ -126,18 +98,12 @@ const loadMorePolygons = async (user_id, limit, last_updated_at) => {
         return result.rows;
     }
     catch(err){
-        console.error("Error loading more polygons:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 // Function to refresh a list of polygons based on a last updated at timestamp
-const refreshPolygons = async (user_id, last_updated_at, limit) => {
-    // Params
-    const client = await pool.connect();
-    
+const refreshPolygons = async (client, user_id, last_updated_at, limit) => {
     let query;
     let values;
 
@@ -167,18 +133,12 @@ const refreshPolygons = async (user_id, last_updated_at, limit) => {
         return result.rows;
     }
     catch(err){
-        console.error("Error fetching polygons:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 // Function to delete multiple polygons based on list of polygon ids
-const deletePolygons = async (polygon_ids) => {
-    // Params
-    const client = await pool.connect();
-
+const deletePolygons = async (client, polygon_ids) => {
     // Query
     const query = 'DELETE FROM polygons WHERE id = ANY($1)';
     const values = [polygon_ids];
@@ -188,19 +148,13 @@ const deletePolygons = async (polygon_ids) => {
         await client.query(query, values);
     }
     catch(err){
-        console.error("Error deleting polygons:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 
 
 // Function querying the database for number of polygons linked to a user
-const getPolygonsCount = async (user_id) => {
-    // Params
-    const client = await pool.connect();
-
+const getPolygonsCount = async (client, user_id) => {
     // Query
     const query = 'SELECT COUNT(*) FROM polygons WHERE user_id = $1';
     const values = [user_id];
@@ -211,10 +165,7 @@ const getPolygonsCount = async (user_id) => {
         return parseInt(result.rows[0].count);
     }
     catch(err){
-        console.error("Error fetching polygons count:", err);
-    }
-    finally{
-        client.release();
+        throw err;
     }
 };
 

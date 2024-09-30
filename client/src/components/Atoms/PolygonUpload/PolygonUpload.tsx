@@ -187,7 +187,9 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
             setError("No coordinates found in KML file. Ensure the file is valid and try again.");
             return;
         }
-
+    
+        // Pre set name to file name
+        setPolygonName(file.name.split(".")[0]);
         setShowSavePolygon(true);
     };
             

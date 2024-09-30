@@ -4,16 +4,21 @@ import sseService from "../services/sseService.js";
 const savePolygon = async (req, res) => {
     const user_id = req.user.id;
     const polygon = req.body;
+    const client = res.locals.dbClient;
 
     try{
-        const savedPolygon = await polygonModel.savePolygon(user_id, polygon);
+        const savedPolygon = await polygonModel.savePolygon(client, user_id, polygon);
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_save", data: savedPolygon});
 
         return res.status(201).json(savedPolygon);
     }catch(err){
+        console.error("Failed to save polygon:", err);
         return res.status(500).json({error: "Failed to save polygon:", err});
+    }finally{
+        // Release the client after request
+        if(client) client.release();
     }
 };
 
@@ -22,8 +27,10 @@ const updatePolygon = async (req, res) => {
     const polygon_id = req.params.id;
     const polygon = req.body
 
+    const client = res.locals.dbClient;
+
     try{
-        const updatedPolygon = await polygonModel.updatePolygon(polygon_id, polygon);
+        const updatedPolygon = await polygonModel.updatePolygon(client, polygon_id, polygon);
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_update", data: updatedPolygon});
@@ -38,8 +45,10 @@ const deletePolygon = async (req, res) => {
     const user_id = req.user.id;
     const polygon_id = req.params.id;
 
+    const client = res.locals.dbClient;
+
     try{
-        const deletedPolygon = await polygonModel.deletePolygon(polygon_id);
+        const deletedPolygon = await polygonModel.deletePolygon(client, polygon_id);
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: deletedPolygon});
@@ -54,8 +63,10 @@ const deletePolygon = async (req, res) => {
 const getPolygon = async (req, res) => {
     const polygon_id = req.params.id;
 
+    const client = res.locals.dbClient;
+
     try{
-        const polygon = await polygonModel.getPolygon(polygon_id);
+        const polygon = await polygonModel.getPolygon(client, polygon_id);
         return res.status(200).json(polygon);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygon:", err});
@@ -67,8 +78,10 @@ const loadMorePolygons = async (req, res) => {
     const limit = req.query.limit || 10;
     const last_updated_at = req.query.last_updated_at || null;
 
+    const client = res.locals.dbClient;
+
     try{
-        const polygons = await polygonModel.loadMorePolygons(user_id, limit, last_updated_at);
+        const polygons = await polygonModel.loadMorePolygons(client, user_id, limit, last_updated_at);
         return res.status(200).json(polygons);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons:", err});
@@ -80,8 +93,10 @@ const refreshPolygons = async (req, res) => {
     const limit = req.query.limit || 10;
     const last_updated_at = req.query.last_updated_at || null;
 
+    const client = res.locals.dbClient;
+
     try{
-        const polygons = await polygonModel.refreshPolygons(user_id, last_updated_at, limit);
+        const polygons = await polygonModel.refreshPolygons(client, user_id, last_updated_at, limit);
         return res.status(200).json(polygons);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons:", err});
@@ -93,8 +108,10 @@ const deletePolygons = async (req, res) => {
     const user_id = req.user.id;
     const polygon_ids = req.body;
 
+    const client = res.locals.dbClient;
+
     try{
-        await polygonModel.deletePolygons(polygon_ids);
+        await polygonModel.deletePolygons(client, polygon_ids);
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: polygon_ids});
@@ -109,8 +126,10 @@ const deletePolygons = async (req, res) => {
 const getPolygonsCount = async (req, res) => {
     const user_id = req.user.id;
 
+    const client = res.locals.dbClient;
+
     try{
-        const count = await polygonModel.getPolygonsCount(user_id);
+        const count = await polygonModel.getPolygonsCount(client, user_id);
         return res.status(200).json({count});
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons count:", err});
