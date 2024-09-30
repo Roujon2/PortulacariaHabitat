@@ -124,7 +124,7 @@ const PolygonsMenu: React.FC = () => {
                 <span>Upload</span>
             </button>
 
-            {viewPolygonUpload && (<PolygonUpload onClose={() => setViewPolygonUpload(false)} onUpload={() => console.log('File uploaded')}/>)}
+            {viewPolygonUpload && (<PolygonUpload onClose={() => setViewPolygonUpload(false)} />)}
 
             <PanelGroup direction='vertical'>
                 {/* Polygon Table */}

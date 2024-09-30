@@ -12,12 +12,11 @@ import { FiSave } from "react-icons/fi";
 import polygonApi from "../../../api/polygonApi";
 
 interface PolygonUploadProps {
-    onUpload: (file: File) => void;
     onClose: () => void;
 }
 
 
-const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
+const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
     const [file, setFile] = React.useState<File>();
     const [error, setError] = React.useState<string | null>(null);
 
@@ -156,7 +155,6 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
 
         // Save new polygon to backend
         polygonApi.savePolygon(NewPolygon).then((res) => {
-            console.log(res);
             setShowSavePolygon(false);
             setPolygonName("");
             setPolygonDescription("");
@@ -165,7 +163,6 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
             setNotes("");
             setSeriesName("");
             setCoordinates(undefined);
-            onUpload(file as File);
             setLoading(false);
 
             onClose();
