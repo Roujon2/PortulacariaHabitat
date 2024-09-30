@@ -85,7 +85,7 @@
     justify-content: stretch;
 }
 
-.menu-buttons>button{
+.upload-menu-buttons>button{
     background-color: #363cf4;
     color: white;
     border: none;
@@ -94,6 +94,6 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
-.menu-buttons>button:hover{
+.upload-menu-buttons>button:hover{
     background-color: #183367;
 }

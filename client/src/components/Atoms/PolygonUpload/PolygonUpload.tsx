@@ -284,7 +284,7 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
                                 />
                             </label>
 
-                            <div className="menu-buttons">
+                            <div className="upload-menu-buttons">
                                 <button type="submit">
                                     {loading? "Loading..." : <FiSave />}
                                 </button>
