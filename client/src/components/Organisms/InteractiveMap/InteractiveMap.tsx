@@ -210,6 +210,11 @@ const InteractiveMap: React.FC = () => {
             return;
         }
 
+        // If the polygon is not closed, close it
+        if (!polygon.getPath().getAt(0).equals(polygon.getPath().getAt(polygon.getPath().getLength() - 1))) {
+            polygon.getPath().push(polygon.getPath().getAt(0));
+        }
+
         setShowSavePolygonMenu(true);
 
         // Create the polygon object
