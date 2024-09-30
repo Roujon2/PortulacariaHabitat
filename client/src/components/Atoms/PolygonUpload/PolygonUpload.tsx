@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import JSZip from "jszip";
 
 import { NewPolygon } from "../../../types/polygon";
@@ -19,10 +19,9 @@ interface PolygonUploadProps {
 
 const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
     const [file, setFile] = React.useState<File>();
-    const [zip, setZip] = React.useState<JSZip>();
+    const [error, setError] = React.useState<string | null>(null);
 
     const [showSavePolygon, setShowSavePolygon] = React.useState<boolean>(false);
-    const [showFileDetails, setShowFileDetails] = React.useState<boolean>(false);
 
     const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -34,6 +33,16 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
     const [notes, setNotes] = React.useState<string>("");
     const [farm_series_name, setSeriesName] = React.useState<string>("");
     const [coordinates, setCoordinates] = React.useState<google.maps.LatLngLiteral[]>();
+
+
+    // UseEffect tracking coordinates change
+    useEffect(() => {
+        if(coordinates && coordinates.length > 0) {
+            // Coordinates are found and valid
+            setError(null);
+            setLoading(false);
+        }
+    }, [coordinates]);
 
 
     // Function to process kml content and extract coordinates
@@ -72,20 +81,31 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
 
     // If the file is changed
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLoading(true);
         // Get the files
         const files = e.target.files;
 
-        if(files) {
-            // Set the file to the first file\
-            const file = files[0];
-            setFile(file);
+        if(!files || !files[0]){
+            setFile(undefined);
+            setCoordinates(undefined);
+            return;
+        }
 
+        const selectedFile = files[0];
+        setFile(selectedFile); 
+
+        // Reset values
+        setShowSavePolygon(false);
+        setError(null);
+        setCoordinates(undefined);
+        setLoading(true);
+
+        // Process file
+        try{
             // Check if file is kmz or kml
-            if(file.name.endsWith(".kmz")) {
+            if(selectedFile.name.endsWith(".kmz")) {
                 // Unzip and extract kml
                 const zip = new JSZip();
-                const unzipped = await zip.loadAsync(file);
+                const unzipped = await zip.loadAsync(selectedFile);
                 const kml = Object.keys(unzipped.files).find((key) => key.endsWith(".kml"));
 
                 if(kml) {
@@ -93,28 +113,32 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
                     // Process kml and save coordinates
                     processKML(kmlContent);
                 }
-            }else if(file.name.endsWith(".kml")) {
+            }else if(selectedFile.name.endsWith(".kml")) {
                 // Handle kml file
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const content = e.target?.result as string;
                     processKML(content);
                 };
-                reader.readAsText(file);
+                reader.readAsText(selectedFile);
+            }else{
+                // Set error if file is not kml or kmz
+                setError("Unsupported file type. Please upload a KML or KMZ file");
             }
-
-            setLoading(false);
-            setShowFileDetails(true);
+        }catch(err){
+            setError("An error occurred while processing the file. Please try again.");
         }
-    }
+    };
 
     // Function to handle save
     const handleSave = (e: React.FormEvent) => {
+        setLoading(true);
         e.preventDefault();
 
         // If there are no coordinates, return
         if(!coordinates) {
-            alert ("No coordinates found in KML file");
+            setError("No coordinates found in KML file. Ensure the file is valid and try again.");
+            setLoading(false);
             return;
         }
 
@@ -130,19 +154,41 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
             classified: false,
         };
 
-        console.log(NewPolygon);
-
         // Save new polygon to backend
-        polygonApi.savePolygon(NewPolygon);
+        polygonApi.savePolygon(NewPolygon).then((res) => {
+            console.log(res);
+            setShowSavePolygon(false);
+            setPolygonName("");
+            setPolygonDescription("");
+            setLocality("");
+            setOwnershipType("");
+            setNotes("");
+            setSeriesName("");
+            setCoordinates(undefined);
+            onUpload(file as File);
+            setLoading(false);
+
+            onClose();
+        }).catch((err) => {
+            console.error(err);
+            setError("An error occurred while saving the polygon. Please try again.");
+            setLoading(false);
+        });
     }
 
     // Function to handle upload
-    const handleUpload = () => {
-        if (file) {
-            setShowFileDetails(false);
-            setShowSavePolygon(true);
-            setFile(undefined);
+    const handleUpload = async () => {
+        if (!file){
+            setError("No file selected. Please select a file to upload.");
+            return;
         }
+
+        if(!coordinates || coordinates.length === 0) {
+            setError("No coordinates found in KML file. Ensure the file is valid and try again.");
+            return;
+        }
+
+        setShowSavePolygon(true);
     };
             
 
@@ -154,15 +200,15 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
                 <h1>Upload KMZ</h1>
                 <div className="polygon-upload__buttons">
                     <input type="file" onChange={handleFileChange} accept=".kml, .kmz"/>
-                    <button className={file ? "upload_button" : "upload_button_disabled"} onClick={handleUpload}><TiUpload /></button>
+                    <button className={coordinates ? "upload_button" : "upload_button_disabled"} onClick={handleUpload} disabled={!coordinates}>
+                        {!loading ? <TiUpload /> : "Loading..."}
+                    </button>
                 </div>
 
-                {showFileDetails && file && zip && (
-                    <div className="polygon-upload__file-info">
-                        <h2>File Info</h2>
-                        <p>File Name: {file.name}</p>
-                        <p>File Size: {file.size} bytes</p>
-                        <p>Number of Files: {Object.keys(zip.files).length}</p>
+
+                {error && (
+                    <div className="polygon-upload__error">
+                        <p>{error}</p>
                     </div>
                 )}
 
@@ -240,7 +286,9 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onUpload, onClose }) => {
                             </label>
 
                             <div className="menu-buttons">
-                                <button type="submit"><FiSave /></button>
+                                <button type="submit">
+                                    {loading? "Loading..." : <FiSave />}
+                                </button>
                             </div>
                         </form>
                     </div>
