@@ -1,5 +1,4 @@
-import pool from '../../config/dbConfig.js';
-
+// Function to save polygon data
 const savePolygon = async (client, user_id, polygon) => {
     // Query
     const query = 'INSERT INTO polygons(user_id, name, description, coordinates, locality, ownership_type, farm_series_name, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';

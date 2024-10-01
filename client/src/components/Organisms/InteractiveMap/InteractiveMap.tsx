@@ -153,8 +153,8 @@ const InteractiveMap: React.FC = () => {
             polygonApi.classifyPolygon(polygonToClassify)
                 .then((classifyData) => {
                     // Overlay the classified polygon on the map
-                    if(classifyData.urlFormat){
-                        addOverlay(classifyData.urlFormat, polygonToClassify);
+                    if(classifyData.classification_result_url){
+                        addOverlay(classifyData.classification_result_url, polygonToClassify);
                     }else{
                         console.error("No url format found in classify data.");
                     }
