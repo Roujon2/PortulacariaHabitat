@@ -150,7 +150,6 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
             notes: notes,
             farm_series_name: farm_series_name,
             coordinates: coordinates,
-            classified: false,
         };
 
         // Save new polygon to backend

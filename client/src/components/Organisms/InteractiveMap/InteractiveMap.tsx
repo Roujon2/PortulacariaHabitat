@@ -35,7 +35,11 @@ const InteractiveMap: React.FC = () => {
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage } = usePolygonContext();
+    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, 
+        centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
+        setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
+        polygonResultToDisplay
+        } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
     const [drawnPolygons, setDrawnPolygons] = useState<google.maps.Polygon[]>([]);
@@ -165,6 +169,24 @@ const InteractiveMap: React.FC = () => {
         }
     }, [polygonToClassify]);
 
+    // UseEffect to track polygon classification result to display
+    useEffect(() => {
+        if (polygonResultToDisplay) {
+            // Get polygon classification result to display
+            polygonApi.getPolygonClassification(polygonResultToDisplay.id)
+                .then((classificationResult) => {
+                    // Overlay the classified polygon on the map
+                    if(classificationResult.classification_result_url){
+                        addOverlay(classificationResult.classification_result_url, polygonResultToDisplay);
+                    }else{
+                        console.error("No url format found in classification result.");
+                    }
+                }).catch((error) => {
+                    console.error("Error getting polygon classification result:", error);
+                });
+        }
+    }, [polygonResultToDisplay]);
+
 
     // Load the google maps api script
     const { isLoaded, loadError } = useLoadScript({
@@ -226,7 +248,6 @@ const InteractiveMap: React.FC = () => {
             ownership_type: '',
             farm_series_name: '',
             notes: '',
-            classified: false,
         }
 
         setSelectedPolygon(polygonObj);

@@ -8,5 +8,8 @@ const router = express.Router();
 // Route to get classification for polygon
 router.post('/test', validateData.validatePolygonData, authMiddleware.authorizeToken, classifierController.testClassifier);
 
+// Route to get classification result for polygon
+router.get('/:id', authMiddleware.authorizeToken, classifierController.getPolygonClassificationResult);
+
 
 export default router;

@@ -24,7 +24,7 @@ import PolygonUpload from "../../Atoms/PolygonUpload/PolygonUpload";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon } = usePolygonContext();
+    const { polygons, loadMorePolygons, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon, setPolygonResultToDisplay } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -97,6 +97,20 @@ const PolygonsMenu: React.FC = () => {
         }
     }
 
+    // Function to handle getting polygon classification result to display
+    const handleGetClassificationResult = (polygonId: number) => {
+        // Find polygon
+        const polygon = polygons.find(p => p.id === polygonId);
+
+        if (!polygon) {
+            console.error("Classification result display: Correspoding polygon not found.");
+            return;
+        }
+
+        // Set the polygon result to display
+        setPolygonResultToDisplay(polygon);
+    };
+
     useEffect(() => {
         if (selectedPolygonDetailsId) {
             // Find the polygon with the selected id
@@ -154,6 +168,7 @@ const PolygonsMenu: React.FC = () => {
                             handleCenter={setCenterOnPolygons}
                             onMap={polygonsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
                             handleClassify={classifyPolygon}
+                            handleGetResult={handleGetClassificationResult}
                         />
                     ) : (
                         <p className="polygon-details-empty">Select a polygon to view details.</p>

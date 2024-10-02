@@ -24,7 +24,7 @@ const savePolygon = async (polygon: NewPolygon) => {
             created_at: savedPolygon.data.created_at,
             coordinates: polygon.coordinates,
             updated_at: savedPolygon.data.updated_at,
-            classified: polygon.classified,
+            classification_status: savedPolygon.data.classification_status,
         }
 
         return newPolygon;
@@ -56,7 +56,7 @@ const updatePolygon = async (polygon: Polygon) => {
             created_at: polygon.created_at,
             coordinates: polygon.coordinates,
             updated_at: updatedPolygon.data.updated_at,
-            classified: polygon.classified,
+            classification_status: updatedPolygon.data.classification_status,
         }
 
         return newPolygon;
@@ -119,7 +119,7 @@ const getPolygon = async (polygonId: number) => {
             created_at: polygon.data.created_at,
             coordinates: polygon.data.coordinates,
             updated_at: polygon.data.updated_at,
-            classified: polygon.data.classified,
+            classification_status: polygon.data.classification_status,
         }
 
         return newPolygon;
@@ -152,6 +152,7 @@ const refreshPolygons = async (last_updated_at: string | null, limit: number) =>
             notes: polygon.notes,
             created_at: polygon.created_at,
             updated_at: polygon.updated_at,
+            classification_status: polygon.classification_status,
         }));
 
         return newPolygons;
@@ -184,6 +185,7 @@ const loadMorePolygons = async (last_updated_at: string | null, limit: number) =
             notes: polygon.notes,
             created_at: polygon.created_at,
             updated_at: polygon.updated_at,
+            classification_status: polygon.classification_status,
         }));
 
         return newPolygons;
@@ -226,6 +228,22 @@ const classifyPolygon = async (polygon: Polygon) => {
     }
 };
 
+// Function to get polygon classification result
+const getPolygonClassification = async (polygonId: number) => {
+    try{
+        // Get polygon classification from database
+        const classification = await axios({
+            method: 'get',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/${polygonId}`,
+            withCredentials: true,
+        });
+
+        return classification.data;
+    }catch(error){
+        console.error("Error getting polygon classification:", error);
+    }
+}
+
 export default {
     savePolygon,
     updatePolygon,
@@ -236,4 +254,5 @@ export default {
     refreshPolygons,
     loadMorePolygons,
     classifyPolygon,
+    getPolygonClassification,
 }

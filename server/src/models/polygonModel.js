@@ -1,10 +1,10 @@
 // Function to save polygon data
 const savePolygon = async (client, user_id, polygon) => {
     // Query
-    const query = 'INSERT INTO polygons(user_id, name, description, coordinates, locality, ownership_type, farm_series_name, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+    const query = 'INSERT INTO polygons(user_id, name, description, coordinates, locality, ownership_type, farm_series_name, notes) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
 
     // Values
-    const values = [user_id, polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes];
+    const values = [user_id, polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, 'pending'];
 
     try{
         // Query
@@ -19,10 +19,10 @@ const savePolygon = async (client, user_id, polygon) => {
 // Function to update polygon data
 const updatePolygon = async (client, polygon_id, polygon) => {
     // Query
-    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7 WHERE id = $8 RETURNING *';
+    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7, classification_status = $8 WHERE id = $9 RETURNING *';
 
     // Values
-    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, polygon_id];
+    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, polygon.classification_status, polygon_id];
 
     try{
         // Query
@@ -30,6 +30,23 @@ const updatePolygon = async (client, polygon_id, polygon) => {
         return result.rows[0];
     }
     catch(err){
+        throw err;
+    }
+};
+
+// Function to update polygon classification status
+const updatePolygonClassificationStatus = async (client, polygon_id, classification_status) => {
+    // Query
+    const query = 'UPDATE polygons SET classification_status = $1 WHERE id = $2 RETURNING *';
+
+    // Values
+    const values = [classification_status, polygon_id];
+
+    try{
+        // Query
+        const result = await client.query(query, values);
+        return result.rows[0];
+    }catch(err){
         throw err;
     }
 };
@@ -177,5 +194,6 @@ export default {
     loadMorePolygons,
     refreshPolygons,
     deletePolygons,
-    getPolygonsCount
+    getPolygonsCount,
+    updatePolygonClassificationStatus
 }

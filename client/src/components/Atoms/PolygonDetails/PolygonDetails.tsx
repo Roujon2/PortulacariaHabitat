@@ -7,8 +7,6 @@ import { FaLocationCrosshairs } from "react-icons/fa6";
 
 import './polygonDetails.css';
 
-import { PolygonContextProvider } from "../../../contexts/PolygonContext";
-
 import HoverText from './../HoverText/HoverText';
 
 
@@ -18,9 +16,10 @@ interface PolygonDetailsProps {
     handleCenter: (polygons: Polygon[]) => void;
     onMap: boolean;
     handleClassify: (polygonId: number) => void;
+    handleGetResult: (polygonId: number) => void;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
     
     // State var to track if there are any differences to save
@@ -39,6 +38,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
             setEditedPolygon(polygon);
             setPrevPolygon(polygon);
         }
+
+        console.log(polygon);
 
     }, [polygon]);
 
@@ -93,6 +94,52 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
 
         setIsEdited(true);
     };
+
+
+    // Rendering classification button
+    const renderClassificationButton = () => {
+        switch (polygon.classification_status) {
+            case 'pending':
+                return (
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
+                        Classify
+                    </button>
+                );
+            case 'queued':
+                return (
+                    <button className="polygon-details__button-classify-disabled" disabled>
+                        Classifying
+                    </button>
+                );
+            case 'in_progress':
+                return (
+                    <button className="polygon-details__button-classify-disabled" disabled>
+                        Classifying
+                    </button>
+                );
+            case 'classified':
+                return (
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleGetResult(polygon.id)}>
+                        View Result
+                    </button>
+                );
+            case 'failed':
+                return (
+                    <button className="polygon-details__button-classify">
+                        Classification failed... Try again
+                    </button>
+                );
+            default:
+                return (
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
+                        Classify
+                    </button>
+                );
+
+        }
+    };
+
+
 
     return (
         <div className="polygon-details__container">
@@ -176,9 +223,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                     </span>
                 </HoverText>
             
-                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
-                    Classify
-                </button>
+                {renderClassificationButton()}
 
                 <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} onClick={onSave} disabled={!isEdited}>
                     <FiSave />

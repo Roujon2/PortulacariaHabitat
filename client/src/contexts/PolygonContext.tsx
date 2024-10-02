@@ -29,6 +29,9 @@ interface PolygonContextProps {
     polygonToClassify: Polygon | null;
     classifyPolygon: (polygonId: number) => void;
 
+    polygonResultToDisplay: Polygon | null;
+    setPolygonResultToDisplay: (polygon: Polygon | null) => void;
+
     setSuccessMessage: (message: string) => void;
     successMessage: string;
 }
@@ -54,6 +57,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonsToDelete, setPolygonsToDelete] = useState<Polygon[]>([]);
     // Polygon to classify
     const [polygonToClassify, setPolygonToClassify] = useState<Polygon | null>(null);
+
+    const [polygonResultToDisplay, setPolygonResultToDisplay] = useState<Polygon | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -246,6 +251,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     };
 
 
+
     return (
         <PolygonContext.Provider value={{ polygons, refreshPolygons, 
                                         loading, loadMorePolygons, 
@@ -256,6 +262,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         polygonToUpdate,
                                         centerOnPolygons, setCenterOnPolygons,
                                         polygonToClassify, classifyPolygon,
+                                        polygonResultToDisplay, setPolygonResultToDisplay,
                                         setSuccessMessage, successMessage }}>
             {children}
         </PolygonContext.Provider>
