@@ -39,8 +39,6 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
             setPrevPolygon(polygon);
         }
 
-        console.log(polygon);
-
     }, [polygon]);
 
     // On save
