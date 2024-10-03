@@ -2,6 +2,8 @@ import classifierService from "../services/classifierService.js";
 import classifyResultModel from "../models/classifyResultModel.js";
 import polygonModel from "../models/polygonModel.js";
 
+import sseService from "../services/sseService.js";
+
 const testClassifier = async (req, res) => {
     // Error if the request body is empty
     if (!req.body) {
@@ -24,6 +26,7 @@ const testClassifier = async (req, res) => {
     try {
         const result = await classifierService.classifyImage(polygon);
 
+
         // Structure the result object
         if(!result.urlFormat){
             return res.status(500).json({
@@ -38,9 +41,12 @@ const testClassifier = async (req, res) => {
 
         // Save the classification result
         const savedResult = await classifyResultModel.saveClassificationResult(client, user_id, polygon.id, classificationResult);
-
         // Change polygon classification status
         await polygonModel.updatePolygonClassificationStatus(client, polygon.id, 'classified');
+
+        // Send SSE event
+        sseService.sendEvent(user_id, {action: "classification_complete", data: savedResult});
+
 
         res.status(200).json(savedResult);
     } catch (error) {

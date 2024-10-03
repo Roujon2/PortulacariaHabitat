@@ -39,7 +39,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
             setPrevPolygon(polygon);
         }
 
-    }, [polygon]);
+    }, [polygon, polygon.classification_status, isEdited]);
 
     // On save
     const onSave = () => {

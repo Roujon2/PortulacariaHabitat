@@ -38,7 +38,7 @@ const InteractiveMap: React.FC = () => {
     const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
-        polygonResultToDisplay
+        polygonResultToDisplay, setPolygonResultsOnMap
         } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
@@ -328,6 +328,10 @@ const InteractiveMap: React.FC = () => {
         
         // Add overlay to overlays
         setOverlays(prev => ({ ...prev, [polygon.id]: overlayMapParams }));
+
+        // Add result to polygon results on map
+
+
     };
 
     // Function to add polygon to the map
@@ -382,6 +386,9 @@ const InteractiveMap: React.FC = () => {
                         return newOverlays;
                     });
                 }
+
+                // Remove polygon from polygonResultsOnMap
+                
             }
         }
     }

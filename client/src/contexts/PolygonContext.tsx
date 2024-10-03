@@ -34,6 +34,9 @@ interface PolygonContextProps {
 
     setSuccessMessage: (message: string) => void;
     successMessage: string;
+
+    polygonResultsOnMap : Polygon[];
+    setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 }
 
 const call_limit = 10;
@@ -48,6 +51,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygons, setPolygons] = useState<Polygon[]>([]);
     // Polygons on the map
     const [polygonsOnMap, setPolygonsOnMap] = useState<Polygon[]>([]);
+    // Polygon results on the map
+    const [polygonResultsOnMap, setPolygonResultsOnMap] = useState<Polygon[]>([]);
 
     // Polygon to be updated 
     const [polygonToUpdate, setPolygonToUpdate] = useState<Polygon | null>(null);
@@ -90,6 +95,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     // Function to refresh list on map
     const resetMapPolygons = async () => {
         setPolygonsOnMap([]);
+
+        // Reset polygon results on map
+        
     }
 
     // Function to refresh the list of polygons
@@ -263,7 +271,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         centerOnPolygons, setCenterOnPolygons,
                                         polygonToClassify, classifyPolygon,
                                         polygonResultToDisplay, setPolygonResultToDisplay,
-                                        setSuccessMessage, successMessage }}>
+                                        setSuccessMessage, successMessage,
+                                        polygonResultsOnMap, setPolygonResultsOnMap
+                                        }}>
             {children}
         </PolygonContext.Provider>
     );

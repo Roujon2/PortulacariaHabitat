@@ -126,7 +126,7 @@ const PolygonsMenu: React.FC = () => {
             setEditPolygonSelected(undefined);
         }
     }
-    , [selectedPolygonDetailsId]);
+    , [selectedPolygonDetailsId, polygons]);
 
 
     return (
