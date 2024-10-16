@@ -199,7 +199,7 @@ const InteractiveMap: React.FC = () => {
                 // Overlay
                 addOverlay(polygonSpekboomMask.urlFormat, polygon);
 
-                
+                setSuccessMessage('Spekboom mask overlay added to map');
             }
         }
     }, [polygonSpekboomMask]);
@@ -328,6 +328,9 @@ const InteractiveMap: React.FC = () => {
     const addOverlay = (url: string, polygon: Polygon) => {
         // If there is no map, return
         if (!map) return;
+
+        // If the overlay already exists, return
+        if (overlays[polygon.id]) return;
 
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {

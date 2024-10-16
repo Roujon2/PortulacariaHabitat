@@ -5,6 +5,8 @@ import { FiSave } from "react-icons/fi";
 import { FaTrashCan } from "react-icons/fa6";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 
+import { reuleaux } from 'ldrs';
+
 import './polygonDetails.css';
 
 import HoverText from './../HoverText/HoverText';
@@ -19,9 +21,11 @@ interface PolygonDetailsProps {
     handleGetResult: (polygonId: number) => void;
 
     handleSpekboomMask: (polygonId: number) => void;
+
+    loading: boolean;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult, handleSpekboomMask }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult, handleSpekboomMask, loading }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
     
     // State var to track if there are any differences to save
@@ -30,6 +34,9 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
     // Var to track to show save confirmation
     const [showSaveConfirmation, setShowSaveConfirmation] = React.useState(false);
     const [prevPolygon, setPrevPolygon] = React.useState<Polygon>();
+
+    // Register reuleaux
+    reuleaux.register('loading-reuleaux');
 
     // UseEffect to update edited polygon when polygon changes
     React.useEffect(() => {
@@ -225,9 +232,22 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
             
                 {/* renderClassificationButton() */}
 
-                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)}>
+                {!loading ? 
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)}>
                         Spekboom Mask
-                </button>
+                    </button> 
+                :
+                    <div className='spinner-container'>
+                        {React.createElement('loading-reuleaux', {
+                            size: "25",
+                            stroke: "3",
+                            'stroke-length': "0.15",
+                            'bg-opacity': "0.1",
+                            speed: "1", 
+                            color: '#208350'
+                        })}
+                    </div>
+                }
 
                 <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} onClick={onSave} disabled={!isEdited}>
                     <FiSave />

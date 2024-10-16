@@ -36,6 +36,10 @@ function SSEComponent() {
                 case 'polygon_save':
                     setSuccessMessage('Polygon saved');
                     break;
+                
+                case 'spekboom_mask_processing':
+                    setSuccessMessage('Spekboom mask processing');
+                    break;
 
                 default:
                     break;

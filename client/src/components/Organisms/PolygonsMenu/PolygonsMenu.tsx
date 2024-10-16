@@ -24,7 +24,7 @@ import PolygonUpload from "../../Atoms/PolygonUpload/PolygonUpload";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loadMorePolygons, getSpekboomMask, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon, setPolygonResultToDisplay } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, getSpekboomMask, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon, setPolygonResultToDisplay } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -170,6 +170,7 @@ const PolygonsMenu: React.FC = () => {
                             handleClassify={classifyPolygon}
                             handleGetResult={handleGetClassificationResult}
                             handleSpekboomMask={getSpekboomMask}
+                            loading={loading}
                         />
                     ) : (
                         <p className="polygon-details-empty">Select a polygon to view details.</p>

@@ -135,6 +135,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             }
         }catch(error){
             console.error("Error refreshing polygons:", error);
+        }finally{
+            setLoading(false);
         }
     };
 
@@ -267,6 +269,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Retrieve spekboom mask for polygon
     const getSpekboomMask = async (polygonId: number) => {
+        setLoading(true);
         try{
             // Find polygon in list polygons
             const polygon = polygons.find(p => p.id === polygonId);
@@ -283,6 +286,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         }catch(error){
             console.error("Error getting spekboom mask:", error);
+        }finally{
+            setLoading(false);
         }
     };
 

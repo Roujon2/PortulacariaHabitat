@@ -92,6 +92,9 @@ const getSpekboomMask = async (req, res) => {
         res.status(500).json({
             error: 'Error getting spekboom mask: ' + error.message,
         });
+    }finally{
+        // Release the client after request
+        if(client) client.release();
     }
 };
 
