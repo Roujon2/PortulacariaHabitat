@@ -38,7 +38,8 @@ const InteractiveMap: React.FC = () => {
     const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
-        polygonResultToDisplay, setPolygonResultsOnMap
+        polygonResultToDisplay, setPolygonResultsOnMap,
+        polygonSpekboomMask, polygonsOnMap
         } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
@@ -186,6 +187,22 @@ const InteractiveMap: React.FC = () => {
                 });
         }
     }, [polygonResultToDisplay]);
+
+    // UseEffect to track polygon spekboom mask to display
+    useEffect(() => {
+        if (polygonSpekboomMask) {
+            // Overlay spekboom mask on map
+            if(polygonSpekboomMask.urlFormat){
+                // Get random polygon
+                const polygon = polygonsOnMap[Math.floor(Math.random() * polygonsOnMap.length)];
+
+                // Overlay
+                addOverlay(polygonSpekboomMask.urlFormat, polygon);
+
+                
+            }
+        }
+    }, [polygonSpekboomMask]);
 
 
     // Load the google maps api script

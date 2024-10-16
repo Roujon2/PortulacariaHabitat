@@ -244,6 +244,25 @@ const getPolygonClassification = async (polygonId: number) => {
     }
 }
 
+// Function to get spekboom mask
+const getSpekboomMask = async (polygon: Polygon) => {
+    try{
+        // Post polygon to spekboom mask endpoint
+        const spekboomMask = await axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/spekboom_mask`,
+            data: {polygon: polygon},
+            withCredentials: true,
+        });
+
+        // Return overlay data
+        return spekboomMask.data;
+
+    }catch(error){
+        console.error("Error getting spekboom mask:", error);
+    }
+}
+
 export default {
     savePolygon,
     updatePolygon,
@@ -255,4 +274,5 @@ export default {
     loadMorePolygons,
     classifyPolygon,
     getPolygonClassification,
+    getSpekboomMask,
 }

@@ -42,7 +42,7 @@ const testClassifier = async (req, res) => {
         // Save the classification result
         const savedResult = await classifyResultModel.saveClassificationResult(client, user_id, polygon.id, classificationResult);
         // Change polygon classification status
-        await polygonModel.updatePolygonClassificationStatus(client, polygon.id, 'classified');
+        await polygonModel.updatePolygonClassificationStatus(client, polygon.id, 'pending'); // CHANGED FROM 'classified' TO 'pending' CAUSE BROKEN
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "classification_complete", data: savedResult});
@@ -59,6 +59,42 @@ const testClassifier = async (req, res) => {
     }
 
 };
+
+// Function to get spekboom mask
+const getSpekboomMask = async (req, res) => {
+    if(!req.body){
+        return res.status(400).json({
+            error: 'Missing request body',
+        });
+    }
+
+    if(!req.body.polygon){
+        return res.status(400).json({
+            error: 'Missing polygon in request body',
+        });
+    }
+
+    const polygon = req.body.polygon;
+    const client = res.locals.dbClient;
+
+    try {
+        // Get the spekboom mask
+        const mask = await classifierService.getSpekboomMask(polygon);
+
+        if(!mask.urlFormat){
+            return res.status(500).json({
+                error: 'Error getting spekboom mask.',
+            });
+        }
+
+        res.status(200).json(mask);
+    }catch(error){
+        res.status(500).json({
+            error: 'Error getting spekboom mask: ' + error.message,
+        });
+    }
+};
+
 
 // Function to get a polygon classification result
 const getPolygonClassificationResult = async (req, res) => {
@@ -89,4 +125,5 @@ const getPolygonClassificationResult = async (req, res) => {
 export default {
     testClassifier,
     getPolygonClassificationResult,
+    getSpekboomMask,
 };

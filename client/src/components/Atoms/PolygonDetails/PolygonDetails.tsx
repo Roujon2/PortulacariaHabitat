@@ -17,9 +17,11 @@ interface PolygonDetailsProps {
     onMap: boolean;
     handleClassify: (polygonId: number) => void;
     handleGetResult: (polygonId: number) => void;
+
+    handleSpekboomMask: (polygonId: number) => void;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult, handleSpekboomMask }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
     
     // State var to track if there are any differences to save
@@ -221,7 +223,11 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                     </span>
                 </HoverText>
             
-                {renderClassificationButton()}
+                {/* renderClassificationButton() */}
+
+                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)}>
+                        Spekboom Mask
+                </button>
 
                 <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} onClick={onSave} disabled={!isEdited}>
                     <FiSave />

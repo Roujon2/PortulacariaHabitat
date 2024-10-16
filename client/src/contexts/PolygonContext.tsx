@@ -37,6 +37,9 @@ interface PolygonContextProps {
 
     polygonResultsOnMap : Polygon[];
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
+
+    getSpekboomMask: (polygonId: number) => void;
+    polygonSpekboomMask: any | null;
 }
 
 const call_limit = 10;
@@ -64,6 +67,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonToClassify, setPolygonToClassify] = useState<Polygon | null>(null);
 
     const [polygonResultToDisplay, setPolygonResultToDisplay] = useState<Polygon | null>(null);
+
+    // Polygon spekboom mask
+    const [polygonSpekboomMask, setPolygonSpekboomMask] = useState<any | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -257,6 +263,28 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             });
         });
     };
+    
+
+    // Retrieve spekboom mask for polygon
+    const getSpekboomMask = async (polygonId: number) => {
+        try{
+            // Find polygon in list polygons
+            const polygon = polygons.find(p => p.id === polygonId);
+
+            if(!polygon){
+                return;
+            }
+
+            // Call api to get spekboom mask
+            const spekboomMask = await polygonApi.getSpekboomMask(polygon);
+
+            // Set spekboom mask polygon
+            setPolygonSpekboomMask(spekboomMask);
+
+        }catch(error){
+            console.error("Error getting spekboom mask:", error);
+        }
+    };
 
 
 
@@ -272,7 +300,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         polygonToClassify, classifyPolygon,
                                         polygonResultToDisplay, setPolygonResultToDisplay,
                                         setSuccessMessage, successMessage,
-                                        polygonResultsOnMap, setPolygonResultsOnMap
+                                        polygonResultsOnMap, setPolygonResultsOnMap,
+                                        getSpekboomMask, polygonSpekboomMask
                                         }}>
             {children}
         </PolygonContext.Provider>
