@@ -39,7 +39,7 @@ interface PolygonContextProps {
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 
     getSpekboomMask: (polygonId: number) => void;
-    polygonSpekboomMask: any | null;
+    polygonSpekboomMask: {overlayUrl: string, polygonId: number} | null;
 }
 
 const call_limit = 10;
@@ -69,7 +69,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonResultToDisplay, setPolygonResultToDisplay] = useState<Polygon | null>(null);
 
     // Polygon spekboom mask
-    const [polygonSpekboomMask, setPolygonSpekboomMask] = useState<any | null>(null);
+    const [polygonSpekboomMask, setPolygonSpekboomMask] = useState<{overlayUrl: string, polygonId: number} | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -269,20 +269,28 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Retrieve spekboom mask for polygon
     const getSpekboomMask = async (polygonId: number) => {
+        // If polygon id in polygonResultsOnMap, return
+        if(polygonResultsOnMap.find(p => p.id === polygonId)){
+            setSuccessMessage('Spekboom mask already on map');
+            return;
+        }
+
         setLoading(true);
         try{
-            // Find polygon in list polygons
-            const polygon = polygons.find(p => p.id === polygonId);
-
-            if(!polygon){
-                return;
-            }
-
             // Call api to get spekboom mask
-            const spekboomMask = await polygonApi.getSpekboomMask(polygon);
+            const spekboomMask = await polygonApi.getSpekboomMask(polygonId);
+
+            // Retrieve overlay url from spekboomMask response
+            const overlayUrl : string = spekboomMask.urlFormat;
+
+            // Build spekboomMask object
+            const spekboomMaskObject = {
+                overlayUrl: overlayUrl,
+                polygonId: polygonId
+            };
 
             // Set spekboom mask polygon
-            setPolygonSpekboomMask(spekboomMask);
+            setPolygonSpekboomMask(spekboomMaskObject);
 
         }catch(error){
             console.error("Error getting spekboom mask:", error);

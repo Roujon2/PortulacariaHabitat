@@ -245,13 +245,12 @@ const getPolygonClassification = async (polygonId: number) => {
 }
 
 // Function to get spekboom mask
-const getSpekboomMask = async (polygon: Polygon) => {
+const getSpekboomMask = async (polygonId: number) => {
     try{
         // Post polygon to spekboom mask endpoint
         const spekboomMask = await axios({
             method: 'post',
-            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/classifier/spekboom_mask`,
-            data: {polygon: polygon},
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/${polygonId}/classify/spekboom_mask`,
             withCredentials: true,
         });
 

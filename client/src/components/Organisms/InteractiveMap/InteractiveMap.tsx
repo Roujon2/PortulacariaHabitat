@@ -38,7 +38,7 @@ const InteractiveMap: React.FC = () => {
     const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
-        polygonResultToDisplay, setPolygonResultsOnMap,
+        polygonResultToDisplay, setPolygonResultsOnMap, polygonResultsOnMap,
         polygonSpekboomMask, polygonsOnMap
         } = usePolygonContext();
 
@@ -159,7 +159,7 @@ const InteractiveMap: React.FC = () => {
                 .then((classifyData) => {
                     // Overlay the classified polygon on the map
                     if(classifyData.classification_result_url){
-                        addOverlay(classifyData.classification_result_url, polygonToClassify);
+                        addOverlay(classifyData.classification_result_url, polygonToClassify.id);
                     }else{
                         console.error("No url format found in classify data.");
                     }
@@ -178,7 +178,7 @@ const InteractiveMap: React.FC = () => {
                 .then((classificationResult) => {
                     // Overlay the classified polygon on the map
                     if(classificationResult.classification_result_url){
-                        addOverlay(classificationResult.classification_result_url, polygonResultToDisplay);
+                        addOverlay(classificationResult.classification_result_url, polygonResultToDisplay.id);
                     }else{
                         console.error("No url format found in classification result.");
                     }
@@ -192,12 +192,9 @@ const InteractiveMap: React.FC = () => {
     useEffect(() => {
         if (polygonSpekboomMask) {
             // Overlay spekboom mask on map
-            if(polygonSpekboomMask.urlFormat){
-                // Get random polygon
-                const polygon = polygonsOnMap[Math.floor(Math.random() * polygonsOnMap.length)];
-
+            if(polygonSpekboomMask.overlayUrl){
                 // Overlay
-                addOverlay(polygonSpekboomMask.urlFormat, polygon);
+                addOverlay(polygonSpekboomMask.overlayUrl, polygonSpekboomMask.polygonId);
 
                 setSuccessMessage('Spekboom mask overlay added to map');
             }
@@ -325,12 +322,12 @@ const InteractiveMap: React.FC = () => {
     }
 
     // Function to add an overlay to the map
-    const addOverlay = (url: string, polygon: Polygon) => {
+    const addOverlay = (url: string, polygonId: number) => {
         // If there is no map, return
         if (!map) return;
 
         // If the overlay already exists, return
-        if (overlays[polygon.id]) return;
+        if (overlays[polygonId]) return;
 
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {
@@ -347,10 +344,14 @@ const InteractiveMap: React.FC = () => {
         map.overlayMapTypes.push(overlayMapParams);
         
         // Add overlay to overlays
-        setOverlays(prev => ({ ...prev, [polygon.id]: overlayMapParams }));
+        setOverlays(prev => ({ ...prev, [polygonId]: overlayMapParams }));
 
         // Add result to polygon results on map
-
+        // Get polygon from id
+        const polygon : Polygon | undefined = polygonsOnMap.find(p => p.id === polygonId);
+        if (polygon) {
+            setPolygonResultsOnMap([...polygonResultsOnMap, polygon]);
+        }
 
     };
 
@@ -436,6 +437,8 @@ const InteractiveMap: React.FC = () => {
         setShowSavePolygonMenu(false);
         setShowErrorBox(false);
         setSelectedPolygonDetailsId(null);
+
+        setPolygonResultsOnMap([]);
 
         // Reset map polygons
         resetMapPolygons();

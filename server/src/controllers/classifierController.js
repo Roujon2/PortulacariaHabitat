@@ -62,22 +62,22 @@ const testClassifier = async (req, res) => {
 
 // Function to get spekboom mask
 const getSpekboomMask = async (req, res) => {
-    if(!req.body){
-        return res.status(400).json({
-            error: 'Missing request body',
-        });
-    }
-
-    if(!req.body.polygon){
-        return res.status(400).json({
-            error: 'Missing polygon in request body',
-        });
-    }
-
-    const polygon = req.body.polygon;
+    // Retrieve polygon id from params
+    const id = req.params.id;
+    
+    // DB client
     const client = res.locals.dbClient;
 
-    try {
+    try{
+        // Find polygon in db
+        const polygon = await polygonModel.getPolygon(client, id);
+
+        if(!polygon){
+            return res.status(404).json({
+                error: 'Polygon not found',
+            });
+        }
+
         // Get the spekboom mask
         const mask = await classifierService.getSpekboomMask(polygon);
 

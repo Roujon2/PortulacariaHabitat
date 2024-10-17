@@ -1,6 +1,7 @@
 import express from 'express';
 import polygonController from '../controllers/polygonController.js';
 import authMiddleware from '../middlewares/auth.js';
+import classifierController from '../controllers/classifierController.js';
 
 const router = express.Router();
 
@@ -27,6 +28,12 @@ router.put('/:id', authMiddleware.authorizeToken, polygonController.updatePolygo
 // Delete polygon
 router.delete('/:id', authMiddleware.authorizeToken, polygonController.deletePolygon);
 router.delete('/', authMiddleware.authorizeToken, polygonController.deletePolygons);
+
+
+// Polygon classification
+
+// Get spekboom mask
+router.post('/:id/classify/spekboom_mask', authMiddleware.authorizeToken, classifierController.getSpekboomMask);
 
 
 export default router;
