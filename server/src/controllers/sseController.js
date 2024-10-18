@@ -8,6 +8,14 @@ function connect(req, res) {
 
     res.flushHeaders();
 
+    // Send keep-alive
+    const keepAliveInterval = setInterval(() => {
+        res.write(': keep-alive\n\n');
+    }, 3000);
+
+    // Initial heartbeat
+    res.write("\n\n");
+
     // Get user id from request object
     const clientId = req.user.id;
 
@@ -19,6 +27,7 @@ function connect(req, res) {
 
     // Handle connection close
     req.on("close", () => {
+        clearInterval(keepAliveInterval);
         sseService.removeClient(clientId);
     });
 };

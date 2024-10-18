@@ -9,6 +9,8 @@ import classifierRoute from './src/routes/classifierRoutes.js';
 import sseRoutes from './src/routes/sseRoutes.js';
 import polygonRoutes from './src/routes/polygonRoutes.js';
 
+import { setSseHeaders } from './src/middlewares/sse.js';
+
 import https from 'https';
 import fs from 'fs';
 
@@ -37,7 +39,7 @@ app.use('/ndvi', ndviRoute);
 app.use('/classifier', classifierRoute);
 
 // Routes for SSE
-app.use('/sse', sseRoutes);
+app.use('/sse', setSseHeaders, sseRoutes);
 
 // Routes for polygons
 app.use('/polygons', polygonRoutes);
