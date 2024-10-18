@@ -30,6 +30,9 @@ const getGoogleTokenParams = (code) =>
 const verifyGoogleAuth = async (req, res) => {
     const { code } = req.query;
 
+    // Get db client
+    const client = res.locals.dbClient;
+
     // If the query doesn't exist
     if (!code) {
         return res.status(400).json({ error: 'Authorization code not provided.' });
@@ -56,7 +59,7 @@ const verifyGoogleAuth = async (req, res) => {
         };
 
         // Check if the user exists in the database
-        const dbUser = await getUserByEmail(user.email);
+        const dbUser = await getUserByEmail(client, user.email);
 
         // If the user doesn't exist, reject the request
         if (!dbUser) {
@@ -73,7 +76,11 @@ const verifyGoogleAuth = async (req, res) => {
         res.json({user});
     }catch(error){
         console.error('Error: ', error.message);
-        return res.status(500).json({ message: 'Error verifying authorization code. '+ error.message })
+        res.status(500).json({ message: 'Error verifying authorization code. '+ error.message })
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 

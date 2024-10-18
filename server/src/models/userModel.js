@@ -1,8 +1,5 @@
-import pool from '../../config/dbConfig.js';
-
-const getUserByEmail = async (email) => {
+const getUserByEmail = async (client, email) => {
   // Parameters
-  const client = await pool.connect();
   const query = 'SELECT * FROM users WHERE email = $1';
   const values = [email];
 
@@ -12,8 +9,6 @@ const getUserByEmail = async (email) => {
     return result.rows[0];
   }catch(err){
     console.error("Error fetching user by email:", err);
-  }finally{
-    client.release();
   }
 };
 

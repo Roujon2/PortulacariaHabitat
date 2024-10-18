@@ -12,10 +12,14 @@ const savePolygon = async (req, res) => {
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_save", data: savedPolygon});
 
-        return res.status(201).json(savedPolygon);
+        res.status(201).json(savedPolygon);
     }catch(err){
         console.error("Failed to save polygon:", err);
-        return res.status(500).json({error: "Failed to save polygon:", err});
+        res.status(500).json({error: "Failed to save polygon:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -32,9 +36,13 @@ const updatePolygon = async (req, res) => {
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_update", data: updatedPolygon});
 
-        return res.status(200).json(updatedPolygon);
+        res.status(200).json(updatedPolygon);
     }catch(err){
-        return res.status(500).json({error: "Failed to update polygon:", err});
+        res.status(500).json({error: "Failed to update polygon:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -50,9 +58,13 @@ const deletePolygon = async (req, res) => {
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: deletedPolygon});
 
-        return res.status(200).json(deletedPolygon);
+        res.status(200).json(deletedPolygon);
     }catch(err){
-        return res.status(500).json({error: "Failed to delete polygon:", err});
+        res.status(500).json({error: "Failed to delete polygon:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -64,9 +76,13 @@ const getPolygon = async (req, res) => {
 
     try{
         const polygon = await polygonModel.getPolygon(client, polygon_id);
-        return res.status(200).json(polygon);
+        res.status(200).json(polygon);
     }catch(err){
-        return res.status(500).json({error: "Failed to get polygon:", err});
+        res.status(500).json({error: "Failed to get polygon:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -79,9 +95,13 @@ const loadMorePolygons = async (req, res) => {
 
     try{
         const polygons = await polygonModel.loadMorePolygons(client, user_id, limit, last_updated_at);
-        return res.status(200).json(polygons);
+        res.status(200).json(polygons);
     }catch(err){
-        return res.status(500).json({error: "Failed to get polygons:", err});
+        res.status(500).json({error: "Failed to get polygons:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -94,9 +114,13 @@ const refreshPolygons = async (req, res) => {
 
     try{
         const polygons = await polygonModel.refreshPolygons(client, user_id, last_updated_at, limit);
-        return res.status(200).json(polygons);
+        res.status(200).json(polygons);
     }catch(err){
-        return res.status(500).json({error: "Failed to get polygons:", err});
+        res.status(500).json({error: "Failed to get polygons:", err});
+    }finally{
+        if(client){
+            client.release();  
+        }
     }
 };
 
@@ -113,9 +137,13 @@ const deletePolygons = async (req, res) => {
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: polygon_ids});
 
-        return res.status(200).json({message: "Polygons deleted"});
+        res.status(200).json({message: "Polygons deleted"});
     }catch(err){
-        return res.status(500).json({error: "Failed to delete polygons:", err});
+        res.status(500).json({error: "Failed to delete polygons:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 }
 
@@ -127,9 +155,13 @@ const getPolygonsCount = async (req, res) => {
 
     try{
         const count = await polygonModel.getPolygonsCount(client, user_id);
-        return res.status(200).json({count});
+        res.status(200).json({count});
     }catch(err){
-        return res.status(500).json({error: "Failed to get polygons count:", err});
+        res.status(500).json({error: "Failed to get polygons count:", err});
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 

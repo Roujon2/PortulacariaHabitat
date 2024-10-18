@@ -53,6 +53,10 @@ const testClassifier = async (req, res) => {
         res.status(500).json({
             error: 'Error with test classifier: ' + error.message,
         });
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -88,6 +92,10 @@ const getSpekboomMask = async (req, res) => {
         res.status(500).json({
             error: 'Error getting spekboom mask: ' + error.message,
         });
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 
@@ -112,6 +120,10 @@ const getPolygonClassificationResult = async (req, res) => {
         res.status(500).json({
             error: 'Error getting polygon classification result: ' + error.message,
         });
+    }finally{
+        if(client){
+            client.release();
+        }
     }
 };
 

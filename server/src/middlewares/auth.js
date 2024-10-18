@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import config from '../../config/config.js';
-import pool from '../../config/dbConfig.js';
 
 // Auth middleware verification
 const authorizeToken = async (req, res, next) => {

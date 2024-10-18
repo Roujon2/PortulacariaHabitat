@@ -20,12 +20,17 @@ export const generateClient = async (req, res, next) => {
         return next();
     }catch (error){
         console.error("Error generating DB client: ", error.message);
-        return res.status(500).json({message: "Database connection error."});
+        // Try and release it just in case
+        if(client){
+            client.release();
+        }
+        res.status(500).json({message: "Database connection error."});
     }
 };
 
 export const releaseClient = async(req, res, next) => {
     const client = res.locals.dbClient;
+    console.log('In client release');
 
     // If the client exists, release it
     if(client){
