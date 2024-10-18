@@ -13,7 +13,9 @@ const router = express.Router();
 // Refreshing list
 router.get('/refresh', 
     authMiddleware.authorizeToken, 
-    polygonController.refreshPolygons
+    generateClient,
+    polygonController.refreshPolygons,
+    releaseClient
 );
 // Loading more
 router.get('/loadmore', 
