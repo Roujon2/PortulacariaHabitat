@@ -1,7 +1,7 @@
 import config from '../../config/config.js';
 import pool from '../../config/dbConfig.js';
 
-const generateClient = async (req, res, next) => {
+export const generateClient = async (req, res, next) => {
     try{
         // Retrieve user from req
         const user = req.user;
@@ -24,7 +24,7 @@ const generateClient = async (req, res, next) => {
     }
 };
 
-const releaseClient = async(req, res, next) => {
+export const releaseClient = async(req, res, next) => {
     const client = res.locals.dbClient;
 
     // If the client exists, release it
@@ -34,8 +34,3 @@ const releaseClient = async(req, res, next) => {
 
     return next();
 };
-
-export default {
-    generateClient,
-    releaseClient
-}

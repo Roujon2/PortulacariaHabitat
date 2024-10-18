@@ -2,8 +2,8 @@ import express from 'express';
 import classifierController from '../controllers/classifierController.js';
 import authMiddleware from '../middlewares/auth.js';
 import validateData from '../middlewares/validateData.js';
-import generateClient from '../middlewares/db.js';
-import releaseClient from '../middlewares/db.js';
+import { generateClient, releaseClient } from '../middlewares/db.js';
+
 
 const router = express.Router();
 
