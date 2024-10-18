@@ -16,9 +16,6 @@ const savePolygon = async (req, res) => {
     }catch(err){
         console.error("Failed to save polygon:", err);
         return res.status(500).json({error: "Failed to save polygon:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -38,9 +35,6 @@ const updatePolygon = async (req, res) => {
         return res.status(200).json(updatedPolygon);
     }catch(err){
         return res.status(500).json({error: "Failed to update polygon:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -59,9 +53,6 @@ const deletePolygon = async (req, res) => {
         return res.status(200).json(deletedPolygon);
     }catch(err){
         return res.status(500).json({error: "Failed to delete polygon:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -76,9 +67,6 @@ const getPolygon = async (req, res) => {
         return res.status(200).json(polygon);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygon:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -94,9 +82,6 @@ const loadMorePolygons = async (req, res) => {
         return res.status(200).json(polygons);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -112,9 +97,6 @@ const refreshPolygons = async (req, res) => {
         return res.status(200).json(polygons);
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 
@@ -134,9 +116,6 @@ const deletePolygons = async (req, res) => {
         return res.status(200).json({message: "Polygons deleted"});
     }catch(err){
         return res.status(500).json({error: "Failed to delete polygons:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 }
 
@@ -151,9 +130,6 @@ const getPolygonsCount = async (req, res) => {
         return res.status(200).json({count});
     }catch(err){
         return res.status(500).json({error: "Failed to get polygons count:", err});
-    }finally{
-        // Release the client after request
-        if(client) client.release();
     }
 };
 

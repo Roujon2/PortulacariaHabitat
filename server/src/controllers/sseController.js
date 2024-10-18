@@ -2,6 +2,10 @@ import sseService from "../services/sseService.js";
 
 // SSE connection handler
 function connect(req, res) {
+    // Release db client since sse won't be using it
+    const dbClient = res.locals.dbClient
+    dbClient.release();
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
