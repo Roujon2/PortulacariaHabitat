@@ -2,6 +2,7 @@ import config from '../../config/config.js';
 import queryString from 'query-string';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import pool from '../../config/dbConfig.js';
 
 import { getUserByEmail } from '../models/userModel.js';
 
@@ -31,14 +32,15 @@ const verifyGoogleAuth = async (req, res) => {
     const { code } = req.query;
 
     // Get db client
-    const client = res.locals.dbClient;
-
-    // If the query doesn't exist
-    if (!code) {
-        return res.status(400).json({ error: 'Authorization code not provided.' });
-    }
+    const client = await pool.connect();
 
     try{
+
+        // If the query doesn't exist
+        if (!code) {
+            return res.status(400).json({ error: 'Authorization code not provided.' });
+        }
+
         // Extract all params needed for the token exchange
         const tokenParams = getGoogleTokenParams(code);
 
