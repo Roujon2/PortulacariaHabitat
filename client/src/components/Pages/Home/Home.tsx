@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 import { PolygonContextProvider } from '../../../contexts/PolygonContext';
 
@@ -15,6 +15,9 @@ import ProfileMenu from '../../Organisms/ProfileMenu/ProfileMenu';
 import PolygonsMenu from '../../Organisms/PolygonsMenu/PolygonsMenu';
 import SSEComponent from '../../Atoms/SSEComponent/sseComponent';
 
+// Server offline box
+import ServerOfflineBox from '../../Atoms/ServerOfflineBox/ServerOfflineBox';
+
 
 interface HomeProps {
     // Selected menu item
@@ -23,6 +26,16 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({selectedMenu}) => {
     const { user } = useContext(AuthContext) as AuthContextProps;
+    
+    // State var to keep track of if the server is online
+    const [serverOnline, setServerOnline] = useState(true);
+
+    // UseEffect keeping track of the server status
+    useEffect(() => {
+        if (!serverOnline) {
+            console.log('Server offline');
+        }
+    }, [serverOnline]);
 
     if (!user) {
         return <p>Loading from Home...</p>;
@@ -42,7 +55,9 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
                         {selectedMenu === 'polygons' && <PolygonsMenu />}
                     </Panel>
                 </PanelGroup>
-                <SSEComponent />
+                <SSEComponent setServerOnline={setServerOnline}/>
+
+                {!serverOnline && <ServerOfflineBox />}
             </div>
         </PolygonContextProvider>
     );

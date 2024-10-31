@@ -46,7 +46,7 @@ app.use('/polygons', polygonRoutes);
 
 // Heath check
 app.get('/health', (req, res) => {
-    res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString() });
+    res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString(), status: 200 });
 });
 
 

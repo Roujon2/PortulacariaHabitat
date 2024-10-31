@@ -3,6 +3,13 @@ import { NewPolygon, Polygon } from '../types/polygon';
 
 // Function to save polygon to the database
 const savePolygon = async (polygon: NewPolygon) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Save polygon to database
         const savedPolygon = await axios({
@@ -35,6 +42,13 @@ const savePolygon = async (polygon: NewPolygon) => {
 
 // Function to update polygon in the database
 const updatePolygon = async (polygon: Polygon) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Update polygon in database
         const updatedPolygon = await axios({
@@ -67,6 +81,13 @@ const updatePolygon = async (polygon: Polygon) => {
 
 // Function to delete polygon from the database
 const deletePolygon = async (polygonId: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Delete polygon from database
         await axios({
@@ -81,6 +102,13 @@ const deletePolygon = async (polygonId: number) => {
 }
 // Function deleting multiple polygons
 const deletePolygons = async (polygonIds: number[]) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Delete polygons from database
         const deletedPolygons = await axios({
@@ -99,6 +127,13 @@ const deletePolygons = async (polygonIds: number[]) => {
 
 // Function to get polygon from id
 const getPolygon = async (polygonId: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Get polygon from database
         const polygon = await axios({
@@ -130,6 +165,13 @@ const getPolygon = async (polygonId: number) => {
 
 // Function to refresh the table of polygons
 const refreshPolygons = async (last_updated_at: string | null, limit: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Get polygons from database
         const polygons = await axios({
@@ -163,6 +205,13 @@ const refreshPolygons = async (last_updated_at: string | null, limit: number) =>
 
 // Function to load more polygons to list
 const loadMorePolygons = async (last_updated_at: string | null, limit: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Get polygons from database
         const polygons = await axios({
@@ -195,6 +244,13 @@ const loadMorePolygons = async (last_updated_at: string | null, limit: number) =
 };
 
 const getPolygonCount = async () => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Get polygon count from database
         const polygonCount = await axios({
@@ -211,6 +267,13 @@ const getPolygonCount = async () => {
 
 // Function to classify a polygon
 const classifyPolygon = async (polygon: Polygon) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Post polygon to classification endpoint
         const classifiedPolygon = await axios({
@@ -230,6 +293,13 @@ const classifyPolygon = async (polygon: Polygon) => {
 
 // Function to get polygon classification result
 const getPolygonClassification = async (polygonId: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Get polygon classification from database
         const classification = await axios({
@@ -246,6 +316,13 @@ const getPolygonClassification = async (polygonId: number) => {
 
 // Function to get spekboom mask
 const getSpekboomMask = async (polygonId: number) => {
+    const backendStatus = await checkBackendStatus();
+
+    if (!backendStatus){
+        console.error("Server is offline!");
+        return;
+    }
+
     try{
         // Post polygon to spekboom mask endpoint
         const spekboomMask = await axios({
@@ -262,6 +339,23 @@ const getSpekboomMask = async (polygonId: number) => {
     }
 }
 
+// Function to check backend status
+const checkBackendStatus = async () => {
+    try{
+        // Get backend status
+        const status = await axios({
+            method: 'get',
+            url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/health`,
+            withCredentials: true,
+        });
+
+        return status.data.status === 200;
+    }catch(error){
+        console.error("Error getting backend status:", error);
+        return false;
+    }
+}
+
 export default {
     savePolygon,
     updatePolygon,
@@ -274,4 +368,5 @@ export default {
     classifyPolygon,
     getPolygonClassification,
     getSpekboomMask,
+    checkBackendStatus,
 }

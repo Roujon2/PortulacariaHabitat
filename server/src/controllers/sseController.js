@@ -23,7 +23,7 @@ function connect(req, res) {
     sseService.addClient(clientId, res);
 
     // Send a welcome message
-    sseService.sendEvent(clientId, { message: "SSE Connection established!" });
+    sseService.sendEvent(clientId, { message: "Initial SSE message" });
 
     // Handle connection close
     req.on("close", () => {
