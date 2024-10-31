@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import './interactiveMap.css';
 import { DrawingManagerF, GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { useMemo } from "react";
-import type { LoadScriptProps } from "@react-google-maps/api";
+import { LoadScriptProps, useJsApiLoader } from "@react-google-maps/api";
 import SavePolygonMenu, {SavePolygonMenuProps} from "../../Atoms/SavePolygonMenu/SavePolygonMenu";
 import {Polygon, NewPolygon } from "../../../types/polygon";
 
@@ -203,10 +203,9 @@ const InteractiveMap: React.FC = () => {
 
 
     // Load the google maps api script
-    const { isLoaded, loadError } = useLoadScript({
+    const { isLoaded, loadError } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string,
         libraries,
-        id: 'google-map-script',
     });
 
     // Cache center
