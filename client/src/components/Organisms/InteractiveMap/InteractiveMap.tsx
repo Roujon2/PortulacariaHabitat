@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './interactiveMap.css';
-import { DrawingManagerF, GoogleMap, useLoadScript } from "@react-google-maps/api";
+import { DrawingManagerF, GoogleMap } from "@react-google-maps/api";
 import { useMemo } from "react";
 import { LoadScriptProps, useJsApiLoader } from "@react-google-maps/api";
 import SavePolygonMenu, {SavePolygonMenuProps} from "../../Atoms/SavePolygonMenu/SavePolygonMenu";
@@ -135,6 +135,9 @@ const InteractiveMap: React.FC = () => {
             }else{
                 setSuccessMessage('Polygon/s already on map');
             }
+
+            // Center map to the new polygons
+            setCenterOnPolygons(newPolygons);
 
         }
     }, [polygonsToMap]);
