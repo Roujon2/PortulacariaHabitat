@@ -35,7 +35,7 @@ const InteractiveMap: React.FC = () => {
     const [showErrorBox, setShowErrorBox] = useState<boolean>(false);
 
     // Access polygons to be on map from context
-    const { resetMapPolygons, setSelectedPolygonDetailsId, polygonToUpdate, putOnMap, 
+    const { resetMapPolygons, setSelectedPolygonDetailsId, selectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
         polygonResultToDisplay, setPolygonResultsOnMap, polygonResultsOnMap,
@@ -83,10 +83,27 @@ const InteractiveMap: React.FC = () => {
         }
     }, [polygonToUpdate]);
 
+    // UseEffect tracking selected polygon details id
+    useEffect(() => {
+        if (selectedPolygonDetailsId) {
+            // Change stroke color of selected polygon
+            changeStrokeColor(selectedPolygonDetailsId, '#FFA500');
+        }
+    }, [selectedPolygonDetailsId]);
+
     // UseEffect tracking the polygon to center on
     useEffect(() => {
         if (centerOnPolygons) {
             if(centerOnPolygons.length > 0 && map){
+                // Check if at least one polygon is on map
+                const drawnPolygonsIds = drawnPolygons.map(p => p.get('id'));
+                const centerOnPolygonsIds = centerOnPolygons.map(p => p.id);
+                const polygonsOnMap = centerOnPolygonsIds.filter(id => drawnPolygonsIds.includes(id));
+
+                if (polygonsOnMap.length === 0) {
+                    return;
+                }
+
                 // Get map bounds
                 const bounds = new google.maps.LatLngBounds();
 
@@ -124,9 +141,6 @@ const InteractiveMap: React.FC = () => {
             // Reset polygons to map
             setPolygonsToMap([]);
 
-            // Put polygon details for first polygon added
-            setSelectedPolygonDetailsId(polygonsToMap[0].id);
-
             // Set success message
             if (newPolygons.length === 1) {
                 setSuccessMessage('Polygon added to map');
@@ -138,6 +152,9 @@ const InteractiveMap: React.FC = () => {
 
             // Center map to the new polygons
             setCenterOnPolygons(newPolygons);
+
+            // Put polygon details for first polygon added
+            setSelectedPolygonDetailsId(polygonsToMap[0].id);
 
         }
     }, [polygonsToMap]);
@@ -378,7 +395,7 @@ const InteractiveMap: React.FC = () => {
             newPolygon.set('id', polygon.id);
 
             newPolygon.addListener('click', () => {
-                // Selecte details for clicked polygon
+                // Selected details for clicked polygon
                 setSelectedPolygonDetailsId(newPolygon.get('id'));
             });
 
@@ -415,6 +432,27 @@ const InteractiveMap: React.FC = () => {
             }
         }
     }
+
+    // Function to change the stroke color of the selected polygon
+    const changeStrokeColor = (id: number, color: string) => {
+        if (map) {
+            // Reset stroke color of all polygons
+            drawnPolygons.forEach(polygon => {
+                polygon.setOptions({
+                    strokeColor: '#FF0000',
+                });
+            });
+
+            // Change the stroke color of the selected polygon
+            const polygon = drawnPolygons.find(p => p.get('id') === id);
+            if (polygon) {
+                polygon.setOptions({
+                    strokeColor: color,
+                });
+            }
+        }
+    }
+
 
     // Function to calculate polygon centroid
     const calculateCentroid = (polygon: Polygon) => {
