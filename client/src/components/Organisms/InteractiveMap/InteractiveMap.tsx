@@ -156,6 +156,9 @@ const InteractiveMap: React.FC = () => {
             // Put polygon details for first polygon added
             setSelectedPolygonDetailsId(polygonsToMap[0].id);
 
+            // Change stroke color of first polygon added
+            changeStrokeColor(polygonsToMap[0].id, '#FFA500');
+
         }
     }, [polygonsToMap]);
 

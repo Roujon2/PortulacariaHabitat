@@ -174,6 +174,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         }catch(error){
             console.error("Error loading more polygons:", error);
+        }finally{
+            setLoading(false);
         }
     };
 
