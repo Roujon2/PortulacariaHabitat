@@ -82,5 +82,13 @@ router.post('/:id/classify/spekboom_mask',
     releaseClient
 );
 
+// Classify spekboom
+router.post('/:id/classify/spekboom', 
+    authMiddleware.authorizeToken, 
+    generateClient,
+    classifierController.getSpekboomClassification,
+    releaseClient
+);
+
 
 export default router;

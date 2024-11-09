@@ -208,7 +208,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                 <div className="polygon-details__buttons">
                     <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
                         <span>
-                            <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter([polygon])} disabled={!onMap}>
+                            <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter([polygon])} disabled={!onMap} type='button'>
                                     <FaLocationCrosshairs />
                             </button>
                         </span>
@@ -217,8 +217,8 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                     {/* renderClassificationButton() */}
 
                     {!loading ? 
-                        <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)}>
-                            Spekboom Mask
+                        <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)} type='button'>
+                            Spekboom Classification
                         </button> 
                     :
                         <div className='spinner-container'>

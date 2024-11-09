@@ -23,6 +23,7 @@ const mapOptions = {
     zoomControl: false,
     streetViewControl: false,
     disableDefaultUI: true,
+    scaleControl: true
 };
 
 // Component for displaying and functionality of interactive map
@@ -57,6 +58,10 @@ const InteractiveMap: React.FC = () => {
     // Map var for overlays on map linked to polygon id
     const [overlays, setOverlays] = useState<{ [key: number]: google.maps.ImageMapType }>({});
 
+    // State var for checking zooming
+    const [isZooming, setIsZooming] = useState<boolean>(false);
+    // Zoom timeout 
+    const zoomTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // UseEffect tracking polygon to update
     useEffect(() => {
@@ -353,6 +358,35 @@ const InteractiveMap: React.FC = () => {
 
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {
+                const bounds = map.getBounds();
+                if (!bounds) return '';
+    
+                const projection = map.getProjection();
+                if (!projection) return '';
+    
+                // Calculate tile bounds
+                const tileSize = 256;
+                const scale = Math.pow(2, zoom);
+                const worldCoordinateSW = new google.maps.Point(
+                    coord.x * tileSize / scale,
+                    (coord.y + 1) * tileSize / scale
+                );
+                const worldCoordinateNE = new google.maps.Point(
+                    (coord.x + 1) * tileSize / scale,
+                    coord.y * tileSize / scale
+                );
+    
+                // Convert world coordinates to LatLng for the tile corners
+                const tileSW = projection.fromPointToLatLng(worldCoordinateSW);
+                const tileNE = projection.fromPointToLatLng(worldCoordinateNE);
+    
+                const tileBounds = new google.maps.LatLngBounds(tileSW, tileNE);
+    
+                // Check if tile is outside the camera view
+                if (!bounds.intersects(tileBounds)) {
+                    return '';
+                }
+    
                 return url
                     .replace('{x}', coord.x.toString())
                     .replace('{y}', coord.y.toString())
@@ -360,7 +394,8 @@ const InteractiveMap: React.FC = () => {
             },
             tileSize: new google.maps.Size(256, 256),
             opacity: 0.8,
-            name: 'NDVI'
+            name: 'Abundance',
+            maxZoom: 13,
         });
 
         map.overlayMapTypes.push(overlayMapParams);

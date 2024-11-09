@@ -127,8 +127,44 @@ const getPolygonClassificationResult = async (req, res) => {
     }
 };
 
+
+// Function to get spekboom classification
+const getSpekboomClassification = async (req, res) => {
+    const polygon_id = req.params.id;
+    const client = res.locals.dbClient;
+
+    try {
+        // Retrieve the polygon
+        const polygon = await polygonModel.getPolygon(client, polygon_id);
+
+        if (!polygon) {
+            return res.status(404).json({
+                error: 'Polygon not found',
+            });
+        }
+
+        // Get the spekboom classification
+        const result = await classifierService.classifySpekboom(polygon);
+
+        // Send SSE event
+        sseService.sendEvent(polygon.user_id, {action: "classification_complete", data: result});
+
+        res.status(200).json(result);
+
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error getting polygon classification result: ' + error.message,
+        });
+    }finally{
+        if(client){
+            client.release();
+        }
+    }
+};
+
 export default {
     testClassifier,
     getPolygonClassificationResult,
     getSpekboomMask,
+    getSpekboomClassification,
 };
