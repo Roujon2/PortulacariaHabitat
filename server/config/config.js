@@ -21,10 +21,10 @@ const config = {
         key: process.env.SSL_KEY_PATH
     },
     db: {
-        user: process.env.DB_USER,
+        user: process.env.DB_USER_CLIENT,
         host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME_CLIENT,
+        password: process.env.DB_PASSWORD_CLIENT,
         port: process.env.DB_PORT
     }
 };

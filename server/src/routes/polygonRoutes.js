@@ -37,38 +37,33 @@ router.get('/count',
 router.get('/:id', 
     authMiddleware.authorizeToken, 
     generateClient,
-    polygonController.getPolygon,
-    releaseClient
+    polygonController.getPolygon
 );
 
 // Save polygon
 router.post('/', 
     authMiddleware.authorizeToken, 
     generateClient,
-    polygonController.savePolygon,
-    releaseClient
+    polygonController.savePolygon
 );
 
 // Update polygon
 router.put('/:id', 
     authMiddleware.authorizeToken, 
     generateClient,
-    polygonController.updatePolygon,
-    releaseClient
+    polygonController.updatePolygon
 );
 
 // Delete polygon
 router.delete('/:id', 
     authMiddleware.authorizeToken, 
     generateClient,
-    polygonController.deletePolygon,
-    releaseClient
+    polygonController.deletePolygon
 );
 router.delete('/', 
     authMiddleware.authorizeToken, 
     generateClient,
-    polygonController.deletePolygons,
-    releaseClient
+    polygonController.deletePolygons
 );
 
 
@@ -78,16 +73,14 @@ router.delete('/',
 router.post('/:id/classify/spekboom_mask', 
     authMiddleware.authorizeToken, 
     generateClient,
-    classifierController.getSpekboomMask,
-    releaseClient
+    classifierController.getSpekboomMask
 );
 
 // Classify spekboom
 router.post('/:id/classify/spekboom', 
     authMiddleware.authorizeToken, 
     generateClient,
-    classifierController.getSpekboomClassification,
-    releaseClient
+    classifierController.getSpekboomClassification
 );
 
 

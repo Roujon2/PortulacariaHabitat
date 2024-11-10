@@ -1,0 +1,10 @@
+This file is for describing the step by step process to setting up the backend on a Linux machine.
+
+----- 1. 
+
+
+
+
+----- X. Setting up backend user with minimum permissions
+sudo adduser spekboom_backend_user
+

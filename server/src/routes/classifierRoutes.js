@@ -12,23 +12,20 @@ router.post('/test',
     validateData.validatePolygonData, 
     authMiddleware.authorizeToken, 
     generateClient, 
-    classifierController.testClassifier, 
-    releaseClient);
+    classifierController.testClassifier);
 
 // Route to get classification result for polygon
 router.get('/:id', 
     authMiddleware.authorizeToken, 
     generateClient, 
-    classifierController.getPolygonClassificationResult, 
-    releaseClient);
+    classifierController.getPolygonClassificationResult);
 
 // Route to get spekboom mask
 router.post('/spekboom_mask', 
     validateData.validatePolygonData, 
     authMiddleware.authorizeToken, 
     generateClient, 
-    classifierController.getSpekboomMask, 
-    releaseClient);
+    classifierController.getSpekboomMask);
 
 
 export default router;
