@@ -16,6 +16,8 @@ import SuccessConfirmationBox from "../../Atoms/SuccessConfirmationBox/SuccessCo
 
 import ColorRamp from "../../Atoms/ColorRamp/ColorRamp";
 
+import PolygonWidget from "../../Atoms/PolygonWidget/PolygonWidget";
+
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 
@@ -42,7 +44,7 @@ const InteractiveMap: React.FC = () => {
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
         polygonResultToDisplay, setPolygonResultsOnMap, polygonResultsOnMap,
-        polygonSpekboomMask, polygonsOnMap
+        polygonSpekboomMask, polygonsOnMap, setPolygonsOnMap
         } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
@@ -66,7 +68,7 @@ const InteractiveMap: React.FC = () => {
     const zoomTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // State for overlay opacity
-    const [overlayOpacity, setOverlayOpacity] = useState<number>(0.5);
+    const [overlayOpacity, setOverlayOpacity] = useState<number>(0.8);
 
     // UseEffect tracking polygon to update
     useEffect(() => {
@@ -393,6 +395,16 @@ const InteractiveMap: React.FC = () => {
     const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newOpacity = parseFloat(e.target.value);
         setOverlayOpacity(newOpacity);
+
+        // Change overlay opacity
+        if (map) {
+            // Get selected polygon overlay
+            const selectedPolygonOverlay = overlays[selectedPolygonDetailsId as number];
+
+            if (selectedPolygonOverlay) {
+                selectedPolygonOverlay.setOpacity(newOpacity);
+            }
+        }
     };
 
     // UseEffect to track overlay opacity change
@@ -430,6 +442,7 @@ const InteractiveMap: React.FC = () => {
             });
 
 
+
             newPolygon.setMap(map);
 
             // Add polygon to drawn polygons
@@ -457,7 +470,12 @@ const InteractiveMap: React.FC = () => {
                     });
                 }
 
-                // Remove polygon from polygonResultsOnMap
+                // Remove polygon from polygons on map
+                setPolygonResultsOnMap(polygonResultsOnMap.filter((p: Polygon) => p.id !== id));
+
+                setPolygonsOnMap(polygonsOnMap.filter((p: Polygon) => p.id !== id));
+
+                setSuccessMessage('Polygon removed from map');
                 
             }
         }
@@ -569,6 +587,12 @@ const InteractiveMap: React.FC = () => {
                             onChange={handleOpacityChange}
                         />
                     </div>
+
+                    <PolygonWidget
+                        opacity={overlayOpacity}
+                        handleOpacityChange={handleOpacityChange}
+                        handleRemoveFromMap={() => removePolygonFromMap(selectedPolygonDetailsId as number)}
+                    />
 
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
