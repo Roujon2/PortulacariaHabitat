@@ -457,15 +457,37 @@ async function spekboomClassification(polygon){
         // Adjust the abundance
         var spekboomAbundanceAdj = spekboomAbundance.log().multiply(8.0337).add(5.1887);
 
+        // Cut off lower abundance
+        spekboomAbundanceAdj = spekboomAbundanceAdj.updateMask(spekboomAbundanceAdj.gt(5));
+
+        // Divide into classes
+        var classAdjust = spekboomAbundanceAdj
+            .where(spekboomAbundanceAdj.lte(10),0)
+            .where(spekboomAbundanceAdj.gt(10),1)
+            .where(spekboomAbundanceAdj.gt(12),2)
+            .where(spekboomAbundanceAdj.gt(14),3)
+            .where(spekboomAbundanceAdj.gt(16),4)
+            .where(spekboomAbundanceAdj.gt(18),5)
+            .where(spekboomAbundanceAdj.gt(20),6)
+            .where(spekboomAbundanceAdj.gt(22),7)
+            .where(spekboomAbundanceAdj.gt(24),8);
+
+        var imageVisParamBlue = {"opacity":1,"bands":["classification"],"min":0,"max":8,"palette":["4b4b96","0000ff","dcdcff","c8c84b","ffff00","ffffb4","c84b4b","ff0000","ffb4b4"] };
+
+        // Get map
+        var spekboomMap = classAdjust.getMap(imageVisParamBlue);
+
+        
+
         // ----- NOW WOULD BE THE PART TO SOMEHOW RETURN THE CLASSIFIED IMAGE TO THE FRONTEND -----
         // I'm not sure how to do this, but I think it would be something like this: NOT USING GET MAP BUT SOMEHOW SAVING THE IMAGE
-        var spekboomMap = spekboomAbundanceAdj.getMap(
-            {
-                min: 0,
-                max: 60,
-                palette: ["ff0e02","ff7a08","ffd400","9eff02","00ff89","02ffe8","00d0ff","0215ff","b400ff"]
-            }
-        );
+        // var spekboomMap = classAdjust.getMap(
+        //     {
+        //         min: 5,
+        //         max: 60,
+        //         palette: ["0000ff","2f52ff","859aff","ffffff","ffb6b6","ff5a5a","ff0000"]
+        //     }
+        // );
 
         return spekboomMap;    
 };

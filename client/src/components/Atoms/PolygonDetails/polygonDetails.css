@@ -10,10 +10,10 @@
     overflow: hidden;
 }
 
-.polygon-details__content{
+.polygon-details__form{
     flex-grow: 1;
     overflow-y: auto;
-    margin-bottom: 0.5rem;
+    margin-bottom: 3rem;
     padding-right: 0.3rem;
 }
 
@@ -49,10 +49,16 @@
 
 .polygon-details__buttons{
     display: flex;
+    position: absolute;
+    bottom: 0;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 1rem;
     align-items: center;
+    padding: 1rem;
+    left: 0.3rem;
+    right: 0.5rem;
+    background-color: white;
+    width: 100%;
 }
 .polygon-details__button-delete{
     background-color: #f44336;

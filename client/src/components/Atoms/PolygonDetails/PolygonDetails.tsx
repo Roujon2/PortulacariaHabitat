@@ -157,85 +157,88 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
 
             <h2>Polygon Details</h2>
 
-            <form className="polygon-details__content" onSubmit={onSave}>
+            <form className="polygon-details__form" onSubmit={onSave}>
+                <div className="polygon-details__content">
 
-                <div className="polygon-details__field">
-                    <label htmlFor="name">Name <span className="required">*</span></label>
-                    <input type="text" id="name" value={editedPolygon.name} onChange={(e) => handleChange(e, 'name')} required />
-                </div>
-
-                <div className="polygon-details__field">
-                    <label htmlFor="description">Description</label>
-                    <textarea className='textarea' id="description" value={editedPolygon.description || ""} onChange={(e) => handleChange(e, 'description')} />
-                </div>
-
-                <div className="polygon-details__field polygon-coordinates">
-                    <label>Coordinates</label>
-                    <div className="coordinates-container">
-                        {editedPolygon.coordinates.map((coord, index) => (
-                            <div key={index} className="coordinate-row">
-                                <label>Lat</label>
-                                <input type="number" value={coord.lat} onChange={(e) => handleCoordChange(e, index, 'lat')} required/>
-                                <label>Lng</label>
-                                <input type="number" value={coord.lng} onChange={(e) => handleCoordChange(e, index, 'lng')} required/>
-                            </div>
-                        ))}
+                    <div className="polygon-details__field">
+                        <label htmlFor="name">Name <span className="required">*</span></label>
+                        <input type="text" id="name" value={editedPolygon.name} onChange={(e) => handleChange(e, 'name')} required />
                     </div>
-                </div>
 
-                <div className="polygon-details__field">
-                    <label htmlFor="locality">Locality <span className="required">*</span></label>
-                    <input type="text" value={editedPolygon.locality} onChange={(e) => handleChange(e, 'locality')} required />
-                </div>
+                    <div className="polygon-details__field">
+                        <label htmlFor="description">Description</label>
+                        <textarea className='textarea' id="description" value={editedPolygon.description || ""} onChange={(e) => handleChange(e, 'description')} />
+                    </div>
 
-                <div className="polygon-details__field">
-                    <label htmlFor="ownership_type">Ownership Type <span className="required">*</span></label>
-                    <input type="text" value={editedPolygon.ownership_type} onChange={(e) => handleChange(e, 'ownership_type')} required/>
-                </div>
-
-                <div className="polygon-details__field">
-                    <label htmlFor="farm_series_name">Farm Series Name <span className="required">*</span></label>
-                    <input type="text" value={editedPolygon.farm_series_name} onChange={(e) => handleChange(e, 'farm_series_name')} required/>
-                </div>
-
-                <div className="polygon-details__field">
-                    <label htmlFor="notes">Notes / Observations</label>
-                    <textarea className='textarea' value={editedPolygon.notes || ""} onChange={(e) => handleChange(e, 'notes')} />
-                </div>
-
-            
-
-                <div className="polygon-details__buttons">
-                    <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
-                        <span>
-                            <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter([polygon])} disabled={!onMap} type='button'>
-                                    <FaLocationCrosshairs />
-                            </button>
-                        </span>
-                    </HoverText>
-                
-                    {/* renderClassificationButton() */}
-
-                    {!loading ? 
-                        <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)} type='button'>
-                            Spekboom Classification
-                        </button> 
-                    :
-                        <div className='spinner-container'>
-                            {React.createElement('loading-reuleaux', {
-                                size: "25",
-                                stroke: "3",
-                                'stroke-length': "0.15",
-                                'bg-opacity': "0.1",
-                                speed: "1", 
-                                color: '#208350'
-                            })}
+                    <div className="polygon-details__field polygon-coordinates">
+                        <label>Coordinates</label>
+                        <div className="coordinates-container">
+                            {editedPolygon.coordinates.map((coord, index) => (
+                                <div key={index} className="coordinate-row">
+                                    <label>Lat</label>
+                                    <input type="number" value={coord.lat} onChange={(e) => handleCoordChange(e, index, 'lat')} required/>
+                                    <label>Lng</label>
+                                    <input type="number" value={coord.lng} onChange={(e) => handleCoordChange(e, index, 'lng')} required/>
+                                </div>
+                            ))}
                         </div>
-                    }
+                    </div>
 
-                    <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} disabled={!isEdited} type="submit">
-                        <FiSave />
-                    </button>
+                    <div className="polygon-details__field">
+                        <label htmlFor="locality">Locality <span className="required">*</span></label>
+                        <input type="text" value={editedPolygon.locality} onChange={(e) => handleChange(e, 'locality')} required />
+                    </div>
+
+                    <div className="polygon-details__field">
+                        <label htmlFor="ownership_type">Ownership Type <span className="required">*</span></label>
+                        <input type="text" value={editedPolygon.ownership_type} onChange={(e) => handleChange(e, 'ownership_type')} required/>
+                    </div>
+
+                    <div className="polygon-details__field">
+                        <label htmlFor="farm_series_name">Farm Series Name <span className="required">*</span></label>
+                        <input type="text" value={editedPolygon.farm_series_name} onChange={(e) => handleChange(e, 'farm_series_name')} required/>
+                    </div>
+
+                    <div className="polygon-details__field">
+                        <label htmlFor="notes">Notes / Observations</label>
+                        <textarea className='textarea' value={editedPolygon.notes || ""} onChange={(e) => handleChange(e, 'notes')} />
+                    </div>
+
+                
+
+                    <div className="polygon-details__buttons">
+                        <HoverText title={!onMap ? "Polygon not on map" : "Center on map"}>
+                            <span>
+                                <button className={`${!onMap ? 'polygon-details__button-center-disabled' : 'polygon-details__button-center'}`} onClick={() => handleCenter([polygon])} disabled={!onMap} type='button'>
+                                        <FaLocationCrosshairs />
+                                </button>
+                            </span>
+                        </HoverText>
+                    
+                        {/* renderClassificationButton() */}
+
+                        {!loading ? 
+                            <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)} type='button'>
+                                Spekboom Classification
+                            </button> 
+                        :
+                            <div className='spinner-container'>
+                                {React.createElement('loading-reuleaux', {
+                                    size: "25",
+                                    stroke: "3",
+                                    'stroke-length': "0.15",
+                                    'bg-opacity': "0.1",
+                                    speed: "1", 
+                                    color: '#208350'
+                                })}
+                            </div>
+                        }
+
+                        <button className={`${!isEdited ? 'polygon-details__button-save-disabled' : 'polygon-details__button-save'}`} disabled={!isEdited} type="submit">
+                            <FiSave />
+                        </button>
+                    </div>
+
                 </div>
 
             </form>

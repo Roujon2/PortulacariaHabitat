@@ -14,6 +14,8 @@ import { TbReload } from "react-icons/tb";
 
 import SuccessConfirmationBox from "../../Atoms/SuccessConfirmationBox/SuccessConfirmationBox";
 
+import ColorRamp from "../../Atoms/ColorRamp/ColorRamp";
+
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 
@@ -62,6 +64,9 @@ const InteractiveMap: React.FC = () => {
     const [isZooming, setIsZooming] = useState<boolean>(false);
     // Zoom timeout 
     const zoomTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+    // State for overlay opacity
+    const [overlayOpacity, setOverlayOpacity] = useState<number>(0.5);
 
     // UseEffect tracking polygon to update
     useEffect(() => {
@@ -237,7 +242,7 @@ const InteractiveMap: React.FC = () => {
     });
 
     // Cache center
-    const center = useMemo(() => ({ lat: -30.989205, lng: -64.486241  }), []);
+    const center = useMemo(() => ({ lat: -32.2506, lng: 24.5259 }), []);
 
     // Function to handle map loaded
     const onMapLoad = (map: google.maps.Map) => {
@@ -358,34 +363,6 @@ const InteractiveMap: React.FC = () => {
 
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {
-                const bounds = map.getBounds();
-                if (!bounds) return '';
-    
-                const projection = map.getProjection();
-                if (!projection) return '';
-    
-                // Calculate tile bounds
-                const tileSize = 256;
-                const scale = Math.pow(2, zoom);
-                const worldCoordinateSW = new google.maps.Point(
-                    coord.x * tileSize / scale,
-                    (coord.y + 1) * tileSize / scale
-                );
-                const worldCoordinateNE = new google.maps.Point(
-                    (coord.x + 1) * tileSize / scale,
-                    coord.y * tileSize / scale
-                );
-    
-                // Convert world coordinates to LatLng for the tile corners
-                const tileSW = projection.fromPointToLatLng(worldCoordinateSW);
-                const tileNE = projection.fromPointToLatLng(worldCoordinateNE);
-    
-                const tileBounds = new google.maps.LatLngBounds(tileSW, tileNE);
-    
-                // Check if tile is outside the camera view
-                if (!bounds.intersects(tileBounds)) {
-                    return '';
-                }
     
                 return url
                     .replace('{x}', coord.x.toString())
@@ -411,6 +388,21 @@ const InteractiveMap: React.FC = () => {
         }
 
     };
+
+    // Function to handle the slider change
+    const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newOpacity = parseFloat(e.target.value);
+        setOverlayOpacity(newOpacity);
+    };
+
+    // UseEffect to track overlay opacity change
+    useEffect(() => {
+        if (map) {
+            map.overlayMapTypes.forEach((overlay) => {
+                (overlay as google.maps.ImageMapType)?.setOpacity(overlayOpacity);
+            });
+        }
+    }, [overlayOpacity]);
 
     // Function to add polygon to the map
     const addPolygonToMap = (polygon: Polygon) => {
@@ -566,11 +558,24 @@ const InteractiveMap: React.FC = () => {
                         <TbReload />
                     </button>
 
+                    <div className="opacity-slider">
+                        <label>Overlay Opacity:</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={overlayOpacity}
+                            onChange={handleOpacityChange}
+                        />
+                    </div>
+
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
                     
                     {successMessage && <SuccessConfirmationBox message={successMessage} duration={2500} onClose={() => setSuccessMessage('')} />}
+
                 </GoogleMap>
             )}
         </div>
