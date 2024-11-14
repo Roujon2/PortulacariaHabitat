@@ -19,9 +19,15 @@ const PORT = config.server.port;
 
 // CORS config
 app.use(cors({
-    origin: config.google.client_url,
-    credentials: true
+    origin: [config.google.client_url, 'https://spekboom-mapper.web.app'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
+
+// General endpoint
+app.get('/', (req, res) => {
+	res.status(200).json({message: "Welcome to the Spekboom Mapping API!"});
+});
 
 // Parsing cookies
 app.use(cookieParser());

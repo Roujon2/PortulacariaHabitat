@@ -461,9 +461,9 @@ async function spekboomClassification(polygon){
         // I'm not sure how to do this, but I think it would be something like this: NOT USING GET MAP BUT SOMEHOW SAVING THE IMAGE
         var spekboomMap = spekboomAbundanceAdj.getMap(
             {
-                min: 0,
+                min: 5,
                 max: 60,
-                palette: ["ff0e02","ff7a08","ffd400","9eff02","00ff89","02ffe8","00d0ff","0215ff","b400ff"]
+                palette: ["0000ff","2f52ff","859aff","ffffff","ffb6b6","ff5a5a","ff0000"]
             }
         );
 
