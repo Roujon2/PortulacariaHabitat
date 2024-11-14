@@ -62,10 +62,26 @@ const InteractiveMap: React.FC = () => {
     // Map var for overlays on map linked to polygon id
     const [overlays, setOverlays] = useState<{ [key: number]: google.maps.ImageMapType }>({});
 
-    // State var for checking zooming
-    const [isZooming, setIsZooming] = useState<boolean>(false);
-    // Zoom timeout 
-    const zoomTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    // Function to get the opacity of an overlay
+    const getOverlayOpacity = (polygonId: number) => {
+        const overlay = overlays[polygonId];
+        return overlay ? overlay.getOpacity() : -1;
+    };
+
+    // Function to handle the opacity change for a specific overlay
+    const handleOverlayOpacityChange = (polygonId: number, newOpacity: number) => {
+        const overlay = overlays[polygonId];
+        if (overlay) {
+            overlay.setOpacity(newOpacity);
+            setOverlayOpacity(newOpacity);
+            setOverlays(prev => ({ ...prev, [polygonId]: overlay }));
+        }
+    };
+    // Function to handle the slider change for a specific overlay changed by the widget slider
+    const handleSpecificOpacityChange = (polygonId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newOpacity = parseFloat(e.target.value);
+        handleOverlayOpacityChange(polygonId, newOpacity);
+    };
 
     // State for overlay opacity
     const [overlayOpacity, setOverlayOpacity] = useState<number>(0.8);
@@ -100,6 +116,11 @@ const InteractiveMap: React.FC = () => {
         if (selectedPolygonDetailsId) {
             // Change stroke color of selected polygon
             changeStrokeColor(selectedPolygonDetailsId, '#FFA500');
+
+            // Change opacity state var to selected polygon overlay's current opacity
+            setOverlayOpacity(getOverlayOpacity(selectedPolygonDetailsId));
+        }else{
+            setOverlayOpacity(-1);
         }
     }, [selectedPolygonDetailsId]);
 
@@ -389,6 +410,10 @@ const InteractiveMap: React.FC = () => {
             setPolygonResultsOnMap([...polygonResultsOnMap, polygon]);
         }
 
+        setSelectedPolygonDetailsId(null);
+        setSelectedPolygonDetailsId(polygonId);
+
+
     };
 
     // Function to handle the slider change
@@ -407,14 +432,6 @@ const InteractiveMap: React.FC = () => {
         }
     };
 
-    // UseEffect to track overlay opacity change
-    useEffect(() => {
-        if (map) {
-            map.overlayMapTypes.forEach((overlay) => {
-                (overlay as google.maps.ImageMapType)?.setOpacity(overlayOpacity);
-            });
-        }
-    }, [overlayOpacity]);
 
     // Function to add polygon to the map
     const addPolygonToMap = (polygon: Polygon) => {
@@ -476,6 +493,8 @@ const InteractiveMap: React.FC = () => {
                 setPolygonsOnMap(polygonsOnMap.filter((p: Polygon) => p.id !== id));
 
                 setSuccessMessage('Polygon removed from map');
+
+                setSelectedPolygonDetailsId(null);
                 
             }
         }
@@ -576,21 +595,9 @@ const InteractiveMap: React.FC = () => {
                         <TbReload />
                     </button>
 
-                    <div className="opacity-slider">
-                        <label>Overlay Opacity:</label>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={overlayOpacity}
-                            onChange={handleOpacityChange}
-                        />
-                    </div>
-
                     <PolygonWidget
                         opacity={overlayOpacity}
-                        handleOpacityChange={handleOpacityChange}
+                        handleOpacityChange={handleSpecificOpacityChange(selectedPolygonDetailsId as number)}
                         handleRemoveFromMap={() => removePolygonFromMap(selectedPolygonDetailsId as number)}
                     />
 

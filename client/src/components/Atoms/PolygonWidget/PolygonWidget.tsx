@@ -15,7 +15,7 @@ interface PolygonWidgetProps {
 }
 
 const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityChange,  handleRemoveFromMap}) => {
-    const { selectedPolygonDetailsId, polygonsOnMap, setCenterOnPolygons } = usePolygonContext();
+    const { selectedPolygonDetailsId, polygonsOnMap, setCenterOnPolygons, polygonResultsOnMap } = usePolygonContext();
     const [selectedPolygon, setSelectedPolygon] = useState<Polygon | null>(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityCha
         } else {
             setSelectedPolygon(null);
         }
-    }, [selectedPolygonDetailsId, polygonsOnMap]);
+    }, [selectedPolygonDetailsId, polygonsOnMap, polygonResultsOnMap]);
 
 
     return (
@@ -33,8 +33,8 @@ const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityCha
             <div className="polygon-widget">
                 <h2>{selectedPolygon.name}</h2>
 
-                <div className="overlay-opacity-slider">
-                    <label>Opacity:</label>
+            {opacity >= 0 && opacity <= 1 && (<div className="overlay-opacity-slider">
+                    <label>Opacity</label>
                     <input
                         type="range"
                         min="0"
@@ -43,7 +43,7 @@ const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityCha
                         value={opacity}
                         onChange={handleOpacityChange}
                     />
-                </div>
+                </div>)}
 
                 <div className="polygon-widget__buttons">
                     <button className={'polygon-widget__button-center'} onClick={() => setCenterOnPolygons([selectedPolygon])} >
