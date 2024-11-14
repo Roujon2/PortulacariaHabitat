@@ -12,6 +12,7 @@ interface PolygonContextProps {
     hasMore: boolean;
     updatePolygon: (polygon: Polygon) => void;
     polygonsOnMap: Polygon[];
+    setPolygonsOnMap: (polygons: Polygon[]) => void;
     resetMapPolygons: () => void;
     selectedPolygonDetailsId: number | null;
     setSelectedPolygonDetailsId: (id: number | null) => void;
@@ -307,7 +308,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         <PolygonContext.Provider value={{ polygons, refreshPolygons, 
                                         loading, loadMorePolygons, 
                                         deletePolygons, hasMore, updatePolygon, 
-                                        polygonsOnMap, putOnMap, resetMapPolygons, polygonsToDelete, polygonsToMap,
+                                        polygonsOnMap, putOnMap, resetMapPolygons, polygonsToDelete, polygonsToMap, setPolygonsOnMap,
                                         setPolygonsToMap, setPolygonsToDelete,
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,

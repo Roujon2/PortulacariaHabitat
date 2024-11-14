@@ -33,3 +33,5 @@ logs
 
 # Private folder
 private/
+
+.cache

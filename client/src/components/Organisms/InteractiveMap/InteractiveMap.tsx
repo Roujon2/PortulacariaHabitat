@@ -14,6 +14,10 @@ import { TbReload } from "react-icons/tb";
 
 import SuccessConfirmationBox from "../../Atoms/SuccessConfirmationBox/SuccessConfirmationBox";
 
+import ColorRamp from "../../Atoms/ColorRamp/ColorRamp";
+
+import PolygonWidget from "../../Atoms/PolygonWidget/PolygonWidget";
+
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 
@@ -40,7 +44,7 @@ const InteractiveMap: React.FC = () => {
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
         setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
         polygonResultToDisplay, setPolygonResultsOnMap, polygonResultsOnMap,
-        polygonSpekboomMask, polygonsOnMap
+        polygonSpekboomMask, polygonsOnMap, setPolygonsOnMap
         } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
@@ -58,10 +62,29 @@ const InteractiveMap: React.FC = () => {
     // Map var for overlays on map linked to polygon id
     const [overlays, setOverlays] = useState<{ [key: number]: google.maps.ImageMapType }>({});
 
-    // State var for checking zooming
-    const [isZooming, setIsZooming] = useState<boolean>(false);
-    // Zoom timeout 
-    const zoomTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    // Function to get the opacity of an overlay
+    const getOverlayOpacity = (polygonId: number) => {
+        const overlay = overlays[polygonId];
+        return overlay ? overlay.getOpacity() : -1;
+    };
+
+    // Function to handle the opacity change for a specific overlay
+    const handleOverlayOpacityChange = (polygonId: number, newOpacity: number) => {
+        const overlay = overlays[polygonId];
+        if (overlay) {
+            overlay.setOpacity(newOpacity);
+            setOverlayOpacity(newOpacity);
+            setOverlays(prev => ({ ...prev, [polygonId]: overlay }));
+        }
+    };
+    // Function to handle the slider change for a specific overlay changed by the widget slider
+    const handleSpecificOpacityChange = (polygonId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newOpacity = parseFloat(e.target.value);
+        handleOverlayOpacityChange(polygonId, newOpacity);
+    };
+
+    // State for overlay opacity
+    const [overlayOpacity, setOverlayOpacity] = useState<number>(0.8);
 
     // UseEffect tracking polygon to update
     useEffect(() => {
@@ -93,6 +116,11 @@ const InteractiveMap: React.FC = () => {
         if (selectedPolygonDetailsId) {
             // Change stroke color of selected polygon
             changeStrokeColor(selectedPolygonDetailsId, '#FFA500');
+
+            // Change opacity state var to selected polygon overlay's current opacity
+            setOverlayOpacity(getOverlayOpacity(selectedPolygonDetailsId));
+        }else{
+            setOverlayOpacity(-1);
         }
     }, [selectedPolygonDetailsId]);
 
@@ -237,7 +265,7 @@ const InteractiveMap: React.FC = () => {
     });
 
     // Cache center
-    const center = useMemo(() => ({ lat: -30.989205, lng: -64.486241  }), []);
+    const center = useMemo(() => ({ lat: -32.2506, lng: 24.5259 }), []);
 
     // Function to handle map loaded
     const onMapLoad = (map: google.maps.Map) => {
@@ -358,34 +386,6 @@ const InteractiveMap: React.FC = () => {
 
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {
-                const bounds = map.getBounds();
-                if (!bounds) return '';
-    
-                const projection = map.getProjection();
-                if (!projection) return '';
-    
-                // Calculate tile bounds
-                const tileSize = 256;
-                const scale = Math.pow(2, zoom);
-                const worldCoordinateSW = new google.maps.Point(
-                    coord.x * tileSize / scale,
-                    (coord.y + 1) * tileSize / scale
-                );
-                const worldCoordinateNE = new google.maps.Point(
-                    (coord.x + 1) * tileSize / scale,
-                    coord.y * tileSize / scale
-                );
-    
-                // Convert world coordinates to LatLng for the tile corners
-                const tileSW = projection.fromPointToLatLng(worldCoordinateSW);
-                const tileNE = projection.fromPointToLatLng(worldCoordinateNE);
-    
-                const tileBounds = new google.maps.LatLngBounds(tileSW, tileNE);
-    
-                // Check if tile is outside the camera view
-                if (!bounds.intersects(tileBounds)) {
-                    return '';
-                }
     
                 return url
                     .replace('{x}', coord.x.toString())
@@ -410,7 +410,15 @@ const InteractiveMap: React.FC = () => {
             setPolygonResultsOnMap([...polygonResultsOnMap, polygon]);
         }
 
+        setSelectedPolygonDetailsId(null);
+        setSelectedPolygonDetailsId(polygonId);
+
+        // Set the overlay opacity to this overlay if the selected polygon is this polygon
+        setOverlayOpacity(overlayMapParams.getOpacity());
+
+
     };
+
 
     // Function to add polygon to the map
     const addPolygonToMap = (polygon: Polygon) => {
@@ -436,6 +444,7 @@ const InteractiveMap: React.FC = () => {
                 // Selected details for clicked polygon
                 setSelectedPolygonDetailsId(newPolygon.get('id'));
             });
+
 
 
             newPolygon.setMap(map);
@@ -465,7 +474,14 @@ const InteractiveMap: React.FC = () => {
                     });
                 }
 
-                // Remove polygon from polygonResultsOnMap
+                // Remove polygon from polygons on map
+                setPolygonResultsOnMap(polygonResultsOnMap.filter((p: Polygon) => p.id !== id));
+
+                setPolygonsOnMap(polygonsOnMap.filter((p: Polygon) => p.id !== id));
+
+                setSuccessMessage('Polygon removed from map');
+
+                setSelectedPolygonDetailsId(null);
                 
             }
         }
@@ -566,11 +582,18 @@ const InteractiveMap: React.FC = () => {
                         <TbReload />
                     </button>
 
+                    <PolygonWidget
+                        opacity={overlayOpacity}
+                        handleOpacityChange={handleSpecificOpacityChange(selectedPolygonDetailsId as number)}
+                        handleRemoveFromMap={() => removePolygonFromMap(selectedPolygonDetailsId as number)}
+                    />
+
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
                     
                     {successMessage && <SuccessConfirmationBox message={successMessage} duration={2500} onClose={() => setSuccessMessage('')} />}
+
                 </GoogleMap>
             )}
         </div>
