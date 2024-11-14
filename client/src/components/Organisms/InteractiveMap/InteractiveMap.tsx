@@ -413,23 +413,10 @@ const InteractiveMap: React.FC = () => {
         setSelectedPolygonDetailsId(null);
         setSelectedPolygonDetailsId(polygonId);
 
+        // Set the overlay opacity to this overlay if the selected polygon is this polygon
+        setOverlayOpacity(overlayMapParams.getOpacity());
 
-    };
 
-    // Function to handle the slider change
-    const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newOpacity = parseFloat(e.target.value);
-        setOverlayOpacity(newOpacity);
-
-        // Change overlay opacity
-        if (map) {
-            // Get selected polygon overlay
-            const selectedPolygonOverlay = overlays[selectedPolygonDetailsId as number];
-
-            if (selectedPolygonOverlay) {
-                selectedPolygonOverlay.setOpacity(newOpacity);
-            }
-        }
     };
 
 
