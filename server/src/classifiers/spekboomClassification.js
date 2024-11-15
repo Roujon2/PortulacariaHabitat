@@ -17,78 +17,87 @@ var spekboomClassifier = "2024-Nov-REG";
             - ee.Image with the average MSAVI2
     */  
 var getAvgMSAVI2 = function(polygon){
+    return new Promise((resolve, reject) => {
+        try{
+
+                   
+            // 10 years of data
+            var startDate = ee.Date.fromYMD(2014,1,1);
+            var endDate = ee.Date.fromYMD(2024,1,1);
+            var myImageCollection = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
             
-                
-        // 10 years of data
-        var startDate = ee.Date.fromYMD(2014,1,1);
-        var endDate = ee.Date.fromYMD(2024,1,1);
-        var myImageCollection = ee.ImageCollection("LANDSAT/LC08/C02/T1_L2");
-        
-        //filter by geometry
-        myImageCollection = myImageCollection.filterBounds(polygon);
-        //print("numImages after geometry filter", myImageCollection.aggregate_count("CLOUD_COVER"));
-        
-        //filter by dates
-        myImageCollection = myImageCollection.filterDate(startDate,endDate);
-        
-        //print("numImages after date filter", myImageCollection.aggregate_count("CLOUD_COVER"));
-        
-        //filter by cloudlessness
-        myImageCollection = myImageCollection.filter(ee.Filter.lt("CLOUD_COVER",10));
-        //print("numImages after cloud filter", myImageCollection.aggregate_count("CLOUD_COVER"));
-        // Get all the image datess
-        var datesOfImages = myImageCollection.aggregate_array("system:time_start").map(
+            //filter by geometry
+            myImageCollection = myImageCollection.filterBounds(polygon);
+            //print("numImages after geometry filter", myImageCollection.aggregate_count("CLOUD_COVER"));
+            
+            //filter by dates
+            myImageCollection = myImageCollection.filterDate(startDate,endDate);
+            
+            //print("numImages after date filter", myImageCollection.aggregate_count("CLOUD_COVER"));
+            
+            //filter by cloudlessness
+            myImageCollection = myImageCollection.filter(ee.Filter.lt("CLOUD_COVER",10));
+            //print("numImages after cloud filter", myImageCollection.aggregate_count("CLOUD_COVER"));
+            // Get all the image datess
+            var datesOfImages = myImageCollection.aggregate_array("system:time_start").map(
+                function (date) {
+                return ee.Date(date).format().slice(0,10);
+                });
+            
+            // Get all the distinct years of images
+            var yearsOfImages = datesOfImages.map(
             function (date) {
-            return ee.Date(date).format().slice(0,10);
-            });
-        
-        // Get all the distinct years of images
-        var yearsOfImages = datesOfImages.map(
-        function (date) {
-            return ee.Number.parse(ee.Date(date).format("YYYY"));
-        }).distinct();
-        
-        //print(myImageCollection.first());
-        
-        
-        
-        // calculate MSAVI2
-        //MSAVI2 = 1/2 * ((2*(NIR+1)) - ((2*NIR+1-(2 – 8*(NIR-red))^1/2)
-        // ESA
-        // MSAVI2 = (1/2) * ( 2 * IR_factor * near_IR + 1 - sqrt( ( 2 * IR_factor * near_IR + 1) * ( 2 * IR_factor * near_IR + 1)
-        //           - 8 * (IR_factor * near_IR - red_factor * red) ) )
-        
-        
-        var calcMSAVI2 = function(image){
-            var mSAVI2 = image.expression(
-            '(1/2) * ((2*(NIR+1)) - ((2*NIR+1)*(2*NIR+1) - 8*(NIR-RED))**(1/2))', {
-            'NIR': image.select('SR_B5'),
-            'RED': image.select('SR_B4')
-            });
-            return mSAVI2.set('system:time_start',image.get('system:time_start'),'date',ee.Date(image.get('system:time_start')).format().slice(0,10));
-        };
-        
-        
-        var mSAVI2Collection = myImageCollection.map(calcMSAVI2);
-        
-        //print("mSAVI2", mSAVI2Collection);
-        
-        // Calculate the AVG per year
-        // yearsOfImages - contains all the years that we have images for
-        var yearlyAvg = function(year){
+                return ee.Number.parse(ee.Date(date).format("YYYY"));
+            }).distinct();
             
-            var myYearlyAvgMSAVI2 = mSAVI2Collection.filter(ee.Filter.calendarRange(year,year,'year'));
-            //print("filtered to year",myYearlyAvgMSAVI2);
-            myYearlyAvgMSAVI2.reduce(ee.Reducer.mean());
-            return myYearlyAvgMSAVI2.mosaic();
-        };
-        
-        
-        var mSAVI2YearlyAvgCollection = ee.ImageCollection(yearsOfImages.map(yearlyAvg));
-        
-        var avgMSAVI2 = mSAVI2YearlyAvgCollection.reduce(ee.Reducer.mean()).rename("avgMSAVI2");
-        
-        return avgMSAVI2.clip(polygon);
+            //print(myImageCollection.first());
+            
+            
+            
+            // calculate MSAVI2
+            //MSAVI2 = 1/2 * ((2*(NIR+1)) - ((2*NIR+1-(2 – 8*(NIR-red))^1/2)
+            // ESA
+            // MSAVI2 = (1/2) * ( 2 * IR_factor * near_IR + 1 - sqrt( ( 2 * IR_factor * near_IR + 1) * ( 2 * IR_factor * near_IR + 1)
+            //           - 8 * (IR_factor * near_IR - red_factor * red) ) )
+            
+            
+            var calcMSAVI2 = function(image){
+                var mSAVI2 = image.expression(
+                '(1/2) * ((2*(NIR+1)) - ((2*NIR+1)*(2*NIR+1) - 8*(NIR-RED))**(1/2))', {
+                'NIR': image.select('SR_B5'),
+                'RED': image.select('SR_B4')
+                });
+                return mSAVI2.set('system:time_start',image.get('system:time_start'),'date',ee.Date(image.get('system:time_start')).format().slice(0,10));
+            };
+            
+            
+            var mSAVI2Collection = myImageCollection.map(calcMSAVI2);
+            
+            //print("mSAVI2", mSAVI2Collection);
+            
+            // Calculate the AVG per year
+            // yearsOfImages - contains all the years that we have images for
+            var yearlyAvg = function(year){
+                
+                var myYearlyAvgMSAVI2 = mSAVI2Collection.filter(ee.Filter.calendarRange(year,year,'year'));
+                //print("filtered to year",myYearlyAvgMSAVI2);
+                myYearlyAvgMSAVI2.reduce(ee.Reducer.mean());
+                return myYearlyAvgMSAVI2.mosaic();
+            };
+            
+            
+            var mSAVI2YearlyAvgCollection = ee.ImageCollection(yearsOfImages.map(yearlyAvg));
+            
+            var avgMSAVI2 = mSAVI2YearlyAvgCollection.reduce(ee.Reducer.mean()).rename("avgMSAVI2");
+            
+            var avgMSAVI2Clip = avgMSAVI2.clip(polygon);
+
+            resolve(avgMSAVI2Clip);
+
+        }catch(error){
+            reject(new Error("Error in getAvgMSAVI2: " + error.message));
+        }
+    })
 };
 
 
@@ -105,12 +114,19 @@ var avgYearRainfall = function(polygon){
             - ee.Image with the average yearly rainfall
 
      */
+    return new Promise((resolve, reject) => {
+        try{
 
-    var annualave_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/annualave_ppt");
+            var annualave_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/annualave_ppt");
 
-    return annualave_ppt
-        .clip(polygon)
-        .rename("avgYRainfall");
+            var annualaveClip_ppt = annualave_ppt.clip(polygon).rename("avgYRainfall");
+
+            resolve(annualaveClip_ppt);
+
+        }catch(error){
+            reject(new Error("Error in avgYearRainfall: " + error.message));
+        }
+    })
 };
 
 
@@ -127,13 +143,19 @@ var avgRainfall6Hottest = function(polygon){
             - ee.Image with the average rainfall during the 6 hottest months of the year
 
     */
+    return new Promise((resolve, reject) => {
+        try{
 
-    var maxTempSemester_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/maxtempsemester_ppt");
+            var maxTempSemester_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/maxtempsemester_ppt");
 
-    return maxTempSemester_ppt
-        .clip(polygon)
-        .rename("avgRainfall6H");
+            var maxTempSemesterClip_ppt = maxTempSemester_ppt.clip(polygon).rename("avgRainfall6H");
 
+            resolve(maxTempSemesterClip_ppt);
+
+        }catch(error){
+            reject(new Error("Error in avgRainfall6Hottest: " + error.message));
+        }
+    })
 };
 
 
@@ -149,14 +171,20 @@ var avgRainfall6Coldest = function(polygon){
         Output
             - ee.Image with the average rainfall during the 6 coldest months of the year
     */
-    
-    var mintempsemester_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/mintempsemester_ppt");
-  
-  
-    return mintempsemester_ppt
-    .clip(polygon)
-    .rename("avgRainfall6C");
-  
+
+    return new Promise((resolve, reject) => {
+        try{
+
+            var mintempsemester_ppt = ee.Image("projects/ee-ambientes/assets/WC_2-1/Prec/mintempsemester_ppt");
+            
+            var mintempsemesterClip_ppt = mintempsemester_ppt.clip(polygon).rename("avgRainfall6C");
+
+            resolve(mintempsemesterClip_ppt);
+
+        }catch(error){
+            reject(new Error("Error in avgRainfall6Coldest: " + error.message));
+        }
+    })
 };
     
   
@@ -173,9 +201,19 @@ var sumHeatUnits6Hottest = function(polygon){
             - ee.Image with the sum of heat units of the 6 hottest months
     */
 
-    var maxtempsemester_heatunits = ee.Image("projects/ee-ambientes/assets/WC_2-1/HeatUnits/maxtempsemester_heatunits");
+    return new Promise((resolve, reject) => {
+        try{
 
-    return maxtempsemester_heatunits.clip(polygon).rename("sumHeatUnits6H");
+            var maxtempsemester_heatunits = ee.Image("projects/ee-ambientes/assets/WC_2-1/HeatUnits/maxtempsemester_heatunits");
+
+            var maxtempsemesterClip_heatunits = maxtempsemester_heatunits.clip(polygon).rename("sumHeatUnits6H");
+            
+            resolve(maxtempsemesterClip_heatunits);
+
+        }catch(error){
+            reject(new Error("Error in sumHeatUnits6Hottest: " + error.message));
+        }
+    })
 
 };
 
@@ -193,10 +231,19 @@ var sumHeatUnits6Coldest = function(polygon){
             - ee.Image with the sum of heat units of the 6 coldest months
     */
 
-    var maxtempsemester_heatunits = ee.Image("projects/ee-ambientes/assets/WC_2-1/HeatUnits/maxtempsemester_heatunits");
+    return new Promise((resolve, reject) => {
+        try{
 
+            var maxtempsemester_heatunits = ee.Image("projects/ee-ambientes/assets/WC_2-1/HeatUnits/maxtempsemester_heatunits");
 
-    return maxtempsemester_heatunits.clip(polygon).rename("sumHeatUnits6C");
+            var maxtempsemesterClip_heatunits = maxtempsemester_heatunits.clip(polygon).rename("sumHeatUnits6C");
+
+            resolve(maxtempsemesterClip_heatunits);
+
+        }catch(error){
+            reject(new Error("Error in sumHeatUnits6Coldest: " + error.message));
+        }
+    })
 };
 
 
@@ -213,9 +260,18 @@ var sumRadiationavg6Hottest = function(polygon){
             - ee.Image with the sum of radiation of the 6 hottest months
     */
 
-    var maxtempsemester_rad = ee.Image("projects/ee-ambientes/assets/WC_2-1/Srad/maxtempsemester_rad");
+    return new Promise((resolve, reject) => {
+        try{
+            var maxtempsemester_rad = ee.Image("projects/ee-ambientes/assets/WC_2-1/Srad/maxtempsemester_rad");
+            
+            var maxtempsemesterClip_rad = maxtempsemester_rad.clip(polygon).rename("sumRadi6H");
 
-    return maxtempsemester_rad.clip(polygon).rename("sumRadi6H");
+            resolve(maxtempsemesterClip_rad);
+
+        }catch(error){
+            reject(new Error("Error in sumRadiationavg6Hottest: " + error.message));
+        }
+    })
 };
 
 
@@ -232,10 +288,16 @@ var sumRadiationavg6Coldest = function(polygon){
             - ee.Image with the sum of radiation of the 6 coldest months
     */
 
-    var mintempsemester_rad = ee.Image("projects/ee-ambientes/assets/WC_2-1/Srad/mintempsemester_rad");
+    return new Promise((resolve, reject) => {
+        try{
+            var mintempsemester_rad = ee.Image("projects/ee-ambientes/assets/WC_2-1/Srad/mintempsemester_rad");
 
-    
-    return mintempsemester_rad.clip(polygon).rename("sumRadi6C");
+            resolve(mintempsemester_rad.clip(polygon).rename("sumRadi6C"));
+
+        }catch(error){
+            reject(new Error("Error in sumRadiationavg6Coldest: " + error.message));
+        }
+    })
     
 };
 
@@ -253,17 +315,24 @@ var slopePercent = function(polygon){
             - ee.Image with the slope percentage
     */
 
-    var dem = ee.Image("USGS/SRTMGL1_003");
+    return new Promise((resolve, reject) => {
+        try{
 
-    var terrain = ee.Algorithms.Terrain(dem);
+            var dem = ee.Image("USGS/SRTMGL1_003");
 
-    var slope = terrain.select("slope");
+            var terrain = ee.Algorithms.Terrain(dem);
 
-    var slopeRadians = slope.multiply(Math.PI).divide(180);
+            var slope = terrain.select("slope");
 
-    var slopePerc = slopeRadians.tan().multiply(100);
+            var slopeRadians = slope.multiply(Math.PI).divide(180);
 
-    return slopePerc.clip(polygon).rename("slopePerc");
+            var slopePerc = slopeRadians.tan().multiply(100);
+            
+            resolve(slopePerc.clip(polygon).rename("slopePerc"));
+        }catch(error){
+            reject(new Error("Error in slopePercent: " + error.message));
+        }
+    })
 };
 
 
@@ -280,9 +349,17 @@ var getCTI = function(polygon){
             - ee.Image with the CTI
     */
 
-    var cti = ee.ImageCollection("projects/sat-io/open-datasets/Geomorpho90m/cti");
-    cti = cti.filterBounds(polygon).mosaic();
-    return cti.clip(polygon).rename("cti");
+    return new Promise((resolve, reject) => {
+        try{
+            var cti = ee.ImageCollection("projects/sat-io/open-datasets/Geomorpho90m/cti");
+            cti = cti.filterBounds(polygon).mosaic();
+
+            resolve(cti.clip(polygon).rename("cti"));
+
+        }catch(error){
+            reject(new Error("Error in getCTI: " + error.message));
+        }
+    })
 };
 
 
@@ -298,9 +375,15 @@ var frostQuantity = function(polygon){
             - ee.Image with the frost quantity
     */
 
-    var frQty = ee.Image("projects/ee-ambientes/assets/WC_2-1/frostqty");
+    return new Promise((resolve, reject) => {
+        try{
+            var frQty = ee.Image("projects/ee-ambientes/assets/WC_2-1/frostqty");
 
-    return frQty.clip(polygon).rename("frQty");
+            resolve(frQty.clip(polygon).rename("frQty"));
+        }catch(error){
+            reject(new Error("Error in frostQuantity: " + error.message));
+        }
+    })
 };
 
 
@@ -316,33 +399,40 @@ var createStack = function(polygon){
             - ee.Image with all the variables
     */
 
-    var avgMSAVI2_V = getAvgMSAVI2(polygon);
-    var avgYearRainfall_V = avgYearRainfall(polygon);
-    var avgRainfall6Hottest_V = avgRainfall6Hottest(polygon);
-    var avgRainfall6Coldest_V = avgRainfall6Coldest(polygon);
-    var sumHeatUnits6Hottest_V = sumHeatUnits6Hottest(polygon);
-    var sumHeatUnits6Coldest_V = sumHeatUnits6Coldest(polygon);
-    var sumRadiationavg6Hottest_V = sumRadiationavg6Hottest(polygon);
-    var sumRadiationavg6Coldest_V = sumRadiationavg6Coldest(polygon);
-    //var slopePercent_V = slopePercent(bbox);
-    var getCTI_V = getCTI(polygon);
-    //var meanMinTempColdestMonth_V = meanMinTempColdestMonth(bbox);
-    var frostQuantity_V = frostQuantity(polygon);
+    return new Promise((resolve, reject) => {
+        try{
+            var avgMSAVI2_V = getAvgMSAVI2(polygon);
+            var avgYearRainfall_V = avgYearRainfall(polygon);
+            var avgRainfall6Hottest_V = avgRainfall6Hottest(polygon);
+            var avgRainfall6Coldest_V = avgRainfall6Coldest(polygon);
+            var sumHeatUnits6Hottest_V = sumHeatUnits6Hottest(polygon);
+            var sumHeatUnits6Coldest_V = sumHeatUnits6Coldest(polygon);
+            var sumRadiationavg6Hottest_V = sumRadiationavg6Hottest(polygon);
+            var sumRadiationavg6Coldest_V = sumRadiationavg6Coldest(polygon);
+            //var slopePercent_V = slopePercent(bbox);
+            var getCTI_V = getCTI(polygon);
+            //var meanMinTempColdestMonth_V = meanMinTempColdestMonth(bbox);
+            var frostQuantity_V = frostQuantity(polygon);
 
-    var stack = avgMSAVI2_V
-        .addBands(avgYearRainfall_V)
-        .addBands(avgRainfall6Hottest_V)
-        .addBands(avgRainfall6Coldest_V)
-        .addBands(sumHeatUnits6Hottest_V)
-        .addBands(sumHeatUnits6Coldest_V)
-        .addBands(sumRadiationavg6Hottest_V) 
-        .addBands(sumRadiationavg6Coldest_V)
-        //.addBands(slopePercent_V)
-        .addBands(getCTI_V)
-        //.addBands(meanMinTempColdestMonth_V)
-        .addBands(frostQuantity_V);
+            var stack = avgMSAVI2_V
+                .addBands(avgYearRainfall_V)
+                .addBands(avgRainfall6Hottest_V)
+                .addBands(avgRainfall6Coldest_V)
+                .addBands(sumHeatUnits6Hottest_V)
+                .addBands(sumHeatUnits6Coldest_V)
+                .addBands(sumRadiationavg6Hottest_V) 
+                .addBands(sumRadiationavg6Coldest_V)
+                //.addBands(slopePercent_V)
+                .addBands(getCTI_V)
+                //.addBands(meanMinTempColdestMonth_V)
+                .addBands(frostQuantity_V);
 
-    return stack;
+            resolve(stack);
+
+        }catch(error){
+            reject(new Error("Error in createStack: " + error.message));
+        }
+    })
 };
 
 
@@ -415,7 +505,8 @@ async function spekboomClassification(polygon){
         Output
             - ee.Image with the classification
     */
-
+    
+    try{
         var bandNames = ["avgMSAVI2",
             "avgYRainfall",
             "avgRainfall6H",
@@ -491,6 +582,11 @@ async function spekboomClassification(polygon){
         // );
 
         return spekboomMap;    
+
+
+    }catch(error){
+        return new Error("Error in spekboomClassification: " + error.message);
+    }
 };
 
 

@@ -28,7 +28,7 @@ function prepSrL8(image){
 
 // Classifier function
 async function classifyImage(polygon){
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try{
             // Reformat coordinates
             const polyCoords = reformatCoordinates(polygon.coordinates);
@@ -147,23 +147,20 @@ function reformatCoordinates(coordinates){
 
 // Function to do a spekboom classification
 async function classifySpekboom(polygon){
-    return new Promise((resolve, reject) => {
         try{
             // Reformat coordinates
             const polyCoords = reformatCoordinates(polygon.coordinates);
-
             // Create ee polygon from coordinates
             const eePolygon = ee.Geometry.Polygon(polyCoords);
 
             // Call the classifier
-            const classifiedMap = spekboomClassification.spekboomClassification(eePolygon);
+            const classifiedMap = await spekboomClassification.spekboomClassification(eePolygon);
 
-            resolve(classifiedMap);
+            return classifiedMap;
 
         } catch (error) {
-            reject(error);
+            throw error;
         }
-    });
 }
 
 
