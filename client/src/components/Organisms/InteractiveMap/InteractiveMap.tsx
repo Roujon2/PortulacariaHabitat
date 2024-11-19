@@ -253,6 +253,8 @@ const InteractiveMap: React.FC = () => {
                 addOverlay(polygonSpekboomMask.overlayUrl, polygonSpekboomMask.polygonId);
 
                 setSuccessMessage('Spekboom mask overlay added to map');
+            }else{
+                console.error("No overlay url found in spekboom mask data.");
             }
         }
     }, [polygonSpekboomMask]);
