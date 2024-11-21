@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import pool from '../../config/dbConfig.js';
 
+import AppError from '../errors/appError.js';
+
 import { getUserByEmail } from '../models/userModel.js';
 
 // Query parameters for Google OAuth url
@@ -28,7 +30,7 @@ const getGoogleTokenParams = (code) =>
     });
 
 // Function to retrieve the auth code from frontend and exchange it for an access token
-const verifyGoogleAuth = async (req, res) => {
+const verifyGoogleAuth = async (req, res, next) => {
     const { code } = req.query;
 
     // Get db client
@@ -38,7 +40,7 @@ const verifyGoogleAuth = async (req, res) => {
 
         // If the query doesn't exist
         if (!code) {
-            return res.status(400).json({ error: 'Authorization code not provided.' });
+            throw new AppError('Authorization error: Auth code not provided.', 400, {error: 'Google auth code not provided'});
         }
 
         // Extract all params needed for the token exchange
@@ -49,7 +51,7 @@ const verifyGoogleAuth = async (req, res) => {
 
         // Check token's existence
         if (!id_token) {
-            return res.status(400).json({ error: 'Authorization error. Token not provided.' });
+            throw new AppError('Authorization error: Token retrieval failed.', 400, {error: 'Google auth token retrieval failed'});
         }
 
         // Decode the token and extract user info
@@ -65,7 +67,7 @@ const verifyGoogleAuth = async (req, res) => {
 
         // If the user doesn't exist, reject the request
         if (!dbUser) {
-            return res.status(401).json({ message: 'User not authorized. Contact developers for more information.' });
+            throw new AppError('Authorization error: Google email not authorized.', 401, {error: 'User not registered. Contact developers for more information.'});
         }
 
         // Add the db user id to the token user 
@@ -77,8 +79,12 @@ const verifyGoogleAuth = async (req, res) => {
         res.cookie('user', token, {httpOnly: true, maxAge: config.google.token_expiration, sameSite: 'None', secure: true});
         res.json({user});
     }catch(error){
+        if(error instanceof AppError){
+            next(error);
+        }
+
         console.error('Error: ', error.message);
-        res.status(500).json({ message: 'Error verifying authorization code. '+ error.message })
+        next(new AppError('Authorization error: Token verification failed.', 500, { error: 'Google OAuth Token verification failed: ' + error.message }));
     }finally{
         if(client){
             client.release();

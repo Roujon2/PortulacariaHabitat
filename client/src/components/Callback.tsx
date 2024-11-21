@@ -24,8 +24,15 @@ const Callback: React.FC = () => {
                 navigate('/');
             }catch (error){
                 console.error(error);
-                // Navigate to login with error added
-                navigate('/login?error=auth_failed');
+
+                // If the error is an unauthorized error
+                if (axios.isAxiosError(error) && error.response?.status === 401) {
+                    // Navigate to login with error added
+                    navigate(`/login?error=${error.response.data.message}`);
+                }else{
+                    // Navigate to login with error added
+                    navigate('/login?error=auth_failed');
+                }
             }
 
         })();

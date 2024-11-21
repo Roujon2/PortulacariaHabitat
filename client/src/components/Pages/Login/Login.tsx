@@ -33,15 +33,7 @@ const Login: React.FC = () => {
         const error = queryParams.get('error');
 
         if (error) {
-            switch (error) {
-                // Case where the oauth failed
-                case 'auth_failed':
-                    setErrorMessage('Authentication failed. Please try again.');
-                    break;
-                default:
-                    setErrorMessage('An error occurred. Please try again.');
-                    break;
-            }
+            setErrorMessage(error);
         }
 
         
@@ -102,7 +94,7 @@ const Login: React.FC = () => {
         }catch(error){
             console.error(error);
             setButtonLoading(false);
-            setErrorMessage('Authentication failed. Please try again.');
+            setErrorMessage('Authentication failed.');
         }
     }
 

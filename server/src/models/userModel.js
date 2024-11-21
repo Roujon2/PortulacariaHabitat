@@ -6,9 +6,16 @@ const getUserByEmail = async (client, email) => {
   try{
     // Query
     const result = await client.query(query, values);
+
+    // If no rows
+    if(result.rows.length === 0){
+      return null;
+    }
+
     return result.rows[0];
   }catch(err){
-    console.error("Error fetching user by email:", err);
+    // Throw error
+    throw new Error(err.message);
   }
 };
 

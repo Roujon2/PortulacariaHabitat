@@ -233,10 +233,7 @@ var spekboomClassification = function(polygon) {
             // Wrap getMap in a Promise
             const getMapPromise = new Promise((resolve, reject) => {
                 classAdjust.getMap(imageVisParamBlue, (map, error) => {
-                    console.log("Map: ", map);
-                    console.log("Error: ", error);
                     if (error) {
-                        console.log("Error generating map: " + error);
                         return reject(new Error("Error generating map: " + error));
                     }
                     resolve(map);
@@ -251,10 +248,7 @@ var spekboomClassification = function(polygon) {
                     fileFormat: "GeoTIFF",
                     region: polygon
                 }, (url, error) => {
-                    console.log("URL: ", url);
-                    console.log("Error: ", error);
                     if (error) {
-                        console.log("Error generating download URL: " + error);
                         return reject(new Error("Error generating download URL: " + error));
                     }
                     resolve(url);
@@ -264,8 +258,6 @@ var spekboomClassification = function(polygon) {
             // Use Promise.all for both
             Promise.all([getMapPromise, getDownloadUrlPromise])
                 .then(([map, url]) => {
-                    console.log("Map: ", map);
-                    console.log("URL: ", url);
                     var spekboomClassificationRes = {
                         map: map,
                         downloadUrl: url
@@ -273,12 +265,10 @@ var spekboomClassification = function(polygon) {
                     resolve(spekboomClassificationRes);
                 })
                 .catch(error => {
-                    console.log("Error generating map and download URL: " + error);
                     reject(new Error("Error generating map and download URL: " + error.message));
                 });
 
         } catch (error) {
-            console.log("Error with spekboom classifier: " + error);
             reject(new Error("Error with spekboom classifier: " + error));
         }
             
