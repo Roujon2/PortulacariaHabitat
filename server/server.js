@@ -11,6 +11,8 @@ import polygonRoutes from './src/routes/polygonRoutes.js';
 
 import { setSseHeaders } from './src/middlewares/sse.js';
 
+import AppError from './src/errors/appError.js';
+
 import https from 'https';
 import fs from 'fs';
 
@@ -54,6 +56,30 @@ app.use('/polygons', polygonRoutes);
 app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString(), status: 200 });
 });
+
+
+// Error handler internal app errors
+app.use((err, req, res, next) => {
+    if(err instanceof AppError) {
+        res.status(err.statusCode).json(err.toJSON());
+    }
+
+    // If error is not an instance of AppError, call next middleware
+    next(err);
+});
+
+// Error handler for 404
+app.use((req, res, next) => {
+    res.status(404).json({ message: 'Resource not found', status: 404 });
+});
+
+
+// General error handler middleware
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(err.statusCode || 500).json({ message: 'Internal server error: ' + err.message, status: err.statusCode || 500 });
+});
+
 
 
 // HTTPS server in production
