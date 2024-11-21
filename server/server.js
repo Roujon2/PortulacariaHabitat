@@ -73,6 +73,7 @@ app.use((req, res, next) => {
     res.status(404).json({ message: 'Resource not found', status: 404 });
 });
 
+
 // General error handler middleware
 app.use((err, req, res, next) => {
     console.error(err);
