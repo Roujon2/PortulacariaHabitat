@@ -180,57 +180,108 @@ var getSpekboomMask = function(polygon) {
 // ------ CLASSIFICATION MODEL ------
 var spekboomClassification = function(polygon) {
     return new Promise((resolve, reject) => {
-        var bandNames = ["avgMSAVI2",
-            "avgYRainfall",
-            "avgRainfall6H",
-            "avgRainfall6C",
-            "sumHeatUnits6H",
-            "sumHeatUnits6C",
-            "sumRadi6H",
-            "sumRadi6C",
-            "cti",
-            "frQty"
-        ];
+        try{
+            var bandNames = ["avgMSAVI2",
+                "avgYRainfall",
+                "avgRainfall6H",
+                "avgRainfall6C",
+                "sumHeatUnits6H",
+                "sumHeatUnits6C",
+                "sumRadi6H",
+                "sumRadi6C",
+                "cti",
+                "frQty"
+            ];
 
-        var stack = createStack(polygon);
-        var spekboomMask = getSpekboomMask(polygon);
-        stack = stack.updateMask(spekboomMask);
+            var stack = createStack(polygon);
+            var spekboomMask = getSpekboomMask(polygon);
+            stack = stack.updateMask(spekboomMask);
 
-        var trainedClassifier = ee.Classifier.load("projects/ee-ambientes/assets/SpekBoom/RF_Classifier_" + spekboomClassifier);
-        var classified = stack.select(bandNames).classify(trainedClassifier);
-        var classifiedClip = classified.clip(polygon);
+            var trainedClassifier = ee.Classifier.load("projects/ee-ambientes/assets/SpekBoom/RF_Classifier_" + spekboomClassifier);
+            var classified = stack.select(bandNames).classify(trainedClassifier);
+            var classifiedClip = classified.clip(polygon);
 
-        var spekboomAbundance = classifiedClip.multiply(classifiedClip)
-            .multiply(0.7143)
-            .add(classifiedClip.multiply(1.9524))
-            .add(1);
 
-        var spekboomAbundanceAdj = spekboomAbundance.log().multiply(8.0337).add(5.1887);
-        spekboomAbundanceAdj = spekboomAbundanceAdj.updateMask(spekboomAbundanceAdj.gt(5));
+            var spekboomAbundance = classifiedClip.multiply(classifiedClip)
+                .multiply(0.7143)
+                .add(classifiedClip.multiply(1.9524))
+                .add(1);
 
-        var classAdjust = spekboomAbundanceAdj
-            .where(spekboomAbundanceAdj.lte(10), 0)
-            .where(spekboomAbundanceAdj.gt(10), 1)
-            .where(spekboomAbundanceAdj.gt(12), 2)
-            .where(spekboomAbundanceAdj.gt(14), 3)
-            .where(spekboomAbundanceAdj.gt(16), 4)
-            .where(spekboomAbundanceAdj.gt(18), 5)
-            .where(spekboomAbundanceAdj.gt(20), 6)
-            .where(spekboomAbundanceAdj.gt(22), 7)
-            .where(spekboomAbundanceAdj.gt(24), 8);
+            var spekboomAbundanceAdj = spekboomAbundance.log().multiply(8.0337).add(5.1887);
+            spekboomAbundanceAdj = spekboomAbundanceAdj.updateMask(spekboomAbundanceAdj.gt(5));
 
-        var imageVisParamBlue = {"opacity": 1, "bands": ["classification"], "min": 0, "max": 8, "palette": ["4b4b96", "0000ff", "dcdcff", "c8c84b", "ffff00", "ffffb4", "c84b4b", "ff0000", "ffb4b4"]};
+            var classAdjust = spekboomAbundanceAdj
+                .where(spekboomAbundanceAdj.lte(10), 0)
+                .where(spekboomAbundanceAdj.gt(10), 1)
+                .where(spekboomAbundanceAdj.gt(12), 2)
+                .where(spekboomAbundanceAdj.gt(14), 3)
+                .where(spekboomAbundanceAdj.gt(16), 4)
+                .where(spekboomAbundanceAdj.gt(18), 5)
+                .where(spekboomAbundanceAdj.gt(20), 6)
+                .where(spekboomAbundanceAdj.gt(22), 7)
+                .where(spekboomAbundanceAdj.gt(24), 8)
 
-        // Get map
-        var spekboomMap = classAdjust;
+            // Visualization parameters: var imageVisParam3 = {"opacity":1,"bands":["classification"],"min":0,"max":8,"palette":["0000ff","0000ff","0000ff","ffff00","ffff00","ffff00","ff0000","ff0000","ff0000"]
+            // var imageVisParamPol = ee.Algorithms.If(aoi.area().lt(maxArea),imageVisParam9,imageVisParam3);
+            
+            var imageVisParamBlue = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["4b4b96", "0000ff", "dcdcff", "c8c84b", "ffff00", "ffffb4", "c84b4b", "ff0000", "ffb4b4"]};
+            
+            // Get map
+            var spekboomMapViz = classAdjust.visualize(imageVisParamBlue);
 
-        spekboomMap.getMap(imageVisParamBlue, (map, error) => {
-            if (error) {
-                reject(new Error("Error generating map: " + error));
-            } else {
-                resolve(map);
-            }
-        });
+
+            // Wrap getMap in a Promise
+            const getMapPromise = new Promise((resolve, reject) => {
+                classAdjust.getMap(imageVisParamBlue, (map, error) => {
+                    console.log("Map: ", map);
+                    console.log("Error: ", error);
+                    if (error) {
+                        console.log("Error generating map: " + error);
+                        return reject(new Error("Error generating map: " + error));
+                    }
+                    resolve(map);
+                });
+            });
+
+            // Wrap getDownloadURL in a Promise
+            const getDownloadUrlPromise = new Promise((resolve, reject) => {
+                spekboomMapViz.getDownloadURL({
+                    name: "spekboom_classification",
+                    scale: 100,
+                    fileFormat: "GeoTIFF",
+                    region: polygon
+                }, (url, error) => {
+                    console.log("URL: ", url);
+                    console.log("Error: ", error);
+                    if (error) {
+                        console.log("Error generating download URL: " + error);
+                        return reject(new Error("Error generating download URL: " + error));
+                    }
+                    resolve(url);
+                });
+            });
+
+            // Use Promise.all for both
+            Promise.all([getMapPromise, getDownloadUrlPromise])
+                .then(([map, url]) => {
+                    console.log("Map: ", map);
+                    console.log("URL: ", url);
+                    var spekboomClassificationRes = {
+                        map: map,
+                        downloadUrl: url
+                    };
+                    resolve(spekboomClassificationRes);
+                })
+                .catch(error => {
+                    console.log("Error generating map and download URL: " + error);
+                    reject(new Error("Error generating map and download URL: " + error.message));
+                });
+
+        } catch (error) {
+            console.log("Error with spekboom classifier: " + error);
+            reject(new Error("Error with spekboom classifier: " + error));
+        }
+            
     });
 };
 

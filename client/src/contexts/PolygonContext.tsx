@@ -284,12 +284,16 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             const spekboomMask = await polygonApi.getSpekboomMask(polygonId);
 
             // Retrieve overlay url from spekboomMask response
-            const overlayUrl : string = spekboomMask.urlFormat;
+            const overlayUrl : string = spekboomMask.map.urlFormat;
+            
+            const downloadUrl : string = spekboomMask.downloadUrl;
+
 
             // Build spekboomMask object
             const spekboomMaskObject = {
                 overlayUrl: overlayUrl,
-                polygonId: polygonId
+                polygonId: polygonId,
+                downloadUrl: downloadUrl
             };
 
             // Set spekboom mask polygon

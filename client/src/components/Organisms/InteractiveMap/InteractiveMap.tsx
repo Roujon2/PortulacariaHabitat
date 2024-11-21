@@ -213,6 +213,7 @@ const InteractiveMap: React.FC = () => {
             // Call backend to classify polygon
             polygonApi.classifyPolygon(polygonToClassify)
                 .then((classifyData) => {
+                    console.log("Classify data:", classifyData);
                     // Overlay the classified polygon on the map
                     if(classifyData.classification_result_url){
                         addOverlay(classifyData.classification_result_url, polygonToClassify.id);
@@ -247,6 +248,7 @@ const InteractiveMap: React.FC = () => {
     // UseEffect to track polygon spekboom mask to display
     useEffect(() => {
         if (polygonSpekboomMask) {
+            console.log("Spekboom mask data:", polygonSpekboomMask);
             // Overlay spekboom mask on map
             if(polygonSpekboomMask.overlayUrl){
                 // Overlay

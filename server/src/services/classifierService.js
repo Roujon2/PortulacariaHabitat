@@ -155,6 +155,7 @@ async function classifySpekboom(polygon){
 
             // Call the classifier
             const classifiedMap = await spekboomClassification.spekboomClassification(eePolygon);
+            console.log(classifiedMap);
 
             return classifiedMap;
 
