@@ -60,6 +60,11 @@ app.get('/health', (req, res) => {
 
 // Error handler internal app errors
 app.use((err, req, res, next) => {
+    // Release the db client if it exists
+    if(res.locals.dbClient) {
+        res.locals.dbClient.release();
+    }
+
     if(err instanceof AppError) {
         res.status(err.statusCode).json(err.toJSON());
     }

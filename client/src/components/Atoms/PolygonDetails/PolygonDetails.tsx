@@ -20,17 +20,17 @@ interface PolygonDetailsProps {
     handleEdit: (polygon: Polygon) => void;
     handleCenter: (polygons: Polygon[]) => void;
     onMap: boolean;
-    handleClassify: (polygonId: number) => void;
-    handleGetResult: (polygonId: number) => void;
 
-    handleSpekboomMask: (polygonId: number) => void;
+    handleSpekboomClassification: (polygonId: number) => void;
 
     resultOnMap: boolean;
 
     loading: boolean;
+
+    handleOverlayDownload: (polygonId: number) => void;
 }
 
-const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleClassify, handleGetResult, handleSpekboomMask, loading, resultOnMap }) => {
+const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleSpekboomClassification, loading, resultOnMap, handleOverlayDownload }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
     
     // State var to track if there are any differences to save
@@ -105,7 +105,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
         switch (polygon.classification_status) {
             case 'pending':
                 return (
-                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomClassification(polygon.id)}>
                         Classify
                     </button>
                 );
@@ -123,7 +123,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                 );
             case 'classified':
                 return (
-                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleGetResult(polygon.id)}>
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomClassification(polygon.id)}>
                         View Result
                     </button>
                 );
@@ -135,7 +135,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                 );
             default:
                 return (
-                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleClassify(polygon.id)}>
+                    <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomClassification(polygon.id)}>
                         Classify
                     </button>
                 );
@@ -227,7 +227,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                             (resultOnMap ? 
                                 <HoverText title="Download Classification Result">
                                     <span>
-                                        <button className="polygon-details__button-download" onClick={() => console.log('download')} type='button'>
+                                        <button className="polygon-details__button-download" onClick={() => handleOverlayDownload(polygon.id)} type='button'>
                                             <IoMdDownload />
                                         </button>
                                     </span>
@@ -235,7 +235,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
 
                                 :
 
-                                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomMask(polygon.id)} type='button'>
+                                <button className={`${!onMap ? 'polygon-details__button-classify-disabled' : 'polygon-details__button-classify'}`} disabled={!onMap} onClick={() => handleSpekboomClassification(polygon.id)} type='button'>
                                     Spekboom Classification
                                 </button> 
                             )

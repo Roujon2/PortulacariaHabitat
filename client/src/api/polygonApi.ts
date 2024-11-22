@@ -314,8 +314,8 @@ const getPolygonClassification = async (polygonId: number) => {
     }
 }
 
-// Function to get spekboom mask
-const getSpekboomMask = async (polygonId: number) => {
+// Function to get spekboom classification
+const getSpekboomClassification = async (polygonId: number) => {
     const backendStatus = await checkBackendStatus();
 
     if (!backendStatus){
@@ -325,17 +325,17 @@ const getSpekboomMask = async (polygonId: number) => {
 
     try{
         // Post polygon to spekboom mask endpoint
-        const spekboomMask = await axios({
+        const spekboomClassification = await axios({
             method: 'post',
             url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/${polygonId}/classify/spekboom`,
             withCredentials: true,
         });
 
         // Return overlay data
-        return spekboomMask.data;
+        return spekboomClassification.data;
 
     }catch(error){
-        console.error("Error getting spekboom mask:", error);
+        console.error("Error getting spekboom classification:", error);
     }
 }
 
@@ -367,6 +367,6 @@ export default {
     loadMorePolygons,
     classifyPolygon,
     getPolygonClassification,
-    getSpekboomMask,
+    getSpekboomClassification,
     checkBackendStatus,
 }

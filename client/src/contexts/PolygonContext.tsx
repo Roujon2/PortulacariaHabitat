@@ -27,20 +27,17 @@ interface PolygonContextProps {
     setPolygonsToMap: (polygons: Polygon[]) => void;
     setPolygonsToDelete: (polygons: Polygon[]) => void;
 
-    polygonToClassify: Polygon | null;
-    classifyPolygon: (polygonId: number) => void;
-
-    polygonResultToDisplay: Polygon | null;
-    setPolygonResultToDisplay: (polygon: Polygon | null) => void;
-
     setSuccessMessage: (message: string) => void;
     successMessage: string;
 
     polygonResultsOnMap : Polygon[];
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 
-    getSpekboomMask: (polygonId: number) => void;
-    polygonSpekboomMask: {overlayUrl: string, polygonId: number} | null;
+    getSpekboomClassification: (polygonId: number) => void;
+    polygonSpekboomClassification: {overlayUrl: string, polygonId: number, downloadUrl: string} | null;
+
+    overlays: { [key: number]: { overlay: google.maps.ImageMapType, downloadUrl: string } };
+    setOverlays: React.Dispatch<React.SetStateAction<{ [key: number]: { overlay: google.maps.ImageMapType; downloadUrl: string; }; }>>;
 }
 
 const call_limit = 10;
@@ -64,13 +61,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonsToMap, setPolygonsToMap] = useState<Polygon[]>([]);
     // Polygons to delete on map
     const [polygonsToDelete, setPolygonsToDelete] = useState<Polygon[]>([]);
-    // Polygon to classify
-    const [polygonToClassify, setPolygonToClassify] = useState<Polygon | null>(null);
-
-    const [polygonResultToDisplay, setPolygonResultToDisplay] = useState<Polygon | null>(null);
 
     // Polygon spekboom mask
-    const [polygonSpekboomMask, setPolygonSpekboomMask] = useState<{overlayUrl: string, polygonId: number} | null>(null);
+    const [polygonSpekboomClassification, setPolygonSpekboomClassification] = useState<{overlayUrl: string, polygonId: number, downloadUrl: string} | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -88,6 +81,13 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Success message for polygon operations
     const [successMessage, setSuccessMessage] = useState<string>('');
+
+    // Overlay dictionary holding overlay and downloadurl for the polygon results on the map
+    const [overlays, setOverlays] = useState<{
+        [key: string]: { overlay: google.maps.ImageMapType; downloadUrl: string };
+    }>({});
+      
+
 
     const fetchPolygonCount = async () => {
         try {
@@ -246,32 +246,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             return currentPolygons.filter(p => !polygons.find(cp => cp.id === p.id));
         });
     };
-
-    // Function to classify polygon
-    const classifyPolygon = async (polygonId: number) => {
-        // Find polygon in list polygons
-        const polygon = polygons.find(p => p.id === polygonId);
-
-        if(!polygon){
-            return;
-        }
-
-        // Set polygon to classify
-        setPolygonToClassify(polygon);
-        // Change the classified polygon in the list
-        setPolygonsOnMap((currentPolygons) => {
-            return currentPolygons.map(p => {
-                if(p.id === polygon.id){
-                    return polygon;
-                }
-                return p;
-            });
-        });
-    };
     
 
-    // Retrieve spekboom mask for polygon
-    const getSpekboomMask = async (polygonId: number) => {
+    // Retrieve spekboom classification for polygon
+    const getSpekboomClassification = async (polygonId: number) => {
         // If polygon id in polygonResultsOnMap, return
         if(polygonResultsOnMap.find(p => p.id === polygonId)){
             setSuccessMessage('Spekboom mask already on map');
@@ -281,7 +259,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         setLoading(true);
         try{
             // Call api to get spekboom mask
-            const spekboomMask = await polygonApi.getSpekboomMask(polygonId);
+            const spekboomMask = await polygonApi.getSpekboomClassification(polygonId);
 
             // Retrieve overlay url from spekboomMask response
             const overlayUrl : string = spekboomMask.map.urlFormat;
@@ -297,7 +275,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             };
 
             // Set spekboom mask polygon
-            setPolygonSpekboomMask(spekboomMaskObject);
+            setPolygonSpekboomClassification(spekboomMaskObject);
 
         }catch(error){
             console.error("Error getting spekboom mask:", error);
@@ -317,11 +295,10 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,
                                         centerOnPolygons, setCenterOnPolygons,
-                                        polygonToClassify, classifyPolygon,
-                                        polygonResultToDisplay, setPolygonResultToDisplay,
                                         setSuccessMessage, successMessage,
                                         polygonResultsOnMap, setPolygonResultsOnMap,
-                                        getSpekboomMask, polygonSpekboomMask
+                                        getSpekboomClassification, polygonSpekboomClassification,
+                                        overlays, setOverlays
                                         }}>
             {children}
         </PolygonContext.Provider>

@@ -5,25 +5,25 @@ import polygonModel from "../models/polygonModel.js";
 import sseService from "../services/sseService.js";
 
 const testClassifier = async (req, res) => {
-    // Error if the request body is empty
-    if (!req.body) {
-        return res.status(400).json({
-            error: 'Missing request body',
-        });
-    }
-
-    // Error if there is not polygon 
-    if (!req.body.polygon) {
-        return res.status(400).json({
-            error: 'Missing polygon in request body',
-        });
-    }
-
-    const user_id = req.user.id;
-    const polygon = req.body.polygon;
-    const client = res.locals.dbClient;
-
     try {
+        const user_id = req.user.id;
+        const polygon = req.body.polygon;
+        const client = res.locals.dbClient;
+
+        // Error if the request body is empty
+        if (!req.body) {
+            res.status(400).json({
+                error: 'Missing request body',
+            });
+        }
+
+        // Error if there is not polygon 
+        if (!req.body.polygon) {
+            res.status(400).json({
+                error: 'Missing polygon in request body',
+            });
+        }
+    
         const result = await classifierService.classifyImage(polygon);
 
 
@@ -54,21 +54,21 @@ const testClassifier = async (req, res) => {
             error: 'Error with test classifier: ' + error.message,
         });
     }finally{
-        if(client){
-            client.release();
+        if(res.locals.dbClient){
+            res.locals.dbClient.release();
         }
     }
 };
 
 // Function to get spekboom mask
 const getSpekboomMask = async (req, res) => {
-    // Retrieve polygon id from params
-    const id = req.params.id;
-    
-    // DB client
-    const client = res.locals.dbClient;
-
     try{
+        // Retrieve polygon id from params
+        const id = req.params.id;
+        
+        // DB client
+        const client = res.locals.dbClient;
+
         // Find polygon in db
         const polygon = await polygonModel.getPolygon(client, id);
 
@@ -93,8 +93,8 @@ const getSpekboomMask = async (req, res) => {
             error: 'Error getting spekboom mask: ' + error.message,
         });
     }finally{
-        if(client){
-            client.release();
+        if(res.locals.dbClient){
+            res.locals.dbClient.release();
         }
     }
 };
@@ -102,11 +102,11 @@ const getSpekboomMask = async (req, res) => {
 
 // Function to get a polygon classification result
 const getPolygonClassificationResult = async (req, res) => {
-    const user_id = req.user.id;
-    const polygon_id = req.params.id;
-    const client = res.locals.dbClient;
-
     try {
+        const user_id = req.user.id;
+        const polygon_id = req.params.id;
+        const client = res.locals.dbClient;
+
         const result = await classifyResultModel.getClassificationResult(client, user_id, polygon_id);
 
         if (!result) {
@@ -121,8 +121,8 @@ const getPolygonClassificationResult = async (req, res) => {
             error: 'Error getting polygon classification result: ' + error.message,
         });
     }finally{
-        if(client){
-            client.release();
+        if(res.locals.dbClient){
+            res.locals.dbClient.release();
         }
     }
 };
@@ -130,15 +130,15 @@ const getPolygonClassificationResult = async (req, res) => {
 
 // Function to get spekboom classification
 const getSpekboomClassification = async (req, res) => {
-    const polygon_id = req.params.id;
-    const client = res.locals.dbClient;
-
     try {
+        const polygon_id = req.params.id;
+        const client = res.locals.dbClient;
+
         // Retrieve the polygon
         const polygon = await polygonModel.getPolygon(client, polygon_id);
 
         if (!polygon) {
-            return res.status(404).json({
+            res.status(404).json({
                 error: 'Polygon not found',
             });
         }
@@ -156,8 +156,8 @@ const getSpekboomClassification = async (req, res) => {
             error: 'Error getting polygon classification result: ' + error.message,
         });
     }finally{
-        if(client){
-            client.release();
+        if(res.locals.dbClient){
+            res.locals.dbClient.release();
         }
     }
 };

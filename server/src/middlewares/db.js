@@ -16,6 +16,7 @@ export const generateClient = async (req, res, next) => {
         // Attach client to res.locals for use in subsequent middleware/routes
         res.locals.dbClient = client;
 
+
         // Next middleware
         return next();
     }catch (error){

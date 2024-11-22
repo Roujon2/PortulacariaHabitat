@@ -42,9 +42,9 @@ const InteractiveMap: React.FC = () => {
     // Access polygons to be on map from context
     const { resetMapPolygons, setSelectedPolygonDetailsId, selectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
-        setPolygonsToMap, polygonToClassify, setSuccessMessage, successMessage,
-        polygonResultToDisplay, setPolygonResultsOnMap, polygonResultsOnMap,
-        polygonSpekboomMask, polygonsOnMap, setPolygonsOnMap
+        setPolygonsToMap, setSuccessMessage, successMessage,
+        setPolygonResultsOnMap, polygonResultsOnMap,
+        polygonSpekboomClassification, polygonsOnMap, setPolygonsOnMap, overlays, setOverlays
         } = usePolygonContext();
 
     // Local state var for the polygons currently drawn on the map
@@ -59,23 +59,27 @@ const InteractiveMap: React.FC = () => {
     const [selectedPolygon, setSelectedPolygon] = useState<NewPolygon | Polygon | null>(null);
     const [drawnPolygon, setDrawnPolygon] = useState<google.maps.Polygon | null>(null);
 
-    // Map var for overlays on map linked to polygon id
-    const [overlays, setOverlays] = useState<{ [key: number]: google.maps.ImageMapType }>({});
 
     // Function to get the opacity of an overlay
     const getOverlayOpacity = (polygonId: number) => {
-        const overlay = overlays[polygonId];
+        const overlay = overlays[polygonId]?.overlay;
         return overlay ? overlay.getOpacity() : -1;
     };
 
     // Function to handle the opacity change for a specific overlay
     const handleOverlayOpacityChange = (polygonId: number, newOpacity: number) => {
-        const overlay = overlays[polygonId];
+        const overlay = overlays[polygonId].overlay;
+        const downloadUrl = overlays[polygonId].downloadUrl;
         if (overlay) {
             overlay.setOpacity(newOpacity);
             setOverlayOpacity(newOpacity);
-            setOverlays(prev => ({ ...prev, [polygonId]: overlay }));
-        }
+            setOverlays((prev) => ({
+                            ...prev,
+                            [polygonId]: { overlay, downloadUrl },
+                          }));
+              
+              
+        }   
     };
     // Function to handle the slider change for a specific overlay changed by the widget slider
     const handleSpecificOpacityChange = (polygonId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,59 +211,22 @@ const InteractiveMap: React.FC = () => {
         }
     }, [polygonsToDelete]);
 
-    // UseEffect tracking polygon to classify
-    useEffect(() => {
-        if (polygonToClassify) {
-            // Call backend to classify polygon
-            polygonApi.classifyPolygon(polygonToClassify)
-                .then((classifyData) => {
-                    console.log("Classify data:", classifyData);
-                    // Overlay the classified polygon on the map
-                    if(classifyData.classification_result_url){
-                        addOverlay(classifyData.classification_result_url, polygonToClassify.id);
-                    }else{
-                        console.error("No url format found in classify data.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error classifying polygon:", error);
-                });
-        }
-    }, [polygonToClassify]);
-
-    // UseEffect to track polygon classification result to display
-    useEffect(() => {
-        if (polygonResultToDisplay) {
-            // Get polygon classification result to display
-            polygonApi.getPolygonClassification(polygonResultToDisplay.id)
-                .then((classificationResult) => {
-                    // Overlay the classified polygon on the map
-                    if(classificationResult.classification_result_url){
-                        addOverlay(classificationResult.classification_result_url, polygonResultToDisplay.id);
-                    }else{
-                        console.error("No url format found in classification result.");
-                    }
-                }).catch((error) => {
-                    console.error("Error getting polygon classification result:", error);
-                });
-        }
-    }, [polygonResultToDisplay]);
 
     // UseEffect to track polygon spekboom mask to display
     useEffect(() => {
-        if (polygonSpekboomMask) {
-            console.log("Spekboom mask data:", polygonSpekboomMask);
+        if (polygonSpekboomClassification) {
+            console.log("Spekboom mask data:", polygonSpekboomClassification);
             // Overlay spekboom mask on map
-            if(polygonSpekboomMask.overlayUrl){
+            if(polygonSpekboomClassification.overlayUrl && polygonSpekboomClassification.polygonId && polygonSpekboomClassification.downloadUrl){
                 // Overlay
-                addOverlay(polygonSpekboomMask.overlayUrl, polygonSpekboomMask.polygonId);
-
+                addOverlay(polygonSpekboomClassification.overlayUrl, polygonSpekboomClassification.downloadUrl, polygonSpekboomClassification.polygonId);
+                
                 setSuccessMessage('Spekboom mask overlay added to map');
             }else{
                 console.error("No overlay url found in spekboom mask data.");
             }
         }
-    }, [polygonSpekboomMask]);
+    }, [polygonSpekboomClassification]);
 
 
     // Load the google maps api script
@@ -381,7 +348,7 @@ const InteractiveMap: React.FC = () => {
     }
 
     // Function to add an overlay to the map
-    const addOverlay = (url: string, polygonId: number) => {
+    const addOverlay = (overlayUrl: string, downloadUrl: string, polygonId: number) => {
         // If there is no map, return
         if (!map) return;
 
@@ -391,7 +358,7 @@ const InteractiveMap: React.FC = () => {
         const overlayMapParams = new google.maps.ImageMapType({
             getTileUrl: (coord: google.maps.Point, zoom: number) => {
     
-                return url
+                return overlayUrl
                     .replace('{x}', coord.x.toString())
                     .replace('{y}', coord.y.toString())
                     .replace('{z}', zoom.toString());
@@ -405,7 +372,7 @@ const InteractiveMap: React.FC = () => {
         map.overlayMapTypes.push(overlayMapParams);
         
         // Add overlay to overlays
-        setOverlays(prev => ({ ...prev, [polygonId]: overlayMapParams }));
+        setOverlays(prev => ({ ...prev, [polygonId]: { overlay: overlayMapParams, downloadUrl: downloadUrl} }));
 
         // Add result to polygon results on map
         // Get polygon from id
@@ -467,7 +434,7 @@ const InteractiveMap: React.FC = () => {
 
                 // Remove overlay if exists
                 if (overlays[id]) {
-                    const overlayIndex = map.overlayMapTypes.getArray().indexOf(overlays[id]);
+                    const overlayIndex = map.overlayMapTypes.getArray().indexOf(overlays[id].overlay);
                     if (overlayIndex > -1) {
                         map.overlayMapTypes.removeAt(overlayIndex);
                     }

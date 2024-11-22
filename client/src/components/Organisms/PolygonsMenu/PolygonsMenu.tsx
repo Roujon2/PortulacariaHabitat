@@ -24,8 +24,9 @@ import PolygonUpload from "../../Atoms/PolygonUpload/PolygonUpload";
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
-    const { polygons, loading, loadMorePolygons, getSpekboomMask, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, 
-        setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, classifyPolygon, setPolygonResultToDisplay, polygonResultsOnMap } = usePolygonContext();
+    const { polygons, loading, loadMorePolygons, getSpekboomClassification, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, 
+        setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, polygonResultsOnMap,
+        overlays } = usePolygonContext();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -98,18 +99,25 @@ const PolygonsMenu: React.FC = () => {
         }
     }
 
-    // Function to handle getting polygon classification result to display
-    const handleGetClassificationResult = (polygonId: number) => {
-        // Find polygon
-        const polygon = polygons.find(p => p.id === polygonId);
+    // Function to handle the classification overlay download button click
+    const handleClassificationOverlayDownload = async (polygonId: number) => {
+        // Get overlay object
+        const overlay = overlays[polygonId];
 
-        if (!polygon) {
-            console.error("Classification result display: Correspoding polygon not found.");
+        if (!overlay) {
+            console.error("Classification overlay download: Correspoding polygon not found.");
             return;
         }
 
-        // Set the polygon result to display
-        setPolygonResultToDisplay(polygon);
+        // Get the classification overlay download url
+        const downloadUrl = overlay.downloadUrl;
+
+        // Create a download link and click it
+        const downloadLink = document.createElement("a");
+        downloadLink.href = downloadUrl;
+        downloadLink.target = "_blank";
+        downloadLink.download = '';
+        downloadLink.click();
     };
 
     useEffect(() => {
@@ -168,11 +176,10 @@ const PolygonsMenu: React.FC = () => {
                             handleEdit={handleUpdate}
                             handleCenter={setCenterOnPolygons}
                             onMap={polygonsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
-                            handleClassify={classifyPolygon}
-                            handleGetResult={handleGetClassificationResult}
-                            handleSpekboomMask={getSpekboomMask}
+                            handleSpekboomClassification={getSpekboomClassification}
                             loading={loading}
                             resultOnMap={polygonResultsOnMap.find(p => p.id === editPolygonSelected.id) ? true : false}
+                            handleOverlayDownload={handleClassificationOverlayDownload}
                         />
                     ) : (
                         <p className="polygon-details-empty">Select a polygon to view details.</p>
