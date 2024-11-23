@@ -147,8 +147,13 @@ const getSpekboomClassification = async (req, res, next) => {
         // Get the spekboom classification
         const result = await classifierService.classifySpekboom(polygon);
 
-        if(!result?.urlFormat){
-            throw new AppError('Error getting spekboom classification.', 500);
+        // If the result is an instance of AppError, throw it
+        if(result instanceof AppError){
+            throw result;
+        }
+
+        if(!result?.map?.urlFormat){
+            throw new AppError('Error getting spekboom classification. No URL present in the response.', 500);
         }
 
         // Send SSE event

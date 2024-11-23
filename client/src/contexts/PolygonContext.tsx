@@ -3,6 +3,7 @@ import polygonApi from '../api/polygonApi';
 import { Polygon } from '../types/polygon';
 
 import SuccessConfirmationBox from '../components/Atoms/SuccessConfirmationBox/SuccessConfirmationBox';
+import { useAlert } from './AlertContext';
 
 interface PolygonContextProps {
     polygons: Polygon[];
@@ -27,9 +28,6 @@ interface PolygonContextProps {
     setPolygonsToMap: (polygons: Polygon[]) => void;
     setPolygonsToDelete: (polygons: Polygon[]) => void;
 
-    setSuccessMessage: (message: string) => void;
-    successMessage: string;
-
     polygonResultsOnMap : Polygon[];
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 
@@ -49,6 +47,9 @@ interface PolygonContextProviderProps {
 }
 
 export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ children }) => {
+    // Alert context
+    const { showAlert } = useAlert();
+
     const [polygons, setPolygons] = useState<Polygon[]>([]);
     // Polygons on the map
     const [polygonsOnMap, setPolygonsOnMap] = useState<Polygon[]>([]);
@@ -78,9 +79,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Var handling polygon to center on
     const [centerOnPolygons, setCenterOnPolygons] = useState<Polygon[]>([]);
-
-    // Success message for polygon operations
-    const [successMessage, setSuccessMessage] = useState<string>('');
 
     // Overlay dictionary holding overlay and downloadurl for the polygon results on the map
     const [overlays, setOverlays] = useState<{
@@ -252,7 +250,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const getSpekboomClassification = async (polygonId: number) => {
         // If polygon id in polygonResultsOnMap, return
         if(polygonResultsOnMap.find(p => p.id === polygonId)){
-            setSuccessMessage('Spekboom mask already on map');
+            showAlert('Spekboom mask already on map', 'warning');
             return;
         }
 
@@ -278,7 +276,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             setPolygonSpekboomClassification(spekboomMaskObject);
 
         }catch(error){
-            console.error("Error getting spekboom mask:", error);
+            showAlert('Unable to retrieve the Spekboom classification. Try again later.', 'error');
         }finally{
             setLoading(false);
         }
@@ -295,7 +293,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                                         selectedPolygonDetailsId, setSelectedPolygonDetailsId,
                                         polygonToUpdate,
                                         centerOnPolygons, setCenterOnPolygons,
-                                        setSuccessMessage, successMessage,
                                         polygonResultsOnMap, setPolygonResultsOnMap,
                                         getSpekboomClassification, polygonSpekboomClassification,
                                         overlays, setOverlays

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { NewPolygon, Polygon } from '../types/polygon';
 
 // Function to save polygon to the database
@@ -336,6 +336,11 @@ const getSpekboomClassification = async (polygonId: number) => {
 
     }catch(error){
         console.error("Error getting spekboom classification:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 

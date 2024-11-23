@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 
 import { usePolygonContext } from "../../../contexts/PolygonContext";
 
+import { useAlert } from "../../../contexts/AlertContext";
+
 interface SSEComponentProps {
     setServerOnline: (serverOnline: boolean) => void;
 }
@@ -10,7 +12,9 @@ interface SSEComponentProps {
 let reconnectAttempts = 0;
 
 const SSEComponent: React.FC<SSEComponentProps> = ({ setServerOnline }) => {
-    const { refreshPolygons, setSuccessMessage } = usePolygonContext();
+    const { refreshPolygons } = usePolygonContext();
+    // Alert context
+    const { showAlert } = useAlert();
 
     // Event source ref
     const eventSourceRef = useRef<EventSource | null>(null);
@@ -39,27 +43,27 @@ const SSEComponent: React.FC<SSEComponentProps> = ({ setServerOnline }) => {
                 // Switch statement to set success message based on event type
                 switch (data.action){
                     case 'polygon_update':
-                        setSuccessMessage('Polygon updated');
+                        showAlert('Polygon updated', 'success');
                         break;
 
                     case 'polygon_delete':
                         // data is an array of deleted polygon ids
                         const countDeleted = data.data.length;
                         if (countDeleted > 1){
-                            setSuccessMessage(`${countDeleted} polygons deleted`);
+                            showAlert(`${countDeleted} polygons deleted`, 'success');
                         }else if(countDeleted === 1){
-                            setSuccessMessage('Polygon deleted');
+                            showAlert('Polygon deleted', 'success');
                         }else{
-                            setSuccessMessage('No polygons deleted');
+                            showAlert('No polygons deleted', 'info');
                         }
                         break;
 
                     case 'polygon_save':
-                        setSuccessMessage('Polygon saved');
+                        showAlert('Polygon saved', 'success');
                         break;
                     
                     case 'spekboom_mask_processing':
-                        setSuccessMessage('Spekboom mask processing');
+                        showAlert('Spekboom mask processing', 'info');
                         break;
 
                     default:

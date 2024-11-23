@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 import { PolygonContextProvider } from '../../../contexts/PolygonContext';
+import { AlertProvider } from '../../../contexts/AlertContext';
 
 import './home.css';
 
@@ -42,24 +43,26 @@ const Home: React.FC<HomeProps> = ({selectedMenu}) => {
     }
 
     return (
-        <PolygonContextProvider>
-            <div className='home-page'>
-                <PanelGroup direction='horizontal'>
-                    <Panel defaultSize={60} minSize={30}>
-                        <InteractiveMap />
-                    </Panel>
-                    <PanelResizeHandle className='resize-handle__home'/>
-                    <Panel defaultSize={40} minSize={20} maxSize={70}>
-                        {selectedMenu === 'help' && <HelpMenu />}
-                        {selectedMenu === 'profile' && <ProfileMenu user={user}/>}
-                        {selectedMenu === 'polygons' && <PolygonsMenu />}
-                    </Panel>
-                </PanelGroup>
-                <SSEComponent setServerOnline={setServerOnline}/>
+        <AlertProvider>
+            <PolygonContextProvider>
+                <div className='home-page'>
+                    <PanelGroup direction='horizontal'>
+                        <Panel defaultSize={60} minSize={30}>
+                            <InteractiveMap />
+                        </Panel>
+                        <PanelResizeHandle className='resize-handle__home'/>
+                        <Panel defaultSize={40} minSize={20} maxSize={70}>
+                            {selectedMenu === 'help' && <HelpMenu />}
+                            {selectedMenu === 'profile' && <ProfileMenu user={user}/>}
+                            {selectedMenu === 'polygons' && <PolygonsMenu />}
+                        </Panel>
+                    </PanelGroup>
+                    <SSEComponent setServerOnline={setServerOnline}/>
 
-                {!serverOnline && <ServerOfflineBox />}
-            </div>
-        </PolygonContextProvider>
+                    {!serverOnline && <ServerOfflineBox />}
+                </div>
+            </PolygonContextProvider>
+        </AlertProvider>
     );
 };
 

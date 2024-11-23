@@ -20,6 +20,7 @@ import PolygonWidget from "../../Atoms/PolygonWidget/PolygonWidget";
 
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
+import { useAlert } from "../../../contexts/AlertContext";
 
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
@@ -32,6 +33,9 @@ const mapOptions = {
 
 // Component for displaying and functionality of interactive map
 const InteractiveMap: React.FC = () => {
+    // Alert context
+    const { showAlert } = useAlert();
+
     // State var map key to force reload
     const [mapKey, setMapKey] = useState<number>(0);
 
@@ -42,7 +46,7 @@ const InteractiveMap: React.FC = () => {
     // Access polygons to be on map from context
     const { resetMapPolygons, setSelectedPolygonDetailsId, selectedPolygonDetailsId, polygonToUpdate, putOnMap, 
         centerOnPolygons, setCenterOnPolygons, polygonsToDelete, polygonsToMap, setPolygonsToDelete, 
-        setPolygonsToMap, setSuccessMessage, successMessage,
+        setPolygonsToMap,
         setPolygonResultsOnMap, polygonResultsOnMap,
         polygonSpekboomClassification, polygonsOnMap, setPolygonsOnMap, overlays, setOverlays
         } = usePolygonContext();
@@ -180,11 +184,11 @@ const InteractiveMap: React.FC = () => {
 
             // Set success message
             if (newPolygons.length === 1) {
-                setSuccessMessage('Polygon added to map');
+                showAlert('Polygon added to map', 'success');
             }else if(newPolygons.length > 1){
-                setSuccessMessage(`${newPolygons.length} polygons added to map`);
+                showAlert(`${newPolygons.length} polygons added to map`, 'success');
             }else{
-                setSuccessMessage('Polygon/s already on map');
+                showAlert('Polygon/s already on map', 'info');
             }
 
             // Center map to the new polygons
@@ -221,9 +225,10 @@ const InteractiveMap: React.FC = () => {
                 // Overlay
                 addOverlay(polygonSpekboomClassification.overlayUrl, polygonSpekboomClassification.downloadUrl, polygonSpekboomClassification.polygonId);
                 
-                setSuccessMessage('Spekboom mask overlay added to map');
+                showAlert('Spekboom classification overlay added to map', 'success');
             }else{
                 console.error("No overlay url found in spekboom mask data.");
+                showAlert('Error adding spekboom classification overlay to map', 'error');
             }
         }
     }, [polygonSpekboomClassification]);
@@ -450,7 +455,7 @@ const InteractiveMap: React.FC = () => {
 
                 setPolygonsOnMap(polygonsOnMap.filter((p: Polygon) => p.id !== id));
 
-                setSuccessMessage('Polygon removed from map');
+                showAlert('Polygon removed from map', 'success');
 
                 setSelectedPolygonDetailsId(null);
                 
@@ -563,8 +568,6 @@ const InteractiveMap: React.FC = () => {
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
                     
-                    {successMessage && <SuccessConfirmationBox message={successMessage} duration={2500} onClose={() => setSuccessMessage('')} />}
-
                 </GoogleMap>
             )}
         </div>
