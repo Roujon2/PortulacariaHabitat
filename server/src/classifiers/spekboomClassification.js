@@ -1,3 +1,7 @@
+import AppError from '../errors/appError.js';
+
+
+
 import ee from '@google/earthengine';
 
 // Spekboom classifier version
@@ -234,7 +238,7 @@ var spekboomClassification = function(polygon) {
             const getMapPromise = new Promise((resolve, reject) => {
                 classAdjust.getMap(imageVisParamBlue, (map, error) => {
                     if (error) {
-                        return reject(new Error("Error generating map: " + error));
+                        return reject(new AppError("Error generating map URL.", 500, {error: error}));
                     }
                     resolve(map);
                 });
@@ -249,7 +253,7 @@ var spekboomClassification = function(polygon) {
                     region: polygon
                 }, (url, error) => {
                     if (error) {
-                        return reject(new Error("Error generating download URL: " + error));
+                        return reject(new AppError("Error generating download URL.", 500, {error: error}));
                     }
                     resolve(url);
                 });
@@ -265,11 +269,17 @@ var spekboomClassification = function(polygon) {
                     resolve(spekboomClassificationRes);
                 })
                 .catch(error => {
-                    reject(new Error("Error generating map and download URL: " + error.message));
+                    if(!(error instanceof AppError)){
+                        error = new AppError('Error generating map and download URL.', 500, {error: error.message});
+                    }
+                    reject(error);
                 });
 
         } catch (error) {
-            reject(new Error("Error with spekboom classifier: " + error));
+            if(!(error instanceof AppError)){
+                error = new AppError('Error with spekboom classifier.', 500, {error: error.message});
+            }
+            reject(error);
         }
             
     });

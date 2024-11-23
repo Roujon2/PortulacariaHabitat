@@ -16,6 +16,11 @@ import AppError from './src/errors/appError.js';
 import https from 'https';
 import fs from 'fs';
 
+import logger from './logger.js';
+
+import jwt from 'jsonwebtoken';
+
+
 const app = express();
 const PORT = config.server.port;
 
@@ -28,6 +33,7 @@ app.use(cors({
 
 // General endpoint
 app.get('/', (req, res) => {
+    logger.info('Root endpoint accessed');
 	res.status(200).json({message: "Welcome to the Spekboom Mapping API!"});
 });
 
@@ -57,32 +63,50 @@ app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Server is online', timestamp: new Date().toISOString(), status: 200 });
 });
 
+// 404 handler for unknown resources
+app.use((req, res, next) => {
+    logger.warn(`404 - Resource not found: ${req.originalUrl}`);
+    res.status(404).json({ message: 'Resource not found', status: 404 });
+});
+
 
 // Error handler internal app errors
 app.use((err, req, res, next) => {
-    // Release the db client if it exists
-    if(res.locals.dbClient) {
-        res.locals.dbClient.release();
+    // Get user data
+    const user = req.cookies.user;
+    var userData = undefined;
+
+    if(user) {
+        userData = jwt.decode(user);
     }
 
+    // If error is an instance of AppError, send error response
     if(err instanceof AppError) {
+        console.error(err.toLog());
+        logger.error(`User: ID - ${userData ? userData.id : 'N/A'}, Email - '${userData ? userData.email : 'N/A'}' - ${err.toLog()}`);
         res.status(err.statusCode).json(err.toJSON());
+    }else{
+        // If error is not an instance of AppError, call next middleware
+        next(err);
     }
-
-    // If error is not an instance of AppError, call next middleware
-    next(err);
-});
-
-// Error handler for 404
-app.use((req, res, next) => {
-    res.status(404).json({ message: 'Resource not found', status: 404 });
 });
 
 
 // General error handler middleware
 app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(err.statusCode || 500).json({ message: 'Internal server error: ' + err.message, status: err.statusCode || 500 });
+    // Get user data
+    const user = req.cookies.user;
+    var userData = undefined;
+
+    if(user) {
+        userData = jwt.decode(user);
+    }
+
+    // Log the error
+    console.error('Unhandled error: ', err.message, err.stack);
+    logger.error(`User: ID - ${userData ? userData.id : 'N/A'}, Email - '${userData ? userData.email : 'N/A'}' - Unhandled error: ${err.message}`);
+    logger.error(err.stack);
+    res.status(err.statusCode || 500).json({ message: `Internal server error: ${err.message || 'Something went wrong'}`, status: err.statusCode || 500 });
 });
 
 

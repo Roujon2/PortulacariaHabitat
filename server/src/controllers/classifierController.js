@@ -4,7 +4,10 @@ import polygonModel from "../models/polygonModel.js";
 
 import sseService from "../services/sseService.js";
 
-const testClassifier = async (req, res) => {
+import AppError from '../errors/appError.js';
+
+
+const testClassifier = async (req, res, next) => {
     try {
         const user_id = req.user.id;
         const polygon = req.body.polygon;
@@ -12,16 +15,12 @@ const testClassifier = async (req, res) => {
 
         // Error if the request body is empty
         if (!req.body) {
-            res.status(400).json({
-                error: 'Missing request body',
-            });
+            throw new AppError('Missing request body.', 400);
         }
 
         // Error if there is not polygon 
         if (!req.body.polygon) {
-            res.status(400).json({
-                error: 'Missing polygon in request body',
-            });
+            throw new AppError('Missing polygon in request body.', 400);
         }
     
         const result = await classifierService.classifyImage(polygon);
@@ -29,9 +28,7 @@ const testClassifier = async (req, res) => {
 
         // Structure the result object
         if(!result.urlFormat){
-            return res.status(500).json({
-                error: 'Error with test classifier: ' + result.error,
-            });
+            throw new AppError('Error with test classifier.', 500, {error: result.error});
         }
 
         const classificationResult = {
@@ -50,9 +47,11 @@ const testClassifier = async (req, res) => {
 
         res.status(200).json(savedResult);
     } catch (error) {
-        res.status(500).json({
-            error: 'Error with test classifier: ' + error.message,
-        });
+        if(!(error instanceof AppError)){
+            error = new AppError('Error with test classifier.', 500, {error: error.message});
+        }
+
+        next(error);
     }finally{
         if(res.locals.dbClient){
             res.locals.dbClient.release();
@@ -61,7 +60,7 @@ const testClassifier = async (req, res) => {
 };
 
 // Function to get spekboom mask
-const getSpekboomMask = async (req, res) => {
+const getSpekboomMask = async (req, res, next) => {
     try{
         // Retrieve polygon id from params
         const id = req.params.id;
@@ -73,25 +72,23 @@ const getSpekboomMask = async (req, res) => {
         const polygon = await polygonModel.getPolygon(client, id);
 
         if(!polygon){
-            return res.status(404).json({
-                error: 'Polygon not found',
-            });
+            throw new AppError('Polygon not found in database.', 404);
         }
 
         // Get the spekboom mask
         const mask = await classifierService.getSpekboomMask(polygon);
 
         if(!mask.urlFormat){
-            return res.status(500).json({
-                error: 'Error getting spekboom mask.',
-            });
+            throw new AppError('Error getting spekboom mask.', 500);
         }
 
         res.status(200).json(mask);
     }catch(error){
-        res.status(500).json({
-            error: 'Error getting spekboom mask: ' + error.message,
-        });
+        if(!(error instanceof AppError)){
+            error = new AppError('Error getting spekboom mask.', 500, {error: error.message});
+        }
+
+        next(error);
     }finally{
         if(res.locals.dbClient){
             res.locals.dbClient.release();
@@ -101,7 +98,7 @@ const getSpekboomMask = async (req, res) => {
 
 
 // Function to get a polygon classification result
-const getPolygonClassificationResult = async (req, res) => {
+const getPolygonClassificationResult = async (req, res, next) => {
     try {
         const user_id = req.user.id;
         const polygon_id = req.params.id;
@@ -110,16 +107,16 @@ const getPolygonClassificationResult = async (req, res) => {
         const result = await classifyResultModel.getClassificationResult(client, user_id, polygon_id);
 
         if (!result) {
-            return res.status(404).json({
-                error: 'Classification result not found',
-            });
+            throw new AppError('Classification result not found in database.', 404);
         }
 
         res.status(200).json(result);
     } catch (error) {
-        res.status(500).json({
-            error: 'Error getting polygon classification result: ' + error.message,
-        });
+        if(!(error instanceof AppError)){
+            error = new AppError('Error getting polygon classification result.', 500, {error: error.message});
+        }
+
+        next(error);
     }finally{
         if(res.locals.dbClient){
             res.locals.dbClient.release();
@@ -129,22 +126,30 @@ const getPolygonClassificationResult = async (req, res) => {
 
 
 // Function to get spekboom classification
-const getSpekboomClassification = async (req, res) => {
+const getSpekboomClassification = async (req, res, next) => {
     try {
         const polygon_id = req.params.id;
         const client = res.locals.dbClient;
 
-        // Retrieve the polygon
-        const polygon = await polygonModel.getPolygon(client, polygon_id);
+        var polygon;
+
+        try{
+            // Retrieve the polygon
+            polygon = await polygonModel.getPolygon(client, polygon_id);
+        }catch(error){
+            throw new AppError('Error getting polygon from database.', 500, {error: error.message});
+        }
 
         if (!polygon) {
-            res.status(404).json({
-                error: 'Polygon not found',
-            });
+            throw new AppError('Polygon not found in database.', 404);
         }
 
         // Get the spekboom classification
         const result = await classifierService.classifySpekboom(polygon);
+
+        if(!result?.urlFormat){
+            throw new AppError('Error getting spekboom classification.', 500);
+        }
 
         // Send SSE event
         sseService.sendEvent(polygon.user_id, {action: "classification_complete", data: result});
@@ -152,9 +157,11 @@ const getSpekboomClassification = async (req, res) => {
         res.status(200).json(result);
 
     } catch (error) {
-        res.status(500).json({
-            error: 'Error getting polygon classification result: ' + error.message,
-        });
+        if(!(error instanceof AppError)){
+            error = new AppError('Error getting spekboom classification.', 500, {error: error.message});
+        }
+
+        next(error);
     }finally{
         if(res.locals.dbClient){
             res.locals.dbClient.release();

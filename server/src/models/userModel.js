@@ -15,7 +15,7 @@ const getUserByEmail = async (client, email) => {
     return result.rows[0];
   }catch(err){
     // Throw error
-    throw new Error(err.message);
+    throw err;
   }
 };
 

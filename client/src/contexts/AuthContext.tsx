@@ -28,7 +28,7 @@ const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) =
     const [loading, setLoading] = useState<boolean>(true);
     const [serverOnline, setServerOnline] = useState<boolean>(true);
 
-    const checkLoginState = useCallback(async () => {
+    const checkLoginState = useCallback(async () => {   
         try {
             // Call loggedIn endpoint
             const {

@@ -8,6 +8,8 @@ import AppError from '../errors/appError.js';
 
 import { getUserByEmail } from '../models/userModel.js';
 
+import logger from '../../logger.js';
+
 // Query parameters for Google OAuth url
 const googleAuthParams = queryString.stringify({
     client_id: config.google.client_id,
@@ -67,7 +69,7 @@ const verifyGoogleAuth = async (req, res, next) => {
 
         // If the user doesn't exist, reject the request
         if (!dbUser) {
-            throw new AppError('Authorization error: Google email not authorized.', 401, {error: 'User not registered. Contact developers for more information.'});
+            throw new AppError('Authorization error. Google email not authorized.', 401, {error: 'User not registered. Contact developers for more information.', user: user});
         }
 
         // Add the db user id to the token user 
@@ -75,16 +77,19 @@ const verifyGoogleAuth = async (req, res, next) => {
 
         // Generate a new JWT token for the user
         const token = jwt.sign(user, config.google.token_secret, { expiresIn: config.google.token_expiration });
+
+        // Log the user info
+        logger.info(`User logged in - ID: ${user.id}, Email: '${user.email}'`);
+
         // Set user info in the cookie
         res.cookie('user', token, {httpOnly: true, maxAge: config.google.token_expiration, sameSite: 'None', secure: true});
         res.json({user});
     }catch(error){
         if(error instanceof AppError){
             next(error);
+        }else{
+            next(new AppError('Authorization error. Token verification failed.', 500, { error: 'Google OAuth Token verification failed: ' + error.message }));
         }
-
-        console.error('Error: ', error.message);
-        next(new AppError('Authorization error: Token verification failed.', 500, { error: 'Google OAuth Token verification failed: ' + error.message }));
     }finally{
         if(client){
             client.release();
@@ -125,6 +130,15 @@ const checkLoggedIn = (req, res) => {
 
 // Function to log out the user
 const logout = (req, res) => {
+    // Get user info from cookie
+    const user = req.cookies.user;
+
+    // Decode
+    const decoded = jwt.decode(user);
+    
+    // Log user info
+    logger.info(`User logged out - ID: ${decoded.id}, Email: '${decoded.email}'`);
+
     res.clearCookie('user', {httpOnly: true, sameSite: 'None', secure: true, path: '/'});
     res.json({message: "Logged out successfully.", loggedIn: false});
 };

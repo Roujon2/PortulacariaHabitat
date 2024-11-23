@@ -11,9 +11,19 @@ class AppError extends Error {
         return {
             message: this.message,
             statusCode: this.statusCode,
-            detail: this.detail,
-            extra: this.extra
+            extra: this.extra,
+            success: this.success
         };
+    }
+
+    // Console log the error
+    toLog() {
+        // Unpack extra in error if it exists
+        if (this.extra) {
+            return `Error: ${this.message} | Status Code: ${this.statusCode} | Extra: ${JSON.stringify(this.extra)}`;
+        } else {
+            return `Error: ${this.message} | Status Code: ${this.statusCode}`;
+        }
     }
 }
 

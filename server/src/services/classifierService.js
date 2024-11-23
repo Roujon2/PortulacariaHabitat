@@ -2,6 +2,9 @@ import ee from '@google/earthengine';
 
 import spekboomClassification from '../classifiers/spekboomClassification.js';
 
+import AppError from '../errors/appError.js';
+
+
 // Helper function to prepare Landsat 8 surface reflectance images
 function prepSrL8(image){
     // Develop masks for unwanted pixels (fill, could, cloud shadow)
@@ -159,6 +162,10 @@ async function classifySpekboom(polygon){
             return classifiedMap;
 
         } catch (error) {
+            if(!(error instanceof AppError)){
+                error = new AppError('Error with spekboom classifier.', 500, {error: error.message});
+            }
+
             throw error;
         }
 }
