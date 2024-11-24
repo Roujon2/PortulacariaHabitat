@@ -5,8 +5,8 @@ import './colorRamp.css';
 
 // Component props
 interface ColorRampProps {
-    min: number;
-    max: number;
+    min: string;
+    max: string;
     palette: string[];
 }
 
@@ -15,12 +15,17 @@ interface ColorRampProps {
 const ColorRamp: React.FC<ColorRampProps> = ({ min, max, palette }) => {
     // Convert palette colors into CSS linear gradient
     const colors = palette.join(', ');
-    const gradient = `linear-gradient(to right, ${colors})`;
 
     return (
-        <div className="color-ramp">
-            <div className="color-ramp__gradient" style={{ background: gradient }} />
-            <div className="color-ramp__labels">
+        <div className="color-bar-container">
+            <div className='color-bar-title'>
+                <span>Spekboom Growth Probability</span>
+            </div>
+            <div
+                className="color-bar"
+                style={{ background: `linear-gradient(to right, ${colors})` }}
+            />
+            <div className="color-bar-labels">
                 <span>{min}</span>
                 <span>{max}</span>
             </div>

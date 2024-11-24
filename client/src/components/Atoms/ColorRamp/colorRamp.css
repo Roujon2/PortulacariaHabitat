@@ -1,6 +1,45 @@
-.color-ramp{
+.color-bar-container {
     display: flex;
-    position: relative;
+    flex-direction: column;
     align-items: center;
-}
+    width: 100%;
+    max-width: 300px;
+    z-index: 1000;
+    position: absolute;
+    top: 0.3rem;
+    right: 50%;
+    transform: translateX(50%);
+  }
+  
+  .color-bar {
+    width: 100%;
+    height: 20px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  
+  .color-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 
+  
+  .color-bar-labels span {
+    font-size: 15px;
+    color: #383232;
+    font-weight: bold;
+  }
+
+  .color-bar-title{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 0.3rem;
+  }
+
+  .color-bar-title span{
+    font-size: 16px;
+    color: #383232;
+    font-weight: bold;
+  }

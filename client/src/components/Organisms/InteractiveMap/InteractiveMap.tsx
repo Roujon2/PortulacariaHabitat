@@ -567,6 +567,8 @@ const InteractiveMap: React.FC = () => {
                     {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
+
+                    <ColorRamp min={'8%'} max={'30%'} palette={["#0000ff","#0000ff","#0000ff","#ffff00","#ffff00","#ffff00","#ff0000","#ff0000","#ff0000"]} />
                     
                 </GoogleMap>
             )}
