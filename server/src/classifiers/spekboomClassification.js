@@ -302,7 +302,7 @@ var spekboomClassification = function(polygon) {
                 .then(([map, url]) => {
                     // If there was an error with the map or download URL, log it
                     if(map.status === "rejected"){
-                        logError("Error generating map URL.", {error: map.reason});
+                        logError("Status Code: 500 | Error generating map URL for Spekboom classification. | Error: " + map.reason);
                     }
                     if(url.status === "rejected"){
                         logError("Status Code: 500 | Error generating download URL for Spekboom classification. | Error: " + url.reason);
