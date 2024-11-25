@@ -2,6 +2,8 @@ import AppError from "../errors/appError.js";
 import polygonModel from "../models/polygonModel.js";
 import sseService from "../services/sseService.js";
 
+import { logInfo } from "../../logger.js";
+
 const savePolygon = async (req, res, next) => {
     try{
     
@@ -13,6 +15,9 @@ const savePolygon = async (req, res, next) => {
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_save", data: savedPolygon});
+
+        // Log action
+        logInfo('Status Code: 201 | Polygon saved', {user_id, polygon_id: savedPolygon.id});
 
         res.status(201).json(savedPolygon);
     }catch(err){
@@ -41,6 +46,9 @@ const updatePolygon = async (req, res, next) => {
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_update", data: updatedPolygon});
 
+        // Log action
+        logInfo('Status Code: 200 | Polygon updated', {user_id, polygon_id});
+
         res.status(200).json(updatedPolygon);
     }catch(err){
         if (!(err instanceof AppError)) {
@@ -66,6 +74,9 @@ const deletePolygon = async (req, res, next) => {
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: deletedPolygon});
+
+        // Log action
+        logInfo('Status Code: 200 | Polygon deleted', {user_id, polygon_id});
 
         res.status(200).json(deletedPolygon);
     }catch(err){
@@ -162,6 +173,9 @@ const deletePolygons = async (req, res, next) => {
 
         // Send SSE event
         sseService.sendEvent(user_id, {action: "polygon_delete", data: polygon_ids});
+
+        // Log action
+        logInfo('Status Code: 200 | Polygons deleted', {user_id, polygon_ids});
 
         res.status(200).json({message: "Polygons deleted"});
     }catch(err){

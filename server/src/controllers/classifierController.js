@@ -6,6 +6,10 @@ import sseService from "../services/sseService.js";
 
 import AppError from '../errors/appError.js';
 
+import { logInfo } from "../../logger.js";
+
+import jwt from 'jsonwebtoken';
+
 
 const testClassifier = async (req, res, next) => {
     try {
@@ -158,6 +162,11 @@ const getSpekboomClassification = async (req, res, next) => {
 
         // Send SSE event
         sseService.sendEvent(polygon.user_id, {action: "classification_complete", data: result});
+
+        // Log the action
+        var userData = req.cookies?.user ? jwt.decode(req.cookies.user) : undefined;
+        userData.polygon_id = polygon_id;
+        logInfo('Status Code: 200 | Spekboom classification complete', userData);
 
         res.status(200).json(result);
 

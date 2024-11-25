@@ -16,7 +16,7 @@ import AppError from './src/errors/appError.js';
 import https from 'https';
 import fs from 'fs';
 
-import logger from './logger.js';
+import {logError, logWarn} from './logger.js';
 
 import jwt from 'jsonwebtoken';
 
@@ -64,7 +64,12 @@ app.get('/health', (req, res) => {
 
 // 404 handler for unknown resources
 app.use((req, res, next) => {
-    logger.warn(`404 - Resource not found: ${req.originalUrl}`);
+    // Get user data
+    const user = req.cookies?.user;
+    if (user) {
+        var userData = jwt.decode(user);
+    }
+    logWarn(`Status Code: 404 | Resource not found: ${req.originalUrl}`, userData);
     res.status(404).json({ message: 'Resource not found', status: 404 });
 });
 
@@ -81,8 +86,7 @@ app.use((err, req, res, next) => {
 
     // If error is an instance of AppError, send error response
     if(err instanceof AppError) {
-        console.error(err.toLog());
-        logger.error(`User: ID - ${userData ? userData.id : 'N/A'}, Email - '${userData ? userData.email : 'N/A'}' - ${err.toLog()}`);
+        logError(err.toLog(), userData);
         res.status(err.statusCode).json(err.toJSON());
     }else{
         // If error is not an instance of AppError, call next middleware
@@ -103,8 +107,10 @@ app.use((err, req, res, next) => {
 
     // Log the error
     console.error('Unhandled error: ', err.message, err.stack);
-    logger.error(`User: ID - ${userData ? userData.id : 'N/A'}, Email - '${userData ? userData.email : 'N/A'}' - Unhandled error: ${err.message}`);
-    logger.error(err.stack);
+
+    logError(`Status Code: ${err.statusCode || 500} | Internal server error: ${err.message || 'Something went wrong'}`, userData);
+    
+
     res.status(err.statusCode || 500).json({ message: `Internal server error: ${err.message || 'Something went wrong'}`, status: err.statusCode || 500 });
 });
 

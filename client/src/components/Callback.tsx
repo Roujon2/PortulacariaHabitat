@@ -31,7 +31,7 @@ const Callback: React.FC = () => {
                     navigate(`/login?error=${error.response.data.message}`);
                 }else{
                     // Navigate to login with error added
-                    navigate('/login?error=auth_failed');
+                    navigate('/login?error=Authentication failed');
                 }
             }
 

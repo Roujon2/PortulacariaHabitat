@@ -11,7 +11,7 @@ const logger = createLogger({
         }),
         format.printf(({ timestamp, level, message, user }) => {
             const userInfo = user ? 'User: ' + JSON.stringify(user) : 'User: N/A';
-            return `${timestamp} | ${level} | ${userInfo} | ${message}`;
+            return `${timestamp} | ${level} | ${message} | ${userInfo}`;
         }
     )),
     transports: [
@@ -26,15 +26,33 @@ const logger = createLogger({
 
 // Custom logging methods
 const logInfo = (message, user) => {
-    logger.log('info', message, user);
+    logger.log(
+        {
+            level: 'info',
+            message: message,
+            user: user
+        }
+    );
 }
 
 const logError = (message, user) => {
-    logger.log('error', message, user);
+    logger.log(
+        {
+            level: 'error',
+            message: message,
+            user: user
+        }
+    );
 }
 
 const logWarn = (message, user) => {
-    logger.log('warn', message, user);
+    logger.log(
+        {
+            level: 'warn',
+            message: message,
+            user: user
+        }
+    );
 }
 
 

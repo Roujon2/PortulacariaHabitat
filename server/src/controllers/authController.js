@@ -8,7 +8,7 @@ import AppError from '../errors/appError.js';
 
 import { getUserByEmail } from '../models/userModel.js';
 
-import logger from '../../logger.js';
+import {logInfo} from '../../logger.js';
 
 // Query parameters for Google OAuth url
 const googleAuthParams = queryString.stringify({
@@ -69,7 +69,7 @@ const verifyGoogleAuth = async (req, res, next) => {
 
         // If the user doesn't exist, reject the request
         if (!dbUser) {
-            throw new AppError('Authorization error. Google email not authorized.', 401, {error: 'User not registered. Contact developers for more information.', user: user});
+            throw new AppError('Authorization error. Google email not authorized.', 401, {error: 'User not registered. Contact an administrator for more information.', user: user});
         }
 
         // Add the db user id to the token user 
@@ -79,7 +79,7 @@ const verifyGoogleAuth = async (req, res, next) => {
         const token = jwt.sign(user, config.google.token_secret, { expiresIn: config.google.token_expiration });
 
         // Log the user info
-        logger.info(`User logged in - ID: ${user.id}, Email: '${user.email}'`);
+        logInfo('User logged in', user);
 
         // Set user info in the cookie
         res.cookie('user', token, {httpOnly: true, maxAge: config.google.token_expiration, sameSite: 'None', secure: true});
@@ -137,7 +137,7 @@ const logout = (req, res) => {
     const decoded = jwt.decode(user);
     
     // Log user info
-    logger.info(`User logged out - ID: ${decoded.id}, Email: '${decoded.email}'`);
+    logInfo('User logged out', decoded);
 
     res.clearCookie('user', {httpOnly: true, sameSite: 'None', secure: true, path: '/'});
     res.json({message: "Logged out successfully.", loggedIn: false});
