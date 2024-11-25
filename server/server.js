@@ -33,7 +33,6 @@ app.use(cors({
 
 // General endpoint
 app.get('/', (req, res) => {
-    logger.info('Root endpoint accessed');
 	res.status(200).json({message: "Welcome to the Spekboom Mapping API!"});
 });
 
