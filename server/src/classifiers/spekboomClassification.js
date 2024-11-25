@@ -1,5 +1,7 @@
 import AppError from '../errors/appError.js';
 
+import { logError } from '../../logger.js';
+
 
 
 import ee from '@google/earthengine';
@@ -279,13 +281,39 @@ var spekboomClassification = function(polygon) {
                 });
             });
 
-            // Use Promise.all for both
-            Promise.all([getMapPromise, getDownloadUrlPromise])
+            // // Use Promise.all for both
+            // Promise.all([getMapPromise, getDownloadUrlPromise])
+            //     .then(([map, url]) => {
+            //         var spekboomClassificationRes = {
+            //             map: map,
+            //             downloadUrl: url
+            //         };
+            //         resolve(spekboomClassificationRes);
+            //     })
+            //     .catch(error => {
+            //         if(!(error instanceof AppError)){
+            //             error = new AppError('Error generating map and download URL.', 500, {error: error.message});
+            //         }
+            //         reject(error);
+            //     });
+
+            // Return the map and download URL using Promise.allSettled
+            Promise.allSettled([getMapPromise, getDownloadUrlPromise])
                 .then(([map, url]) => {
+                    // If there was an error with the map or download URL, log it
+                    if(map.status === "rejected"){
+                        logError("Error generating map URL.", {error: map.reason});
+                    }
+                    if(url.status === "rejected"){
+                        logError("Status Code: 500 | Error generating download URL for Spekboom classification. | Error: " + url.reason);
+                    }
+
                     var spekboomClassificationRes = {
-                        map: map,
-                        downloadUrl: url
+                        map: map.status === "fulfilled" ? map.value : null,
+                        downloadUrl: url.status === "fulfilled" ? url.value : null
                     };
+
+
                     resolve(spekboomClassificationRes);
                 })
                 .catch(error => {
@@ -293,7 +321,8 @@ var spekboomClassification = function(polygon) {
                         error = new AppError('Error generating map and download URL.', 500, {error: error.message});
                     }
                     reject(error);
-                });
+                }
+            );
 
         } catch (error) {
             if(!(error instanceof AppError)){

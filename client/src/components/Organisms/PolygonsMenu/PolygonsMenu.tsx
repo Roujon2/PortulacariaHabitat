@@ -21,12 +21,16 @@ import { MdOutlineExpandMore } from "react-icons/md";
 import { TiUpload } from "react-icons/ti";
 import PolygonUpload from "../../Atoms/PolygonUpload/PolygonUpload";
 
+import { useAlert } from "../../../contexts/AlertContext";
+
 
 // Polygons menu component
 const PolygonsMenu: React.FC = () => {
     const { polygons, loading, loadMorePolygons, getSpekboomClassification, deletePolygons, hasMore, updatePolygon, putOnMap, selectedPolygonDetailsId, 
         setSelectedPolygonDetailsId, setCenterOnPolygons, polygonsOnMap, polygonResultsOnMap,
         overlays } = usePolygonContext();
+
+    const { showAlert } = useAlert();
 
     const [selectedPolygons, setSelectedPolygons] = React.useState<Polygon[]>([]);
 
@@ -105,12 +109,17 @@ const PolygonsMenu: React.FC = () => {
         const overlay = overlays[polygonId];
 
         if (!overlay) {
-            console.error("Classification overlay download: Correspoding polygon not found.");
+            showAlert("Corresponding polygon not found. Please retry the classification.", "error");
             return;
         }
 
         // Get the classification overlay download url
         const downloadUrl = overlay.downloadUrl;
+
+        if (!downloadUrl) {
+            showAlert("Download url not found. Please retry the classification. If the issue persists, contact an administrator.", "error");
+            return;
+        }
 
         // Create a download link and click it
         const downloadLink = document.createElement("a");

@@ -23,8 +23,6 @@ const Callback: React.FC = () => {
                 await checkLoginState();
                 navigate('/');
             }catch (error){
-                console.error(error);
-
                 // If the error is an unauthorized error
                 if (axios.isAxiosError(error) && error.response?.status === 401) {
                     // Navigate to login with error added

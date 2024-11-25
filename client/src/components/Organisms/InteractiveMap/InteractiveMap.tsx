@@ -219,9 +219,8 @@ const InteractiveMap: React.FC = () => {
     // UseEffect to track polygon spekboom mask to display
     useEffect(() => {
         if (polygonSpekboomClassification) {
-            console.log("Spekboom mask data:", polygonSpekboomClassification);
             // Overlay spekboom mask on map
-            if(polygonSpekboomClassification.overlayUrl && polygonSpekboomClassification.polygonId && polygonSpekboomClassification.downloadUrl){
+            if(polygonSpekboomClassification.overlayUrl && polygonSpekboomClassification.polygonId){
                 // Overlay
                 addOverlay(polygonSpekboomClassification.overlayUrl, polygonSpekboomClassification.downloadUrl, polygonSpekboomClassification.polygonId);
                 
