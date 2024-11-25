@@ -8,7 +8,11 @@ const pool = new Pool({
     host: config.db.host,
     database: config.db.database,
     password: config.db.password,
-    port: config.db.port
+    port: config.db.port,
+    // Maximum number of clients in the pool
+    max: 20,
+    // Time to wait before timing out when connecting a new client
+    connectionTimeoutMillis: 30000
 });
 
 
