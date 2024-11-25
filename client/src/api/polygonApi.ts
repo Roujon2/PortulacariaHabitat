@@ -37,6 +37,11 @@ const savePolygon = async (polygon: NewPolygon) => {
         return newPolygon;
     }catch(error){
         console.error("Error saving polygon:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 
@@ -76,6 +81,11 @@ const updatePolygon = async (polygon: Polygon) => {
         return newPolygon;
     }catch(error){
         console.error("Error updating polygon:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 
@@ -98,6 +108,11 @@ const deletePolygon = async (polygonId: number) => {
 
     }catch(error){
         console.error("Error deleting polygon:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 // Function deleting multiple polygons
@@ -121,6 +136,11 @@ const deletePolygons = async (polygonIds: number[]) => {
         return deletedPolygons.data;
     }catch(error){
         console.error("Error deleting polygons:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 };
 
@@ -160,6 +180,11 @@ const getPolygon = async (polygonId: number) => {
         return newPolygon;
     }catch(error){
         console.error("Error getting polygon:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 
@@ -200,6 +225,11 @@ const refreshPolygons = async (last_updated_at: string | null, limit: number) =>
         return newPolygons;
     }catch(error){
         console.error("Error refreshing polygons:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 };
 
@@ -240,6 +270,11 @@ const loadMorePolygons = async (last_updated_at: string | null, limit: number) =
         return newPolygons;
     }catch(error){
         console.error("Error loading more polygons:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 };
 
@@ -262,6 +297,11 @@ const getPolygonCount = async () => {
         return polygonCount.data;
     }catch(error){
         console.error("Error getting polygon count:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 
@@ -288,6 +328,11 @@ const classifyPolygon = async (polygon: Polygon) => {
 
     }catch(error){
         console.error("Error classifying polygon:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 };
 
@@ -311,6 +356,11 @@ const getPolygonClassification = async (polygonId: number) => {
         return classification.data;
     }catch(error){
         console.error("Error getting polygon classification:", error);
+        if(error instanceof AxiosError){
+            throw error.response?.data;
+        }else{
+            throw error;
+        }
     }
 }
 

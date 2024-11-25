@@ -133,6 +133,22 @@ var frostQuantity = function(polygon) {
     return frQty.clip(polygon).rename("frQty");
 };
 
+// Custom function to estimate the dynamic scale of a polygon 
+var getDynamicScale = function(polygon) {
+    var maxFileSize = 33554432; // 32 MB in bytes
+    // Aprox amount of bytes per pixel in geoTIFF
+    var bytesPerPixel = 8;
+    var maxPixels = maxFileSize / bytesPerPixel;
+
+    var area = polygon.area();
+    var scale = ee.Number(area).sqrt().divide(maxPixels).sqrt().round();
+
+    // Return scale in meters per pixel
+    return scale;
+};
+
+
+
 // ------ STACKING VARIABLES ------
 var createStack = function(polygon) {
     var avgMSAVI2_V = getAvgMSAVI2(polygon);
@@ -228,15 +244,19 @@ var spekboomClassification = function(polygon) {
             // Visualization parameters: var imageVisParam3 = {"opacity":1,"bands":["classification"],"min":0,"max":8,"palette":["0000ff","0000ff","0000ff","ffff00","ffff00","ffff00","ff0000","ff0000","ff0000"]
             // var imageVisParamPol = ee.Algorithms.If(aoi.area().lt(maxArea),imageVisParam9,imageVisParam3);
             
-            var imageVisParamBlue = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["4b4b96", "0000ff", "dcdcff", "c8c84b", "ffff00", "ffffb4", "c84b4b", "ff0000", "ffb4b4"]};
-            
+            //var imageVisParamBlue = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["4b4b96", "0000ff", "dcdcff", "c8c84b", "ffff00", "ffffb4", "c84b4b", "ff0000", "ffb4b4"]};
+            var imageVisParam3 = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["0000ff","0000ff","0000ff","ffff00","ffff00","ffff00","ff0000","ff0000","ff0000"]};
+
             // Get map
-            var spekboomMapViz = classAdjust.visualize(imageVisParamBlue);
+            var spekboomMapViz = classAdjust.visualize(imageVisParam3);
+
+            // Get the dynamic scale
+            var scale = getDynamicScale(polygon);
 
 
             // Wrap getMap in a Promise
             const getMapPromise = new Promise((resolve, reject) => {
-                classAdjust.getMap(imageVisParamBlue, (map, error) => {
+                classAdjust.getMap(imageVisParam3, (map, error) => {
                     if (error) {
                         return reject(new AppError("Error generating map URL.", 500, {error: error}));
                     }
@@ -248,7 +268,7 @@ var spekboomClassification = function(polygon) {
             const getDownloadUrlPromise = new Promise((resolve, reject) => {
                 spekboomMapViz.getDownloadURL({
                     name: "spekboom_classification",
-                    scale: 100,
+                    scale: scale,
                     fileFormat: "GeoTIFF",
                     region: polygon
                 }, (url, error) => {

@@ -94,6 +94,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             return polygonCount;
         } catch (error) {
             console.error("Error fetching polygon count:", error);
+            showAlert('Failed to retrieve the polygon count', 'error');
+            return { count: 0 };
         }
     }
 
@@ -134,6 +136,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             }
         }catch(error){
             console.error("Error refreshing polygons:", error);
+            showAlert('Failed to refresh the polygons table. Reload the page and try again.', 'error');
         }finally{
             setLoading(false);
         }
@@ -142,11 +145,15 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     // Function to load more polygons
     const loadMorePolygons = async () => {
         if(!hasMore){
+            console.log('No more polygons to load');
             return;
         }
 
         try{
             setLoading(true);
+            console.log('Loading more polygons');
+            console.log('Last updated:', lastUpdated);
+            console.log('Call limit:', call_limit);
 
             // Fetch older polygons from the database
             const fetchedPolygons = await polygonApi.loadMorePolygons(lastUpdated, call_limit);
@@ -173,6 +180,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         }catch(error){
             console.error("Error loading more polygons:", error);
+            showAlert('Failed to load more polygons. Try again later.', 'error');
         }finally{
             setLoading(false);
         }
@@ -198,6 +206,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         } catch (error) {
             console.error("Error deleting polygons:", error);
+            showAlert('Failed to delete the polygons. Try again later.', 'error');
         } finally {
             setLoading(false);
         }
@@ -205,6 +214,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Function to update polygon
     const updatePolygon = async (polygon: Polygon) => {
+        try{
         // Call api to update in database
         await polygonApi.updatePolygon(polygon);
 
@@ -219,7 +229,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                 return p;
             });
         });
-
+        }catch(error){
+            showAlert('Unable to update the polygon. Try again later.', 'error');
+        }
     };
 
 

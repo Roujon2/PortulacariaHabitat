@@ -4,6 +4,8 @@ import './profileMenu.css'
 import { User } from './../../../types/user';
 import polygonApi from "../../../api/polygonApi";
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { useAlert } from "../../../contexts/AlertContext";
+
 
 
 interface ProfileMenuProps {
@@ -14,9 +16,14 @@ interface ProfileMenuProps {
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ user }) => {
     const [polygonCount, setPolygonCount] = useState<{ count: number } | null>(null);
 
+    const { showAlert } = useAlert();
+
     useEffect(() => {
         polygonApi.getPolygonCount().then(count => {
             setPolygonCount(count);
+        }).catch(err => {
+            console.error(err);
+            showAlert('Failed to retrieve the polygon count', 'error');
         });
     }, []);
 

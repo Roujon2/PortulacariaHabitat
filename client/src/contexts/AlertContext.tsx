@@ -27,7 +27,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
       setAlert({ message, severity });
       // If alert is success or info set timeout
         if (severity === 'success' || severity === 'info'){
-            setTimeout(() => setAlert(null), 3000); // Auto-dismiss after 3 seconds
+            setTimeout(() => setAlert(null), 4500); // Auto-dismiss after 3 seconds
         }
     };
   
@@ -35,7 +35,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
     <AlertContext.Provider value={{ showAlert }}>
       {children}
       {alert && (
-        <>
+        <div className='alert-container'>
         {(() => {
           switch (alert.severity) {
             case 'error':
@@ -73,7 +73,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
             );
           }
         })()}
-        </>
+        </div>
       )}
     </AlertContext.Provider>
     );

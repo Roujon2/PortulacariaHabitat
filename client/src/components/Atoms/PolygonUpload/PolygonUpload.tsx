@@ -11,6 +11,8 @@ import { FiSave } from "react-icons/fi";
 
 import polygonApi from "../../../api/polygonApi";
 
+import { useAlert } from "../../../contexts/AlertContext";
+
 interface PolygonUploadProps {
     onClose: () => void;
 }
@@ -32,6 +34,11 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
     const [notes, setNotes] = React.useState<string>("");
     const [farm_series_name, setSeriesName] = React.useState<string>("");
     const [coordinates, setCoordinates] = React.useState<google.maps.LatLngLiteral[]>();
+
+    // Alert context
+    const { showAlert } = useAlert();
+
+
 
 
     // UseEffect tracking coordinates change
@@ -168,6 +175,7 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
         }).catch((err) => {
             console.error(err);
             setError("An error occurred while saving the polygon. Please try again.");
+            showAlert("An error occurred while saving the polygon. Please try again.", "error");
             setLoading(false);
         });
     }

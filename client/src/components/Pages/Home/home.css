@@ -21,14 +21,18 @@
     border-radius: 5px;
 }
 
-.alert{
+
+.alert-container{
     position: absolute;
     /* bottom of screen */
-    top: 2rem;
+    top: 7rem;
     /* center of screen */
     left: 50%;
     transform: translateX(-50%);
     width: fit-content;
     z-index: 1000;
-
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #8b8b8b7a;
+    padding: 0.3rem;
 }
