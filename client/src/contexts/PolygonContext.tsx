@@ -151,9 +151,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         try{
             setLoading(true);
-            console.log('Loading more polygons');
-            console.log('Last updated:', lastUpdated);
-            console.log('Call limit:', call_limit);
 
             // Fetch older polygons from the database
             const fetchedPolygons = await polygonApi.loadMorePolygons(lastUpdated, call_limit);

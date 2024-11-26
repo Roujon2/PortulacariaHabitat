@@ -14,6 +14,7 @@ import HoverText from "../HoverText/HoverText";
 import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 
+
 import './polygonTable.css';
 
 
@@ -80,8 +81,27 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
         },
         {
             name: 'Date Created',
-            selector: (row: Polygon) => row.created_at,
+            // Format date to be more readable
+            selector: (row: Polygon) => new Intl.DateTimeFormat('en-US', 
+                {   
+                    dateStyle: 'short', 
+                    timeStyle: 'short',
+                    timeZone: 'UTC'
+                }).format(new Date(row.created_at)),
             sortable: true,
+            // Have it wrap for long text
+            wrap: true,
+        },
+        {
+            name: 'Date Updated',
+            selector: (row: Polygon) => new Intl.DateTimeFormat('en-US', 
+                {   
+                    dateStyle: 'short', 
+                    timeStyle: 'short',
+                    timeZone: 'UTC'
+                }).format(new Date(row.updated_at)),
+            sortable: true,
+            wrap: true,
         }
         
     ];
