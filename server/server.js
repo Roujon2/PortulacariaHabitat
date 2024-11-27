@@ -69,7 +69,15 @@ app.use((req, res, next) => {
     if (user) {
         var userData = jwt.decode(user);
     }
-    logWarn(`Status Code: 404 | Resource not found: ${req.originalUrl}`, userData);
+
+    const clientInfo = {
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent'],
+        referer: req.headers['referer'] || 'N/A',
+        origin: req.headers['origin'] || 'N/A'
+    }
+
+    logWarn(`Status Code: 404 | Resource not found: ${req.originalUrl}`, userData, clientInfo);
     res.status(404).json({ message: 'Resource not found', status: 404 });
 });
 
@@ -84,9 +92,16 @@ app.use((err, req, res, next) => {
         userData = jwt.decode(user);
     }
 
+    const clientInfo = {
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent'],
+        referer: req.headers['referer'] || 'N/A',
+        origin: req.headers['origin'] || 'N/A'
+    }
+
     // If error is an instance of AppError, send error response
     if(err instanceof AppError) {
-        logError(err.toLog(), userData);
+        logError(err.toLog(), userData, clientInfo);
         res.status(err.statusCode).json(err.toJSON());
     }else{
         // If error is not an instance of AppError, call next middleware
@@ -105,10 +120,17 @@ app.use((err, req, res, next) => {
         userData = jwt.decode(user);
     }
 
+    const clientInfo = {
+        ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent'],
+        referer: req.headers['referer'] || 'N/A',
+        origin: req.headers['origin'] || 'N/A'
+    }
+
     // Log the error
     console.error('Unhandled error: ', err.message, err.stack);
 
-    logError(`Status Code: ${err.statusCode || 500} | Internal server error: ${err.message || 'Something went wrong'}`, userData);
+    logError(`Status Code: ${err.statusCode || 500} | Internal server error: ${err.message || 'Something went wrong'}`, userData, clientInfo);
     
 
     res.status(err.statusCode || 500).json({ message: `Internal server error: ${err.message || 'Something went wrong'}`, status: err.statusCode || 500 });

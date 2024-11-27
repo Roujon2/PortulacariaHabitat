@@ -9,9 +9,9 @@ const logger = createLogger({
         format.timestamp({
             format: 'YYYY-MM-DD HH:mm:ss'
         }),
-        format.printf(({ timestamp, level, message, user }) => {
+        format.printf(({ timestamp, level, message, user, metadata }) => {
             const userInfo = user ? 'User: ' + JSON.stringify(user) : 'User: N/A';
-            return `${timestamp} | ${level} | ${message} | ${userInfo}`;
+            return `${timestamp} | ${level} | ${message} | ${userInfo} | Metadata: ${metadata ? JSON.stringify(metadata) : 'Metadata: N/A'}`;
         }
     )),
     transports: [
@@ -35,22 +35,24 @@ const logInfo = (message, user) => {
     );
 }
 
-const logError = (message, user) => {
+const logError = (message, user, metadata) => {
     logger.log(
         {
             level: 'error',
             message: message,
-            user: user
+            user: user,
+            metadata
         }
     );
 }
 
-const logWarn = (message, user) => {
+const logWarn = (message, user, metadata) => {
     logger.log(
         {
             level: 'warn',
             message: message,
-            user: user
+            user: user,
+            metadata
         }
     );
 }
