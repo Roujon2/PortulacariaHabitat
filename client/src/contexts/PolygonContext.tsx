@@ -32,10 +32,10 @@ interface PolygonContextProps {
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 
     getSpekboomClassification: (polygonId: number) => void;
-    polygonSpekboomClassification: {overlayUrl: string, polygonId: number, downloadUrl: string} | null;
+    polygonSpekboomClassification: {overlayUrl: string, polygonId: number, downloadUrl: string, classAreas: any} | null;
 
-    overlays: { [key: number]: { overlay: google.maps.ImageMapType, downloadUrl: string } };
-    setOverlays: React.Dispatch<React.SetStateAction<{ [key: number]: { overlay: google.maps.ImageMapType; downloadUrl: string; }; }>>;
+    overlays: { [key: number]: { overlay: google.maps.ImageMapType, downloadUrl: string, classAreas: any } };
+    setOverlays: React.Dispatch<React.SetStateAction<{ [key: number]: { overlay: google.maps.ImageMapType; downloadUrl: string; classAreas: any; }; }>>;
 }
 
 const call_limit = 10;
@@ -64,7 +64,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [polygonsToDelete, setPolygonsToDelete] = useState<Polygon[]>([]);
 
     // Polygon spekboom mask
-    const [polygonSpekboomClassification, setPolygonSpekboomClassification] = useState<{overlayUrl: string, polygonId: number, downloadUrl: string} | null>(null);
+    const [polygonSpekboomClassification, setPolygonSpekboomClassification] = useState<{overlayUrl: string, polygonId: number, downloadUrl: string, classAreas: any} | null>(null);
 
     // Selected polygon for showing details
     const [selectedPolygonDetailsId, setSelectedPolygonDetailsId] = useState<number | null>(null);
@@ -82,7 +82,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     // Overlay dictionary holding overlay and downloadurl for the polygon results on the map
     const [overlays, setOverlays] = useState<{
-        [key: string]: { overlay: google.maps.ImageMapType; downloadUrl: string };
+        [key: string]: { overlay: google.maps.ImageMapType; downloadUrl: string; classAreas: any };
     }>({});
       
 
@@ -273,12 +273,17 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             
             const downloadUrl : string = spekboomMask.downloadUrl;
 
+            const classAreas = spekboomMask.classAreas;
+
+            console.log(spekboomMask)
+
 
             // Build spekboomMask object
             const spekboomMaskObject = {
                 overlayUrl: overlayUrl,
                 polygonId: polygonId,
-                downloadUrl: downloadUrl
+                downloadUrl: downloadUrl,
+                classAreas: classAreas
             };
 
             // Set spekboom mask polygon

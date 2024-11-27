@@ -1,0 +1,49 @@
+/* Base styles for the table */
+.class-areas-table {
+    position: absolute;
+    bottom: 1.3rem;
+    left: 0.5rem;
+    display: block;
+    width: fit-content;
+    height: fit-content;
+    background-color: aliceblue;
+    border-collapse: collapse; /* Prevent double borders */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    border-radius: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 100;
+    font-family: Arial, sans-serif; /* Default font */
+}
+
+/* Table header styles */
+.class-areas-table thead {
+    background-color: rgb(240, 255, 245);
+    color: #333; /* Text color */
+    font-weight: bold;
+}
+
+.class-areas-table th {
+    padding: 8px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Table body styles */
+.class-areas-table tbody {
+    max-height: 200px; /* Limit body height */
+}
+
+.class-areas-table td {
+    padding: 8px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Styling the color cell */
+.class-areas-table .color {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px; /* Rounded corners for the color block */
+    border: 1px solid #ccc; /* Border for visibility */
+}

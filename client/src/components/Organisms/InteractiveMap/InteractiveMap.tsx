@@ -21,6 +21,7 @@ import PolygonWidget from "../../Atoms/PolygonWidget/PolygonWidget";
 
 import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 import { useAlert } from "../../../contexts/AlertContext";
+import AreaTable from "../../Atoms/AreaTable/AreaTable";
 
 const libraries: LoadScriptProps['libraries'] = ['drawing'];
 
@@ -74,12 +75,13 @@ const InteractiveMap: React.FC = () => {
     const handleOverlayOpacityChange = (polygonId: number, newOpacity: number) => {
         const overlay = overlays[polygonId].overlay;
         const downloadUrl = overlays[polygonId].downloadUrl;
+        const classAreas = overlays[polygonId].classAreas;
         if (overlay) {
             overlay.setOpacity(newOpacity);
             setOverlayOpacity(newOpacity);
             setOverlays((prev) => ({
                             ...prev,
-                            [polygonId]: { overlay, downloadUrl },
+                            [polygonId]: { overlay, downloadUrl, classAreas },
                           }));
               
               
@@ -222,7 +224,7 @@ const InteractiveMap: React.FC = () => {
             // Overlay spekboom mask on map
             if(polygonSpekboomClassification.overlayUrl && polygonSpekboomClassification.polygonId){
                 // Overlay
-                addOverlay(polygonSpekboomClassification.overlayUrl, polygonSpekboomClassification.downloadUrl, polygonSpekboomClassification.polygonId);
+                addOverlay(polygonSpekboomClassification.overlayUrl, polygonSpekboomClassification.downloadUrl, polygonSpekboomClassification.polygonId, polygonSpekboomClassification.classAreas);
                 
                 showAlert('Spekboom classification overlay added to map', 'success');
             }else{
@@ -353,7 +355,7 @@ const InteractiveMap: React.FC = () => {
     }
 
     // Function to add an overlay to the map
-    const addOverlay = (overlayUrl: string, downloadUrl: string, polygonId: number) => {
+    const addOverlay = (overlayUrl: string, downloadUrl: string, polygonId: number, classAreas: any) => {
         // If there is no map, return
         if (!map) return;
 
@@ -377,7 +379,7 @@ const InteractiveMap: React.FC = () => {
         map.overlayMapTypes.push(overlayMapParams);
         
         // Add overlay to overlays
-        setOverlays(prev => ({ ...prev, [polygonId]: { overlay: overlayMapParams, downloadUrl: downloadUrl} }));
+        setOverlays(prev => ({ ...prev, [polygonId]: { overlay: overlayMapParams, downloadUrl: downloadUrl, classAreas: classAreas} }));
 
         // Add result to polygon results on map
         // Get polygon from id
@@ -391,6 +393,8 @@ const InteractiveMap: React.FC = () => {
 
         // Set the overlay opacity to this overlay if the selected polygon is this polygon
         setOverlayOpacity(overlayMapParams.getOpacity());
+
+        console.log(overlays);
 
 
     };
@@ -484,18 +488,6 @@ const InteractiveMap: React.FC = () => {
     }
 
 
-    // Function to calculate polygon centroid
-    const calculateCentroid = (polygon: Polygon) => {
-        const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
-
-        const polygonBounds = new google.maps.LatLngBounds();
-        polygonCoords.forEach(coord => {
-            polygonBounds.extend(coord);
-        });
-
-        return polygonBounds.getCenter();
-    }
-
     // Function to reload the map
     const reloadMap = () => {
         // Reset everything
@@ -569,6 +561,10 @@ const InteractiveMap: React.FC = () => {
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
 
                     <ColorRamp min={'<10%'} max={'24%<'} palette={["#0000ff","#0000ff","#0000ff","#ffff00","#ffff00","#ffff00","#ff0000","#ff0000","#ff0000"]} />
+
+                    {overlays[selectedPolygonDetailsId as number] &&
+                        <AreaTable areas={overlays[selectedPolygonDetailsId as number]?.classAreas || ['#0000ff', 0]} />
+                    }
                     
                 </GoogleMap>
             )}

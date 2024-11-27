@@ -149,6 +149,28 @@ var getDynamicScale = function(polygon) {
     return scale;
 };
 
+// Custom function to calculate the area of a specific class
+const calculateClassArea = function(classifiedImage, classValue, polygon) {
+    // Create a mask for the class
+    var classMask = classifiedImage.eq(classValue);
+
+    // Pixel area and mask to class
+    var pixelArea = ee.Image.pixelArea().updateMask(classMask);
+
+    // Sum the area of the class
+    var classArea = pixelArea.reduceRegion({
+        reducer: ee.Reducer.sum(),
+        geometry: polygon,
+        scale: 1000,
+        maxPixels: 1e9
+    });
+
+    // Convert square meters to hectares
+    var classAreaHa = ee.Number(classArea.get("area")).divide(10000).round();
+
+    return classAreaHa;
+};
+
 
 
 // ------ STACKING VARIABLES ------
@@ -243,6 +265,36 @@ var spekboomClassification = function(polygon) {
                 .where(spekboomAbundanceAdj.gt(22), 7)
                 .where(spekboomAbundanceAdj.gt(24), 8)
 
+            // Calculate the area of each class
+            var classAreas = [];
+            for (var i = 0; i < 9; i++) {
+                classAreas.push(calculateClassArea(classAdjust, i, polygon));
+            }
+
+            // Add 3 bottom together, 3 middle together, and 3 top together
+            var classAreasBottom3 = ee.Number(classAreas[0]).add(classAreas[1]).add(classAreas[2]);
+            var classAreasMiddle3 = ee.Number(classAreas[3]).add(classAreas[4]).add(classAreas[5]);
+            var classAreasTop3 = ee.Number(classAreas[6]).add(classAreas[7]).add(classAreas[8]);
+
+            // Results in simple json object
+            var classAreasRes = [
+                ["#0000ff", classAreasBottom3],
+                ["#ffff00", classAreasMiddle3],
+                ["#ff0000", classAreasTop3]
+            ]
+
+            // Wrap in promise for getInfo
+            const classAreasPromise = new Promise((resolve, reject) => {
+                ee.List(classAreasRes.map(([color, area]) => [color, ee.Number(area)]))
+                    .getInfo((result, error) => {
+                        if (error) {
+                            return reject(new AppError("Error getting class areas for Spekboom classification.", 500, { error: error }));
+                        }
+                        resolve(result);
+                    });
+            });
+
+
             // Visualization parameters: var imageVisParam3 = {"opacity":1,"bands":["classification"],"min":0,"max":8,"palette":["0000ff","0000ff","0000ff","ffff00","ffff00","ffff00","ff0000","ff0000","ff0000"]
             // var imageVisParamPol = ee.Algorithms.If(aoi.area().lt(maxArea),imageVisParam9,imageVisParam3);
             
@@ -298,8 +350,8 @@ var spekboomClassification = function(polygon) {
             //     });
 
             // Return the map and download URL using Promise.allSettled
-            Promise.allSettled([getMapPromise, getDownloadUrlPromise])
-                .then(([map, url]) => {
+            Promise.allSettled([getMapPromise, getDownloadUrlPromise, classAreasPromise])
+                .then(([map, url, classAreas]) => {
                     // If there was an error with the map or download URL, log it
                     if(map.status === "rejected"){
                         logError("Status Code: 500 | Error generating map URL for Spekboom classification. | Error: " + map.reason);
@@ -308,10 +360,14 @@ var spekboomClassification = function(polygon) {
                     if(url.status === "rejected"){
                         logError("Status Code: 500 | Error generating download URL for Spekboom classification. | Error: " + url.reason);
                     }
+                    if(classAreas.status === "rejected"){
+                        logError("Status Code: 500 | Error getting class areas for Spekboom classification. | Error: " + classAreas.reason);
+                    }
 
                     var spekboomClassificationRes = {
                         map: map.status === "fulfilled" ? map.value : null,
-                        downloadUrl: url.status === "fulfilled" ? url.value : null
+                        downloadUrl: url.status === "fulfilled" ? url.value : null,
+                        classAreas: classAreas.status === "fulfilled" ? classAreas.value : null
                     };
 
 
