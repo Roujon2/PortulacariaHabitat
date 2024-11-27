@@ -12,8 +12,6 @@
     border-radius: 8px;
     overflow-y: auto;
     overflow-x: hidden;
-    z-index: 100;
-    font-family: Arial, sans-serif; /* Default font */
 }
 
 /* Table header styles */
