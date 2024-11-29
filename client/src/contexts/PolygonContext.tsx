@@ -110,8 +110,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     // Function to refresh the list of polygons
     const refreshPolygons = async () => {
         try{
-            setLoading(true);
-
             // Fetch polygons from the database
             const fetchedPolygons = await polygonApi.refreshPolygons(lastUpdated, call_limit);
 
@@ -137,8 +135,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }catch(error){
             console.error("Error refreshing polygons:", error);
             showAlert('Failed to refresh the polygons table. Reload the page and try again.', 'error');
-        }finally{
-            setLoading(false);
         }
     };
 
@@ -150,7 +146,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }
 
         try{
-            setLoading(true);
 
             // Fetch older polygons from the database
             const fetchedPolygons = await polygonApi.loadMorePolygons(lastUpdated, call_limit);
@@ -178,15 +173,12 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         }catch(error){
             console.error("Error loading more polygons:", error);
             showAlert('Failed to load more polygons. Try again later.', 'error');
-        }finally{
-            setLoading(false);
         }
     };
 
     // Function to delete polygons
     const deletePolygons = async (polygons: Polygon[]) => {
         try {
-            setLoading(true);
 
             // Get polygon ids
             const polygonIds = polygons.map(polygon => polygon.id);
@@ -204,8 +196,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         } catch (error) {
             console.error("Error deleting polygons:", error);
             showAlert('Failed to delete the polygons. Try again later.', 'error');
-        } finally {
-            setLoading(false);
         }
     };
 

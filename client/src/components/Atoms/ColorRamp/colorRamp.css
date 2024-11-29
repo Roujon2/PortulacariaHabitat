@@ -8,6 +8,9 @@
     top: 0.3rem;
     right: 50%;
     transform: translateX(50%);
+    background-color: rgba(239, 255, 241, 0.61);
+    border-radius: 10px;
+    padding: 0.2rem;
   }
   
   .color-bar {

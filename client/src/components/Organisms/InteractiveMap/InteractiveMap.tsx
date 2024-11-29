@@ -23,7 +23,7 @@ import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 import { useAlert } from "../../../contexts/AlertContext";
 import AreaTable from "../../Atoms/AreaTable/AreaTable";
 
-const libraries: LoadScriptProps['libraries'] = ['drawing'];
+const libraries: LoadScriptProps['libraries'] = ['drawing', 'geometry'];
 
 const mapOptions = {
     zoomControl: false,
@@ -173,6 +173,9 @@ const InteractiveMap: React.FC = () => {
     // UseEffect tracking polygons to map
     useEffect(() => {
         if (polygonsToMap.length > 0) {
+            // Reset setSelectedPolygonDetailsId
+            setSelectedPolygonDetailsId(null);
+
             // Filter out polygons that are already on map
             const newPolygons = polygonsToMap.filter(p => !drawnPolygons.find(dp => dp.get('id') === p.id));
 
@@ -394,10 +397,14 @@ const InteractiveMap: React.FC = () => {
         // Set the overlay opacity to this overlay if the selected polygon is this polygon
         setOverlayOpacity(overlayMapParams.getOpacity());
 
-        console.log(overlays);
-
-
     };
+
+
+    // Function to calculate area of google maps polygon
+    const calculateArea = (polygon: google.maps.Polygon) => {
+        const area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+        return area;
+    }
 
 
     // Function to add polygon to the map
@@ -406,12 +413,15 @@ const InteractiveMap: React.FC = () => {
             // If polygon is already drawn, skip
             if (drawnPolygons.find(p => p.get('id') === polygon.id)) return;
 
+            // If it's the first polygon on polygonsToMap, change stroke
+            const firstPolygon = polygonsToMap.length === 1 && polygonsToMap[0].id === polygon.id;
+
 
             const polygonCoords = polygon.coordinates.map(coord => ({ lat: coord.lat, lng: coord.lng }));
 
             const newPolygon = new google.maps.Polygon({
                 paths: polygonCoords,
-                strokeColor: '#FF0000',
+                strokeColor: firstPolygon ? '#FFA500' : '#FF0000',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
                 fillColor: '#FF0000',
@@ -420,17 +430,33 @@ const InteractiveMap: React.FC = () => {
 
             newPolygon.set('id', polygon.id);
 
+            // Calculate area of polygon and store
+            const area = calculateArea(newPolygon);
+            newPolygon.set('area', area);
+
             newPolygon.addListener('click', () => {
                 // Selected details for clicked polygon
                 setSelectedPolygonDetailsId(newPolygon.get('id'));
             });
 
-
-
             newPolygon.setMap(map);
 
-            // Add polygon to drawn polygons
-            setDrawnPolygons(prev => [...prev, newPolygon]);
+            // Add polygon to drawn polygons and update with sorted by area
+            setDrawnPolygons(prev => {
+                const updatedPolygons = [...prev, newPolygon];
+
+                updatedPolygons.sort((a, b) => (b.get('area') as number || 0) - (a.get('area') as number || 0));
+
+                // Update z-index of polygons
+                updatedPolygons.forEach((p, i) => {
+                    p.setOptions({
+                        zIndex: i,
+                    });
+                });
+
+                return updatedPolygons;
+            }
+            );
         }
     }
     // Function to remove polygon from the map

@@ -9,6 +9,8 @@ interface AreaTableProps {
 
 
 const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
+    
+
     return (
         <table className="class-areas-table">
             <thead>
@@ -21,7 +23,7 @@ const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
                 {areas.map(([color, hectares], index) => (
                     <tr key={index}>
                         <td className="color" style={{ backgroundColor: color }}></td>
-                        <td>{hectares} ha</td>
+                        <td>{hectares.toLocaleString()} ha</td>
                     </tr>
                 ))}
             </tbody>
