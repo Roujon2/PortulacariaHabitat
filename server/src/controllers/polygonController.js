@@ -118,16 +118,15 @@ const loadMorePolygons = async (req, res, next) => {
 
     
         const user_id = req.user.id;
-        const limit = req.query.limit || 10;
-        const last_updated_at = req.query.last_updated_at || null;
+        const offset = req.query.offset || 0;
 
         const client = res.locals.dbClient;
 
-        const polygons = await polygonModel.loadMorePolygons(client, user_id, limit, last_updated_at);
+        const polygons = await polygonModel.loadMorePolygons(client, user_id, offset);
         res.status(200).json(polygons);
     }catch(err){
         if (!(err instanceof AppError)) {
-            err = new AppError('Failed to retrieve multiple polygons', 500, {error: err.message, limit: req.query.limit, last_updated_at: req.query.last_updated_at});
+            err = new AppError('Failed to retrieve multiple polygons', 500, {error: err.message, offset: req.query.offset});
         }
         next(err);
     }finally{
@@ -142,15 +141,14 @@ const refreshPolygons = async (req, res, next) => {
 
         const user_id = req.user.id;
         const limit = req.query.limit || 10;
-        const last_updated_at = req.query.last_updated_at || null;
 
         const client = res.locals.dbClient;
 
-        const polygons = await polygonModel.refreshPolygons(client, user_id, last_updated_at, limit);
+        const polygons = await polygonModel.refreshPolygons(client, user_id, limit);
         res.status(200).json(polygons);
     }catch(err){
         if (!(err instanceof AppError)) {
-            err = new AppError('Failed to refresh polygons', 500, {error: err.message, limit: req.query.limit, last_updated_at: req.query.last_updated_at});
+            err = new AppError('Failed to refresh polygons', 500, {error: err.message, limit: req.query.limit});
         }
         next(err);
     }finally{

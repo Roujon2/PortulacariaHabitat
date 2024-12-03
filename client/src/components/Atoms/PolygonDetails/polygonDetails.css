@@ -60,18 +60,7 @@
     background-color: white;
     width: 100%;
 }
-.polygon-details__button-delete{
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.polygon-details__button-delete:hover{
-    background-color: #a52525;
-}
+
 
 .polygon-details__button-save{
     background-color: #363cf4;

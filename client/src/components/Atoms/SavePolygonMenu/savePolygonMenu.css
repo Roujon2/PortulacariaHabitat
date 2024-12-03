@@ -24,7 +24,7 @@
     height: fit-content;
     padding: 1rem;
     left: 0%;
-    bottom: 0%;
+    bottom: 25%;
 
     background-color: rgb(167, 203, 167);
     display: flex;
@@ -33,6 +33,8 @@
     flex-direction: column;
     border-radius: 1rem;
     margin: 0.3rem;
+
+    z-index: 2;
 
 }
 

@@ -2,9 +2,7 @@ import React from "react";
 
 import { Polygon } from "../../../types/polygon";
 import { FiSave } from "react-icons/fi";
-import { FaTrashCan } from "react-icons/fa6";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import { IoIosDownload } from "react-icons/io";
 import { IoMdDownload } from "react-icons/io";
 
 

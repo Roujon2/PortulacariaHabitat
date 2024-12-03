@@ -189,12 +189,16 @@ const getPolygon = async (polygonId: number) => {
 }
 
 // Function to refresh the table of polygons
-const refreshPolygons = async (last_updated_at: string | null, limit: number) => {
+const refreshPolygons = async (limit: number) => {
     const backendStatus = await checkBackendStatus();
 
     if (!backendStatus){
         console.error("Server is offline!");
         return;
+    }
+
+    if (limit < 1){
+        limit = 10;
     }
 
     try{
@@ -203,9 +207,10 @@ const refreshPolygons = async (last_updated_at: string | null, limit: number) =>
             method: 'get',
             url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/refresh`,
             withCredentials: true,
-            // Build params object (last_updated_at may be null)
-            params: last_updated_at ? { last_updated_at, limit } : { limit },
+            // Build params object
+            params: { limit: limit },
         });
+        console.log(limit);
 
         // Create the Polygon object to be returned
         const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({
@@ -234,7 +239,7 @@ const refreshPolygons = async (last_updated_at: string | null, limit: number) =>
 };
 
 // Function to load more polygons to list
-const loadMorePolygons = async (last_updated_at: string | null, limit: number) => {
+const loadMorePolygons = async (offset: number) => {
     const backendStatus = await checkBackendStatus();
 
     if (!backendStatus){
@@ -249,8 +254,9 @@ const loadMorePolygons = async (last_updated_at: string | null, limit: number) =
             url: `${process.env.REACT_APP_BACKEND_SERVER_URL}/polygons/loadmore`,
             withCredentials: true,
             // Build params object (last_updated_at may be null)
-            params: last_updated_at ? { last_updated_at, limit } : { limit },
+            params: { offset: offset },
         });
+        console.log(offset);
 
         // Create the Polygon object to be returned
         const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({

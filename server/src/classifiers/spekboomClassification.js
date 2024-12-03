@@ -137,9 +137,9 @@ var frostQuantity = function(polygon) {
 
 // Custom function to estimate the dynamic scale of a polygon 
 var getDynamicScale = function(polygon) {
-    var maxFileSize = 33554432; // 32 MB in bytes
+    var maxFileSize = 1048576; // 32 MB in bytes
     // Aprox amount of bytes per pixel in geoTIFF
-    var bytesPerPixel = 8;
+    var bytesPerPixel = 1;
     var maxPixels = maxFileSize / bytesPerPixel;
 
     var area = polygon.area();
@@ -161,8 +161,8 @@ const calculateClassArea = function(classifiedImage, classValue, polygon) {
     var classArea = pixelArea.reduceRegion({
         reducer: ee.Reducer.sum(),
         geometry: polygon,
-        scale: 1000,
-        maxPixels: 1e9
+        scale: 100,
+        maxPixels: 1e13
     });
 
     // Convert square meters to hectares
@@ -320,7 +320,7 @@ var spekboomClassification = function(polygon) {
 
             // Wrap getDownloadURL in a Promise
             const getDownloadUrlPromise = new Promise((resolve, reject) => {
-                spekboomMapViz.getDownloadURL({
+                spekboomAbundanceAdj.getDownloadURL({
                     name: "spekboom_classification",
                     scale: scale,
                     fileFormat: "GeoTIFF",

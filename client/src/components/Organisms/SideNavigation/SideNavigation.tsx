@@ -11,7 +11,6 @@ import { AuthContext, AuthContextProps } from '../../../contexts/AuthContext';
 import './sideNavigation.css';
 
 import { IoMdMenu } from "react-icons/io";
-import { FaMapLocationDot } from "react-icons/fa6";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
 import { PiPolygonDuotone } from "react-icons/pi";

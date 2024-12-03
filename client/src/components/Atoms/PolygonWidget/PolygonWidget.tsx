@@ -31,7 +31,7 @@ const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityCha
     return (
         selectedPolygon && (
             <div className="polygon-widget">
-                <h2>{selectedPolygon.name}</h2>
+                <h2 className='polygon-widget__polygon-name'>{selectedPolygon.name}</h2>
 
             {opacity >= 0 && opacity <= 1 && (<div className="overlay-opacity-slider">
                     <label>Opacity</label>

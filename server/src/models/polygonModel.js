@@ -83,30 +83,20 @@ const getPolygon = async (client, polygon_id) => {
 };
 
 // Function to lod more polygons past a certain timestamp
-const loadMorePolygons = async (client, user_id, limit, last_updated_at) => {
+const loadMorePolygons = async (client, user_id, offset) => {
     let query;
     let values;
 
-    if (last_updated_at){
-        query = `
-            SELECT * FROM polygons
-            WHERE user_id = $1
-            AND updated_at < $2
-            ORDER BY updated_at DESC
-            LIMIT $3;
-        `;
+    query = `
+        SELECT * FROM polygons
+        WHERE user_id = $1
+        ORDER BY updated_at DESC
+        OFFSET $2
+    `;
 
-        values = [user_id, last_updated_at, limit];
-    }else{
-        query = `
-            SELECT * FROM polygons
-            WHERE user_id = $1
-            ORDER BY updated_at DESC
-            LIMIT $2;
-        `;
 
-        values = [user_id, limit];
-    }
+    values = [user_id, offset];
+
 
     try{
         // Query
@@ -119,29 +109,18 @@ const loadMorePolygons = async (client, user_id, limit, last_updated_at) => {
 };
 
 // Function to refresh a list of polygons based on a last updated at timestamp
-const refreshPolygons = async (client, user_id, last_updated_at, limit) => {
+const refreshPolygons = async (client, user_id, limit) => {
     let query;
     let values;
 
-    if(last_updated_at){
-        query = `
-            SELECT * FROM polygons
-            WHERE user_id = $1
-            AND updated_at > $2
-            ORDER BY updated_at DESC
-        `;
-
-        values = [user_id, last_updated_at];
-    }else{
-        query = `
-            SELECT * FROM polygons
-            WHERE user_id = $1
-            ORDER BY updated_at DESC
-            LIMIT $2
-        `;
-
-        values = [user_id, limit];
-    }
+    query = `
+        SELECT * FROM polygons
+        WHERE user_id = $1
+        ORDER BY updated_at DESC
+        LIMIT $2
+    `;
+    values = [user_id, limit];
+    
 
     try{
         // Query

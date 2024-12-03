@@ -270,7 +270,7 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
 
                             <label className="menu-label">
                                 <div className="menu-type">
-                                    Farm/Series Name: <span className="required">*</span>
+                                    Farm / Series Name: <span className="required">*</span>
                                 </div>
                                 <input
                                     type="text"
@@ -282,7 +282,7 @@ const PolygonUpload: React.FC<PolygonUploadProps> = ({ onClose }) => {
 
                             <label className="menu-label">
                                 <div className="menu-type">
-                                Notes/Observations:
+                                Notes / Observations:
                                 </div>
                                 <textarea
                                     value={notes}

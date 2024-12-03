@@ -3,10 +3,9 @@ import './App.css';
 
 import axios from 'axios';
 import Login from './components/Pages/Login/Login';
-import { AuthContextProvider, AuthContextProps, AuthContext } from './contexts/AuthContext';
+import { AuthContextProvider } from './contexts/AuthContext';
 import Callback from './components/Callback';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import Home from './components/Pages/Home/Home';
 import AuthGuard from './components/AuthGuard';
 import MainWrapper from './components/Pages/MainWrapper/MainWrapper';
 
@@ -39,6 +38,7 @@ const App: React.FC = () => {
       <AuthContextProvider>
         <RouterProvider router={router} />
       </AuthContextProvider>
+  
     </div>
   );
 };

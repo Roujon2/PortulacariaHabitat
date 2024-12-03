@@ -12,7 +12,6 @@ import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 import { TbReload } from "react-icons/tb";
 
-import SuccessConfirmationBox from "../../Atoms/SuccessConfirmationBox/SuccessConfirmationBox";
 
 import ColorRamp from "../../Atoms/ColorRamp/ColorRamp";
 
@@ -564,7 +563,7 @@ const InteractiveMap: React.FC = () => {
                                 fillOpacity: 0.35,
                                 strokeWeight: 5,
                                 clickable: false,
-                                editable: true,
+                                editable: false,
                                 zIndex: 1,
                             },
                         }}

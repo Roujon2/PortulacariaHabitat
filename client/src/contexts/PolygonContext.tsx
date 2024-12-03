@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import polygonApi from '../api/polygonApi';
 import { Polygon } from '../types/polygon';
 
-import SuccessConfirmationBox from '../components/Atoms/SuccessConfirmationBox/SuccessConfirmationBox';
 import { useAlert } from './AlertContext';
 
 interface PolygonContextProps {
@@ -71,8 +70,8 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
     const [loading, setLoading] = useState<boolean>(false);
 
-    // Statevar for last updated polygon for dynamic pagination
-    const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+    // for knowing how many polygons have been retrieved already
+    var retrievedPolygons = 10;
 
     // Check if there are more polygons to fetch
     const [hasMore, setHasMore] = useState<boolean>(true);
@@ -110,15 +109,15 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     // Function to refresh the list of polygons
     const refreshPolygons = async () => {
         try{
+            console.log('refresh:'  + retrievedPolygons);
             // Fetch polygons from the database
-            const fetchedPolygons = await polygonApi.refreshPolygons(lastUpdated, call_limit);
+            const fetchedPolygons = await polygonApi.refreshPolygons(polygons.length);
 
             if(fetchedPolygons && fetchedPolygons.length > 0){
                 // Fetch polygon count
                 const polygonCount = await fetchPolygonCount();
 
-                // Set last_updated to the last polygon
-                setLastUpdated(fetchedPolygons[fetchedPolygons.length - 1].updated_at);
+                console.log("refreshed polygons", retrievedPolygons);
   
                 // Check if there are more polygons to fetch
                 if(fetchedPolygons.length < polygonCount.count){
@@ -129,6 +128,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
                 // Reset polygon list
                 setPolygons(fetchedPolygons);
+
+                // Reset retrieved polygons
+                retrievedPolygons = fetchedPolygons.length;
             }else{
                 setHasMore(false);
             }
@@ -148,14 +150,17 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         try{
 
             // Fetch older polygons from the database
-            const fetchedPolygons = await polygonApi.loadMorePolygons(lastUpdated, call_limit);
+            const fetchedPolygons = await polygonApi.loadMorePolygons(retrievedPolygons);
 
             if(fetchedPolygons && fetchedPolygons.length > 0){
                 // Fetch polygon count
                 const polygonCount = await fetchPolygonCount();
 
-                // Set last_updated to the last polygon
-                setLastUpdated(fetchedPolygons[fetchedPolygons.length - 1].updated_at);
+                //
+                const updatedRetrievedPolygons = retrievedPolygons + fetchedPolygons.length;
+                // Set retrieved polygons
+                retrievedPolygons = updatedRetrievedPolygons;
+                console.log("loaded more polygons", retrievedPolygons);
 
                 // Check if there are more polygons to fetch
                 if([...polygons, ...fetchedPolygons].length < polygonCount.count){

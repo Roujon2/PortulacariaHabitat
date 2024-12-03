@@ -39,3 +39,15 @@
     transform: rotate(360deg);
   }
 }
+
+.highlight {
+  position: absolute;
+  top: 43.8%; /* Adjust the top position */
+  left: 56.5%; /* Adjust the left position */
+  width: 830px; /* Width of the rectangle */
+  height: 525px; /* Height of the rectangle */
+  box-shadow: 0 0 0 9999px rgba(66, 66, 66, 0.37); /* Creates the cut-out effect */
+  z-index: 1000;
+  pointer-events: none; /* Ensure interactions pass through */
+  border-radius: 10px; /* Rounded corners */
+}
