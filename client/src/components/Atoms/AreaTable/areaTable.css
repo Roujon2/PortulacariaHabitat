@@ -1,7 +1,7 @@
 /* Base styles for the table */
 .class-areas-table {
     position: absolute;
-    bottom: 1.3rem;
+    bottom: 1.5rem;
     left: 0.5rem;
     display: block;
     width: fit-content;
@@ -23,7 +23,7 @@
 
 .class-areas-table th {
     padding: 8px 16px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
@@ -44,4 +44,9 @@
     height: 24px;
     border-radius: 4px; /* Rounded corners for the color block */
     border: 1px solid #ccc; /* Border for visibility */
+}
+
+.area-table-warning{
+    color: red;
+    font-size: 0.7rem;
 }

@@ -109,15 +109,12 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     // Function to refresh the list of polygons
     const refreshPolygons = async () => {
         try{
-            console.log('refresh:'  + retrievedPolygons);
             // Fetch polygons from the database
             const fetchedPolygons = await polygonApi.refreshPolygons(polygons.length);
 
             if(fetchedPolygons && fetchedPolygons.length > 0){
                 // Fetch polygon count
                 const polygonCount = await fetchPolygonCount();
-
-                console.log("refreshed polygons", retrievedPolygons);
   
                 // Check if there are more polygons to fetch
                 if(fetchedPolygons.length < polygonCount.count){
@@ -160,7 +157,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
                 const updatedRetrievedPolygons = retrievedPolygons + fetchedPolygons.length;
                 // Set retrieved polygons
                 retrievedPolygons = updatedRetrievedPolygons;
-                console.log("loaded more polygons", retrievedPolygons);
 
                 // Check if there are more polygons to fetch
                 if([...polygons, ...fetchedPolygons].length < polygonCount.count){
@@ -258,6 +254,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             return;
         }
 
+
         setLoading(true);
         try{
             // Call api to get spekboom mask
@@ -269,8 +266,6 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             const downloadUrl : string = spekboomMask.downloadUrl;
 
             const classAreas = spekboomMask.classAreas;
-
-            console.log(spekboomMask)
 
 
             // Build spekboomMask object

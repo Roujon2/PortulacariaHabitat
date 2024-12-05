@@ -13,8 +13,6 @@ import { usePolygonContext } from "../../../contexts/PolygonContext";
 import { TbReload } from "react-icons/tb";
 
 
-import ColorRamp from "../../Atoms/ColorRamp/ColorRamp";
-
 import PolygonWidget from "../../Atoms/PolygonWidget/PolygonWidget";
 
 
@@ -585,10 +583,8 @@ const InteractiveMap: React.FC = () => {
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
 
-                    <ColorRamp min={'<10%'} max={'24%<'} palette={["#0000ff","#0000ff","#0000ff","#ffff00","#ffff00","#ffff00","#ff0000","#ff0000","#ff0000"]} />
-
                     {overlays[selectedPolygonDetailsId as number] &&
-                        <AreaTable areas={overlays[selectedPolygonDetailsId as number]?.classAreas || ['#0000ff', 0]} />
+                        <AreaTable areas={overlays[selectedPolygonDetailsId as number]?.classAreas ?? ['Error retrieving Spekboom class areas', '#0000ff', 0]} />
                     }
                     
                 </GoogleMap>

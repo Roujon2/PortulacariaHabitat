@@ -171,6 +171,37 @@ const calculateClassArea = function(classifiedImage, classValue, polygon) {
     return classAreaHa;
 };
 
+// Custom function to calculate the area of each class for a 6 class classification
+const calculateSixClassAreas = function (classifiedImage, polygon) {
+    // Generate pixel area
+    var pixelArea = ee.Image.pixelArea();
+
+    // Define the class masks based on classAdjust values
+    var classMasks = [
+        classifiedImage.eq(0), // Class 0
+        classifiedImage.eq(1), // Class 1
+        classifiedImage.eq(2), // Class 2
+        classifiedImage.eq(3), // Class 3
+        classifiedImage.eq(4), // Class 4
+        classifiedImage.eq(5), // Class 5
+    ];
+
+    // Calculate area for each class
+    var classAreas = classMasks.map(function (mask) {
+        var classArea = pixelArea.updateMask(mask).reduceRegion({
+            reducer: ee.Reducer.sum(),
+            geometry: polygon,
+            scale: 1000, // Adjust scale as needed
+            maxPixels: 1e13,
+            bestEffort: true
+        });
+        return ee.Number(classArea.get("area")).divide(10000).round(); // Convert to hectares
+    });
+
+    return classAreas;
+};
+
+
 
 
 // ------ STACKING VARIABLES ------
@@ -255,37 +286,30 @@ var spekboomClassification = function(polygon) {
             spekboomAbundanceAdj = spekboomAbundanceAdj.updateMask(spekboomAbundanceAdj.gt(5));
 
             var classAdjust = spekboomAbundanceAdj
-                .where(spekboomAbundanceAdj.lte(10), 0)
-                .where(spekboomAbundanceAdj.gt(10), 1)
-                .where(spekboomAbundanceAdj.gt(12), 2)
-                .where(spekboomAbundanceAdj.gt(14), 3)
-                .where(spekboomAbundanceAdj.gt(16), 4)
-                .where(spekboomAbundanceAdj.gt(18), 5)
-                .where(spekboomAbundanceAdj.gt(20), 6)
-                .where(spekboomAbundanceAdj.gt(22), 7)
-                .where(spekboomAbundanceAdj.gt(24), 8)
+                .where(spekboomAbundanceAdj.lte(12), 0)
+                .where(spekboomAbundanceAdj.gt(12), 1)
+                .where(spekboomAbundanceAdj.gt(16), 2)
+                .where(spekboomAbundanceAdj.gt(20), 3)
+                .where(spekboomAbundanceAdj.gt(24), 4)
+                .where(spekboomAbundanceAdj.gt(28), 5);
 
             // Calculate the area of each class
-            var classAreas = [];
-            for (var i = 0; i < 9; i++) {
-                classAreas.push(calculateClassArea(classAdjust, i, polygon));
-            }
+            var classAreas = calculateSixClassAreas(classAdjust, polygon);
 
-            // Add 3 bottom together, 3 middle together, and 3 top together
-            var classAreasBottom3 = ee.Number(classAreas[0]).add(classAreas[1]).add(classAreas[2]);
-            var classAreasMiddle3 = ee.Number(classAreas[3]).add(classAreas[4]).add(classAreas[5]);
-            var classAreasTop3 = ee.Number(classAreas[6]).add(classAreas[7]).add(classAreas[8]);
-
-            // Results in simple json object
+            // Add colors to the classes
             var classAreasRes = [
-                ["#0000ff", classAreasBottom3],
-                ["#ffff00", classAreasMiddle3],
-                ["#ff0000", classAreasTop3]
+                ["12%<", "#0000ff", classAreas[0]],
+                [">12%", "#dcdcff", classAreas[1]],
+                [">16%", "#ffff00", classAreas[2]],
+                [">20%", "#ffffb4", classAreas[3]],
+                [">24%", "#ffb4b4", classAreas[4]],
+                [">28%", "#ff0000", classAreas[5]]
             ]
+
 
             // Wrap in promise for getInfo
             const classAreasPromise = new Promise((resolve, reject) => {
-                ee.List(classAreasRes.map(([color, area]) => [color, ee.Number(area)]))
+                ee.List(classAreasRes.map(([percentage, color, area]) => [percentage, color, ee.Number(area)]))
                     .getInfo((result, error) => {
                         if (error) {
                             return reject(new AppError("Error getting class areas for Spekboom classification.", 500, { error: error }));
@@ -300,6 +324,7 @@ var spekboomClassification = function(polygon) {
             
             //var imageVisParamBlue = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["4b4b96", "0000ff", "dcdcff", "c8c84b", "ffff00", "ffffb4", "c84b4b", "ff0000", "ffb4b4"]};
             var imageVisParam3 = {opacity: 1, bands: ["classification"], min: 0, max: 8, palette: ["0000ff","0000ff","0000ff","ffff00","ffff00","ffff00","ff0000","ff0000","ff0000"]};
+            var imageVisParam6 = {opacity: 1, bands: ["classification"], min: 0, max: 5, palette: ["0000ff","dcdcff","ffff00", "ffffb4", "ffb4b4", "ff0000"]};
 
             // Get map
             var spekboomMapViz = classAdjust.visualize(imageVisParam3);
@@ -310,7 +335,7 @@ var spekboomClassification = function(polygon) {
 
             // Wrap getMap in a Promise
             const getMapPromise = new Promise((resolve, reject) => {
-                classAdjust.getMap(imageVisParam3, (map, error) => {
+                classAdjust.getMap(imageVisParam6, (map, error) => {
                     if (error) {
                         return reject(new AppError("Error generating map URL.", 500, {error: error}));
                     }
@@ -322,7 +347,7 @@ var spekboomClassification = function(polygon) {
             const getDownloadUrlPromise = new Promise((resolve, reject) => {
                 spekboomAbundanceAdj.getDownloadURL({
                     name: "spekboom_classification",
-                    scale: scale,
+                    scale: 100,
                     fileFormat: "GeoTIFF",
                     region: polygon
                 }, (url, error) => {

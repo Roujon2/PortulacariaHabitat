@@ -210,7 +210,6 @@ const refreshPolygons = async (limit: number) => {
             // Build params object
             params: { limit: limit },
         });
-        console.log(limit);
 
         // Create the Polygon object to be returned
         const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({
@@ -256,7 +255,6 @@ const loadMorePolygons = async (offset: number) => {
             // Build params object (last_updated_at may be null)
             params: { offset: offset },
         });
-        console.log(offset);
 
         // Create the Polygon object to be returned
         const newPolygons: Polygon[] = polygons.data.map((polygon: Polygon) => ({
