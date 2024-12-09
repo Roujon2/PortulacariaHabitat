@@ -5,10 +5,11 @@ import { Alert, AlertTitle } from '@mui/material';
 interface AlertState {
     message: string;
     severity: 'success' | 'info' | 'warning' | 'error';
+    details?: string;
 }
 
 interface AlertContextProps {
-    showAlert: (message: string, severity: 'success' | 'info' | 'warning' | 'error') => void;   
+    showAlert: (message: string, severity: 'success' | 'info' | 'warning' | 'error', details?: string) => void;   
 }
 
 // Alert context
@@ -22,9 +23,13 @@ interface AlertProviderProps {
 
 export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
     const [alert, setAlert] = useState<AlertState | null>(null);
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleDetails = () => setIsExpanded(!isExpanded);
   
-    const showAlert = (message: string, severity: 'success' | 'info' | 'warning' | 'error') => {
-      setAlert({ message, severity });
+    const showAlert = (message: string, severity: 'success' | 'info' | 'warning' | 'error', details?: string) => {
+      setAlert({ message, severity, details });
       // If alert is success or info set timeout
         if (severity === 'success' || severity === 'info'){
             setTimeout(() => setAlert(null), 4500); // Auto-dismiss after 3 seconds
@@ -43,6 +48,43 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
                     <Alert severity={alert.severity} className='alert' icon={false} onClose={() => setAlert(null)}>
                       <AlertTitle>{alert.severity.toUpperCase()}</AlertTitle>
                       {alert.message}
+                      {alert.details && (
+                        <div style={{ marginTop: '10px' }}>
+                          <button
+                            onClick={toggleDetails}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: '#007bff',
+                              textDecoration: 'underline',
+                              cursor: 'pointer',
+                              padding: 0,
+                            }}
+                          >
+                            {isExpanded ? 'Less Details' : 'More Details'}
+                          </button>
+                          {isExpanded && (
+                            <pre
+                              style={{
+                                marginTop: '10px',
+                                backgroundColor: '#f1f1f1',
+                                margin: '0 auto',
+                                textAlign: 'center',
+                                padding: '10px',
+                                borderRadius: '4px',
+                                overflowX: 'auto', // Enables horizontal scrolling
+                                whiteSpace: 'pre-wrap', // Wraps long lines instead of stretching
+                                wordWrap: 'break-word', // Breaks words if they are too long
+                                maxHeight: '150px', // Limits height and adds vertical scrolling
+                                overflowY: 'auto', // Enables vertical scrolling if content exceeds maxHeight
+                                fontFamily: 'monospace',
+                              }}
+                            >
+                              {alert.details}
+                            </pre>
+                          )}
+                        </div>
+                      )}
                     </Alert>
                   );
             case 'warning':

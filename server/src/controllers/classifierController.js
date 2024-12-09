@@ -135,6 +135,26 @@ const getSpekboomClassification = async (req, res, next) => {
         const polygon_id = req.params.id;
         const client = res.locals.dbClient;
 
+        // Extract post json data
+        const classificationOptions = req.body;
+
+        // Error if the request body is empty
+        if (!req.body) {
+            throw new AppError('Missing request data.', 400);
+        }
+        // Verify body contents
+        else{
+            if (classificationOptions.exactArea === undefined){
+                throw new AppError('Missing exactArea option in request body.', 400);
+            }
+            if (classificationOptions.downloadUrl === undefined){
+                throw new AppError('Missing downloadURL option in request body.', 400);
+            }
+            if (classificationOptions.filename === undefined){
+                throw new AppError('Missing filename in request body.', 400);
+            }
+        }
+
         var polygon;
 
         try{
@@ -149,7 +169,7 @@ const getSpekboomClassification = async (req, res, next) => {
         }
 
         // Get the spekboom classification
-        const result = await classifierService.classifySpekboom(polygon);
+        const result = await classifierService.classifySpekboom(polygon, classificationOptions);
 
         // If the result is an instance of AppError, throw it
         if(result instanceof AppError){
@@ -166,6 +186,7 @@ const getSpekboomClassification = async (req, res, next) => {
         // Log the action
         var userData = req.cookies?.user ? jwt.decode(req.cookies.user) : undefined;
         userData.polygon_id = polygon_id;
+        userData.classificationOptions = classificationOptions;
         logInfo('Status Code: 200 | Spekboom classification complete', userData);
 
         res.status(200).json(result);

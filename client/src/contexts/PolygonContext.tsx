@@ -30,7 +30,7 @@ interface PolygonContextProps {
     polygonResultsOnMap : Polygon[];
     setPolygonResultsOnMap: (polygons: Polygon[]) => void;
 
-    getSpekboomClassification: (polygonId: number) => void;
+    getSpekboomClassification: (polygonId: number, classificationOptions?: { exactArea: boolean; downloadUrl: boolean; filename?: string }) => void;
     polygonSpekboomClassification: {overlayUrl: string, polygonId: number, downloadUrl: string, classAreas: any} | null;
 
     overlays: { [key: number]: { overlay: google.maps.ImageMapType, downloadUrl: string, classAreas: any } };
@@ -133,7 +133,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             }
         }catch(error){
             console.error("Error refreshing polygons:", error);
-            showAlert('Failed to refresh the polygons table. Reload the page and try again.', 'error');
+            showAlert('Failed to refresh the polygons table. Reload the page and try again.', 'error', String(error));
         }
     };
 
@@ -173,7 +173,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
 
         }catch(error){
             console.error("Error loading more polygons:", error);
-            showAlert('Failed to load more polygons. Try again later.', 'error');
+            showAlert('Failed to load more polygons. Try again later.', 'error', String(error));
         }
     };
 
@@ -218,7 +218,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             });
         });
         }catch(error){
-            showAlert('Unable to update the polygon. Try again later.', 'error');
+            showAlert('Unable to update the polygon. Try again later.', 'error', String(error));
         }
     };
 
@@ -247,7 +247,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     
 
     // Retrieve spekboom classification for polygon
-    const getSpekboomClassification = async (polygonId: number) => {
+    const getSpekboomClassification = async (polygonId: number, classificationOptions?: { exactArea: boolean; downloadUrl: boolean; filename?: string }) => {
         // If polygon id in polygonResultsOnMap, return
         if(polygonResultsOnMap.find(p => p.id === polygonId)){
             showAlert('Spekboom mask already on map', 'warning');
@@ -258,7 +258,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
         setLoading(true);
         try{
             // Call api to get spekboom mask
-            const spekboomMask = await polygonApi.getSpekboomClassification(polygonId);
+            const spekboomMask = await polygonApi.getSpekboomClassification(polygonId, classificationOptions);
 
             // Retrieve overlay url from spekboomMask response
             const overlayUrl : string = spekboomMask.map.urlFormat;
@@ -280,7 +280,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             setPolygonSpekboomClassification(spekboomMaskObject);
 
         }catch(error){
-            showAlert('Unable to retrieve the Spekboom classification. Try again later.', 'error');
+            showAlert('Unable to retrieve the Spekboom classification. Try again later.', 'error', String(error));
         }finally{
             setLoading(false);
         }

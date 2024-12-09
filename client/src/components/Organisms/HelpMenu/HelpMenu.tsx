@@ -36,11 +36,6 @@ const HelpMenu = () => {
                             Buttons Guide
                         </a>
                     </li>
-                    <li>
-                        <a href="#menus-section" className="help-index-link">
-                            Sections Guide
-                        </a>
-                    </li>
                 </div>
             </div>
     
@@ -178,38 +173,6 @@ const HelpMenu = () => {
                     </div>
                 </div>
 
-                {/* Menus Section */}
-                <div id="menus-section" className="help-section">
-                    <h2 className="help-title">Sections Guide</h2>
-                    <p className="help-description">
-                    This section provides a guide to the different components of the app, detailing their purpose and functionality.
-                    </p>
-
-                    <div className="app-section">
-                        <h3 className="section-title">Navigation Bar</h3>
-                        <div className="section-image-container">
-                            <img
-                                src={NavBarHighlight}
-                                alt="Navigation Bar Screenshot"
-                                className="section-image"
-                            />
-                        </div>
-                        <p className="section-description">
-                            The Navigation Bar provides access to key features of the app:
-                        </p>
-                        <ul className="section-functionalities">
-                            <li><IoMdMenu className="item-collapse"/> Collapses and expands the sidebar.</li>
-                            <li><MdAccountCircle /> Access your profile information.</li>
-                            <li><PiPolygonDuotone /> Access your polygons.</li>
-                            <li><MdHelp /> Access the help menu.</li>
-                            <li><RiLogoutBoxFill className="logout-icon" /> Logout of the app.</li>
-                        </ul>
-                    </div>
-
-                
-
-
-                </div>
 
 
             </div>

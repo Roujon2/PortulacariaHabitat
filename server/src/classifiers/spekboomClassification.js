@@ -172,7 +172,7 @@ const calculateClassArea = function(classifiedImage, classValue, polygon) {
 };
 
 // Custom function to calculate the area of each class for a 6 class classification
-const calculateSixClassAreas = function (classifiedImage, polygon) {
+const calculateSixClassAreas = function (classifiedImage, polygon, scale) {
     // Generate pixel area
     var pixelArea = ee.Image.pixelArea();
 
@@ -191,7 +191,7 @@ const calculateSixClassAreas = function (classifiedImage, polygon) {
         var classArea = pixelArea.updateMask(mask).reduceRegion({
             reducer: ee.Reducer.sum(),
             geometry: polygon,
-            scale: 1000, // Adjust scale as needed
+            scale: scale, // Adjust scale as needed
             maxPixels: 1e13,
             bestEffort: true
         });
@@ -253,7 +253,7 @@ var getSpekboomMask = function(polygon) {
     return spekBoom.clip(polygon);
 };
 // ------ CLASSIFICATION MODEL ------
-var spekboomClassification = function(polygon) {
+var spekboomClassification = function(polygon, classificationOptions) {
     return new Promise((resolve, reject) => {
         try{
             var bandNames = ["avgMSAVI2",
@@ -294,7 +294,9 @@ var spekboomClassification = function(polygon) {
                 .where(spekboomAbundanceAdj.gt(28), 5);
 
             // Calculate the area of each class
-            var classAreas = calculateSixClassAreas(classAdjust, polygon);
+            // If the exactArea options is off, scale to default 1000
+            var scale = classificationOptions.exactArea ? 100 : 1000;
+            var classAreas = calculateSixClassAreas(classAdjust, polygon, scale);
 
             // Add colors to the classes
             var classAreasRes = [
@@ -345,8 +347,11 @@ var spekboomClassification = function(polygon) {
 
             // Wrap getDownloadURL in a Promise
             const getDownloadUrlPromise = new Promise((resolve, reject) => {
+                if(!classificationOptions.downloadUrl){
+                    return reject("DownloadURL option disabled.");
+                }
                 spekboomAbundanceAdj.getDownloadURL({
-                    name: "spekboom_classification",
+                    name: classificationOptions.filename,
                     scale: 100,
                     fileFormat: "GeoTIFF",
                     region: polygon

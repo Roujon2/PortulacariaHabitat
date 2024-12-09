@@ -149,7 +149,7 @@ function reformatCoordinates(coordinates){
 }
 
 // Function to do a spekboom classification
-async function classifySpekboom(polygon){
+async function classifySpekboom(polygon, classificationOptions){
         try{
             // Reformat coordinates
             const polyCoords = reformatCoordinates(polygon.coordinates);
@@ -157,7 +157,7 @@ async function classifySpekboom(polygon){
             const eePolygon = ee.Geometry.Polygon(polyCoords);
 
             // Call the classifier
-            const classifiedMap = await spekboomClassification.spekboomClassification(eePolygon);
+            const classifiedMap = await spekboomClassification.spekboomClassification(eePolygon, classificationOptions);
 
             return classifiedMap;
 

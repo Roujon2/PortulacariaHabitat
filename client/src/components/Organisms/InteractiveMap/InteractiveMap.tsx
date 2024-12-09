@@ -340,7 +340,7 @@ const InteractiveMap: React.FC = () => {
             }
         }catch(error){
             console.error("Error saving polygon:", error);
-            showAlert('Unable to save polygon. Please try again.', 'error');
+            showAlert('Unable to save polygon. Please try again.', 'error', String(error));
         }
     }
 
