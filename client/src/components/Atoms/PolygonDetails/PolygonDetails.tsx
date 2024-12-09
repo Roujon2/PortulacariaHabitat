@@ -12,6 +12,7 @@ import { reuleaux } from 'ldrs';
 import './polygonDetails.css';
 
 import HoverText from './../HoverText/HoverText';
+import { usePolygonContext } from "../../../contexts/PolygonContext";
 
 interface PolygonDetailsProps {
     polygon: Polygon;
@@ -30,6 +31,8 @@ interface PolygonDetailsProps {
 
 const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, handleCenter, onMap, handleSpekboomClassification, loading, resultOnMap, handleOverlayDownload }) => {
     const [editedPolygon, setEditedPolygon] = React.useState<Polygon>(polygon);
+
+    const { overlays } = usePolygonContext();
     
     // State var to track if there are any differences to save
     const [isEdited, setIsEdited] = React.useState(false);
@@ -194,9 +197,9 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
 
                         {!loading ? 
                             (resultOnMap ? 
-                                <HoverText title="Download Classification Result">
+                                <HoverText title={`${!overlays[polygon.id].downloadUrl ? "Classification result download unavailable" : "Download classification result"}`}>
                                     <span>
-                                        <button className="polygon-details__button-download" onClick={() => handleOverlayDownload(polygon.id)} type='button'>
+                                        <button className={`${!overlays[polygon.id].downloadUrl ? 'polygon-details__button-download-disabled' : 'polygon-details__button-download'}`} onClick={() => handleOverlayDownload(polygon.id)} type='button' disabled={overlays[polygon.id].downloadUrl ? false : true}>
                                             <IoMdDownload />
                                         </button>
                                     </span>

@@ -168,3 +168,12 @@
 .polygon-details__button-download:hover{
     background-color: #0f3f1d;
 }
+
+.polygon-details__button-download-disabled{
+    background-color: #aaaaaa;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.1rem 0.4rem 0.1rem 0.4rem;
+    font-size: 1.3rem;
+}

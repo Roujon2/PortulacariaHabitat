@@ -12,6 +12,8 @@
   }
   
   .classification-confirm-container {
+    display: flex;
+    flex-direction: column;
     background: white;
     border-radius: 8px;
     padding: 20px;
@@ -33,19 +35,38 @@
   h2 {
     margin: 0 0 15px;
   }
+
+  .form-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
   
   .form-group {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .form-group label {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
   }
   
   .warning-text {
     color: red;
     font-size: 14px;
     margin-top: 5px;
+    display: flex;
+    text-align: left;
+    justify-content: flex-start;
   }
   
   .filename-field label {
-    display: block;
+    display: flex;
+    gap: 10px;
     margin-top: 10px;
   }
   

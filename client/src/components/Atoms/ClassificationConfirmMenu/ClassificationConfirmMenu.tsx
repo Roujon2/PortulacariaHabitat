@@ -27,48 +27,52 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
             </div>
             <h2>Classification Options</h2>
 
-            <div className="form-group">
-                <label>
-                    <input
-                    type="checkbox"
-                    checked={exactAreaCalculation}
-                    onChange={(e) => setExactAreaCalculation(e.target.checked)}
-                    />
-                    Enable Exact Classification Area Calculation
-                </label>
-                {exactAreaCalculation && (
-                    <p className="warning-text">
-                    Exact classification area calculation can significantly slow down processing times for large polygons.
-                    </p>
-                )}
-            </div>
+            <div className="form-container">
 
-            <div className="form-group">
-                <label>
-                    <input
-                    type="checkbox"
-                    checked={downloadUrl}
-                    onChange={(e) => setDownloadUrl(e.target.checked)}
-                    />
-                Retrieve Classification Download URL
-                </label>
-                {downloadUrl && (
-                    <div className="filename-field">
+                <div className="form-group">
                     <label>
-                        Filename:
                         <input
-                        type="text"
-                        value={filename}
-                        onChange={(e) => setFilename(e.target.value)}
-                        placeholder="Enter filename"
+                        type="checkbox"
+                        checked={exactAreaCalculation}
+                        onChange={(e) => setExactAreaCalculation(e.target.checked)}
                         />
+                        Enable Exact Classification Area Calculation
                     </label>
+                    {exactAreaCalculation && (
+                        <p className="warning-text">
+                        Exact classification area calculation can significantly slow down processing times for large polygons.
+                        </p>
+                    )}
                 </div>
-                )}
+
+                <div className="form-group">
+                    <label>
+                        <input
+                        type="checkbox"
+                        checked={downloadUrl}
+                        onChange={(e) => setDownloadUrl(e.target.checked)}
+                        />
+                    Retrieve Classification Download URL
+                    </label>
+                    {downloadUrl && (
+                        <div className="filename-field">
+                        <label>
+                            Filename:
+                            <input
+                            type="text"
+                            value={filename}
+                            onChange={(e) => setFilename(e.target.value)}
+                            placeholder="Enter filename"
+                            />
+                        </label>
+                    </div>
+                    )}
+                </div>
+
             </div>
 
             <div className="actions">
-                <button className="classify-button" onClick={handleConfirm}>
+                <button className="polygon-details__button-classify" onClick={handleConfirm}>
                     Classify Polygon
                 </button>
             </div>
