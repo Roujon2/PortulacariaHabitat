@@ -200,7 +200,7 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
                                 <HoverText title={`${!overlays[polygon.id].downloadUrl ? "Classification result download unavailable" : "Download classification result"}`}>
                                     <span>
                                         <button className={`${!overlays[polygon.id].downloadUrl ? 'polygon-details__button-download-disabled' : 'polygon-details__button-download'}`} onClick={() => handleOverlayDownload(polygon.id)} type='button' disabled={overlays[polygon.id].downloadUrl ? false : true}>
-                                            <IoMdDownload />
+                                            {overlays[polygon.id].downloadUrl ? <IoMdDownload /> : <span>Download Unavailable: Polygon too large</span>}
                                         </button>
                                     </span>
                                 </HoverText>

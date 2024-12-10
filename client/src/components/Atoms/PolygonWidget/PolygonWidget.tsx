@@ -4,6 +4,7 @@ import './polygonWidget.css';
 
 import { Polygon } from '../../../types/polygon';
 import { FaLocationCrosshairs, FaMapLocationDot } from 'react-icons/fa6';
+import HoverText from '../HoverText/HoverText';
 
 
 
@@ -46,16 +47,24 @@ const PolygonWidget: React.FC<PolygonWidgetProps> = ({ opacity, handleOpacityCha
                 </div>)}
 
                 <div className="polygon-widget__buttons">
-                    <button className={'polygon-widget__button-center'} onClick={() => setCenterOnPolygons([selectedPolygon])} >
-                        <FaLocationCrosshairs />
-                    </button>
+                    <HoverText title="Center on map">
+                        <span>
+                            <button className={'polygon-widget__button-center'} onClick={() => setCenterOnPolygons([selectedPolygon])} >
+                                <FaLocationCrosshairs />
+                            </button>
+                        </span>
+                    </HoverText>
 
-                    <button 
-                        onClick={handleRemoveFromMap} 
-                        className={'polygon-widget__button-remove-from-map'}
-                    >
-                        <FaMapLocationDot />
-                    </button> 
+                    <HoverText title="Remove from map">
+                        <span>
+                                <button 
+                                onClick={handleRemoveFromMap} 
+                                className={'polygon-widget__button-remove-from-map'}
+                            >
+                                <FaMapLocationDot />
+                            </button> 
+                        </span>
+                    </HoverText>
                 </div>
             </div>
         )

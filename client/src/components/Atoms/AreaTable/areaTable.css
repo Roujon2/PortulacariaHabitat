@@ -50,3 +50,8 @@
     color: red;
     font-size: 0.7rem;
 }
+
+.suitabilityIndex{
+    display: flex;
+    justify-content: center;
+}

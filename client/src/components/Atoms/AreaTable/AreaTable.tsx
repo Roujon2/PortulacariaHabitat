@@ -15,7 +15,7 @@ const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
         <table className="class-areas-table">
             <thead>
                 <tr>
-                    <th>Spekboom<br/>Growth<br/>Probability</th>
+                    <th>Site<br/>Suitability<br/>Index</th>
                     <th>Color</th>
                     <th>
                         Hectares
@@ -30,7 +30,7 @@ const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
             <tbody>
                 {areas.map(([growProb, color, hectares], index) => (
                     <tr key={index}>
-                        <td>{growProb}</td>
+                        <td className="suitabilityIndex">{growProb}</td>
                         <td className="color" style={{ backgroundColor: color }}></td>
                         <td>{hectares.toLocaleString()} ha</td>
                     </tr>

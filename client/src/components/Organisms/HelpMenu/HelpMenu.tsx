@@ -44,8 +44,6 @@ const HelpMenu = () => {
                 {/* Buttons Section */}
                 <div id="buttons-section" className="help-section">
                     <h2 className="help-title">Buttons Guide</h2>
-                    <p className="help-description">
-                    </p>
         
                     <div className="button-info">
                         <h3>Center</h3>
@@ -165,10 +163,14 @@ const HelpMenu = () => {
                                     <button className="polygon-details__button-download">
                                         <IoMdDownload />
                                     </button>
+                                    <button className="polygon-details__button-download-disabled">
+                                        <IoMdDownload />
+                                    </button>
                                 </span>
                             </HoverText>
 
-                            <p>Downloads the classification image of the selected polygon if one has been made. The image is downloaded as a GeoTIFF zip with 3 files representing the RGB bands.</p>
+                            <p>Downloads the classification image of the selected polygon if one has been made. The image is downloaded as a GeoTIFF zip with an image of one band 
+                                representing the Spekboom Abundance Probability at each pixel.</p>
                         </div>
                     </div>
                 </div>

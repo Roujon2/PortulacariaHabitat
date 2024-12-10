@@ -36,7 +36,7 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
                         checked={exactAreaCalculation}
                         onChange={(e) => setExactAreaCalculation(e.target.checked)}
                         />
-                        Enable Exact Classification Area Calculation
+                        Enable High Resolution Area Calculation
                     </label>
                     {exactAreaCalculation && (
                         <p className="warning-text">

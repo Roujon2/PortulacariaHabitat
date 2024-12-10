@@ -137,7 +137,7 @@ var frostQuantity = function(polygon) {
 
 // Custom function to estimate the dynamic scale of a polygon 
 var getDynamicScale = function(polygon) {
-    var maxFileSize = 1048576; // 32 MB in bytes
+    var maxFileSize = 50331648;
     // Aprox amount of bytes per pixel in geoTIFF
     var bytesPerPixel = 1;
     var maxPixels = maxFileSize / bytesPerPixel;
@@ -284,14 +284,17 @@ var spekboomClassification = function(polygon, classificationOptions) {
 
             var spekboomAbundanceAdj = spekboomAbundance.log().multiply(8.0337).add(5.1887);
             spekboomAbundanceAdj = spekboomAbundanceAdj.updateMask(spekboomAbundanceAdj.gt(5));
+            // Adjustment for 0-100 scale
+            spekboomAbundanceAdj = spekboomAbundanceAdj.multiply(1.4286);
+
 
             var classAdjust = spekboomAbundanceAdj
-                .where(spekboomAbundanceAdj.lte(12), 0)
-                .where(spekboomAbundanceAdj.gt(12), 1)
-                .where(spekboomAbundanceAdj.gt(16), 2)
-                .where(spekboomAbundanceAdj.gt(20), 3)
-                .where(spekboomAbundanceAdj.gt(24), 4)
-                .where(spekboomAbundanceAdj.gt(28), 5);
+                .where(spekboomAbundanceAdj.lte(17), 0)
+                .where(spekboomAbundanceAdj.gt(17), 1)
+                .where(spekboomAbundanceAdj.gt(23), 2)
+                .where(spekboomAbundanceAdj.gt(29), 3)
+                .where(spekboomAbundanceAdj.gt(34), 4)
+                .where(spekboomAbundanceAdj.gt(40), 5);
 
             // Calculate the area of each class
             // If the exactArea options is off, scale to default 1000
@@ -300,12 +303,12 @@ var spekboomClassification = function(polygon, classificationOptions) {
 
             // Add colors to the classes
             var classAreasRes = [
-                ["12%<", "#0000ff", classAreas[0]],
-                [">12%", "#dcdcff", classAreas[1]],
-                [">16%", "#ffff00", classAreas[2]],
-                [">20%", "#ffffb4", classAreas[3]],
-                [">24%", "#ffb4b4", classAreas[4]],
-                [">28%", "#ff0000", classAreas[5]]
+                ["17<", "#0000ff", classAreas[0]],
+                [">17", "#dcdcff", classAreas[1]],
+                [">23", "#ffff00", classAreas[2]],
+                [">29", "#ffffb4", classAreas[3]],
+                [">34", "#ffb4b4", classAreas[4]],
+                [">40", "#ff0000", classAreas[5]]
             ]
 
 
@@ -314,7 +317,7 @@ var spekboomClassification = function(polygon, classificationOptions) {
                 ee.List(classAreasRes.map(([percentage, color, area]) => [percentage, color, ee.Number(area)]))
                     .getInfo((result, error) => {
                         if (error) {
-                            return reject(new AppError("Error getting class areas for Spekboom classification.", 500, { error: error }));
+                            return reject("Error getting class areas for Spekboom classification. "+error);
                         }
                         resolve(result);
                     });
@@ -331,6 +334,9 @@ var spekboomClassification = function(polygon, classificationOptions) {
             // Get map
             var spekboomMapViz = classAdjust.visualize(imageVisParam3);
 
+            // Change spekboom image to 1 byte per pixel
+            spekboomAbundanceAdj = spekboomAbundanceAdj.toUint8();
+
             // Get the dynamic scale
             var scale = getDynamicScale(polygon);
 
@@ -339,7 +345,7 @@ var spekboomClassification = function(polygon, classificationOptions) {
             const getMapPromise = new Promise((resolve, reject) => {
                 classAdjust.getMap(imageVisParam6, (map, error) => {
                     if (error) {
-                        return reject(new AppError("Error generating map URL.", 500, {error: error}));
+                        return reject("Error generating map URL. "+error);
                     }
                     resolve(map);
                 });
@@ -357,7 +363,7 @@ var spekboomClassification = function(polygon, classificationOptions) {
                     region: polygon
                 }, (url, error) => {
                     if (error) {
-                        return reject(new AppError("Error generating download URL.", 500, {error: error}));
+                        return reject("Error generating download URL. "+error);
                     }
                     resolve(url);
                 });
@@ -405,7 +411,7 @@ var spekboomClassification = function(polygon, classificationOptions) {
                 })
                 .catch(error => {
                     if(!(error instanceof AppError)){
-                        error = new AppError('Error generating map and download URL.', 500, {error: error.message});
+                        error = new AppError('Error generating spekboom classification.', 500, {error: error.message});
                     }
                     reject(error);
                 }

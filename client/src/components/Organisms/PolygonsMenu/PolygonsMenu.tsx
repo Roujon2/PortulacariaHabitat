@@ -160,7 +160,7 @@ const PolygonsMenu: React.FC = () => {
 
             <PanelGroup direction='vertical'>
                 {/* Polygon Table */}
-                <Panel defaultSize={80} minSize={30} className="polygon-table_container">
+                <Panel defaultSize={50} minSize={30} className="polygon-table_container">
                     <PolygonTable
                         polygons={polygons}
                         handleLoadMore={handleLoadMore}
@@ -178,7 +178,7 @@ const PolygonsMenu: React.FC = () => {
                 <PanelResizeHandle className='resize-handle__polygons-menu' />
 
                 {/* Polygon Details */}
-                <Panel defaultSize={20} minSize={20}>
+                <Panel defaultSize={50} minSize={20}>
                     {editPolygonSelected ? (
                         <PolygonDetails
                             polygon={editPolygonSelected}
