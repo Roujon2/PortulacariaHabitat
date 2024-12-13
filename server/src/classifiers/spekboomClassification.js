@@ -137,39 +137,18 @@ var frostQuantity = function(polygon) {
 
 // Custom function to estimate the dynamic scale of a polygon 
 var getDynamicScale = function(polygon) {
-    var maxFileSize = 50331648;
+    var maxFileSize = 33554432;
     // Aprox amount of bytes per pixel in geoTIFF
     var bytesPerPixel = 1;
     var maxPixels = maxFileSize / bytesPerPixel;
 
     var area = polygon.area();
-    var scale = ee.Number(area).sqrt().divide(maxPixels).sqrt().round();
+    var scale = ee.Number(area).divide(maxPixels).sqrt().round();
 
     // Return scale in meters per pixel
     return scale;
 };
 
-// Custom function to calculate the area of a specific class
-const calculateClassArea = function(classifiedImage, classValue, polygon) {
-    // Create a mask for the class
-    var classMask = classifiedImage.eq(classValue);
-
-    // Pixel area and mask to class
-    var pixelArea = ee.Image.pixelArea().updateMask(classMask);
-
-    // Sum the area of the class
-    var classArea = pixelArea.reduceRegion({
-        reducer: ee.Reducer.sum(),
-        geometry: polygon,
-        scale: 100,
-        maxPixels: 1e13
-    });
-
-    // Convert square meters to hectares
-    var classAreaHa = ee.Number(classArea.get("area")).divide(10000).round();
-
-    return classAreaHa;
-};
 
 // Custom function to calculate the area of each class for a 6 class classification
 const calculateSixClassAreas = function (classifiedImage, polygon, scale) {
@@ -357,7 +336,7 @@ var spekboomClassification = function(polygon, classificationOptions) {
                     return reject("DownloadURL option disabled.");
                 }
                 spekboomAbundanceAdj.getDownloadURL({
-                    name: classificationOptions.filename,
+                    name: classificationOptions.filename || "spekboom-classification",
                     scale: 100,
                     fileFormat: "GeoTIFF",
                     region: polygon
