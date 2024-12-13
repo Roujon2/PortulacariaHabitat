@@ -1,0 +1,26 @@
+.button-info {
+    width: 100%;
+}
+
+.button-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 98%;
+    gap: 1rem;
+    padding: 0.5rem;
+    background-color: white;
+    border: 1px solid #cccccc98;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.buttons-span{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}

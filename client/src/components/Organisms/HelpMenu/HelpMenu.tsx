@@ -1,29 +1,42 @@
 import React from "react";
 
-import { FiSave } from "react-icons/fi";
-import { IoMdDownload } from "react-icons/io";
-import { MdOutlineExpandMore } from "react-icons/md";
-import { FaTrashCan } from "react-icons/fa6";
-import { FaMapLocationDot } from "react-icons/fa6";
-import { FaLocationCrosshairs } from "react-icons/fa6";
 
-import { IoMdMenu } from "react-icons/io";
-import { RiLogoutBoxFill } from "react-icons/ri";
-import { MdAccountCircle } from "react-icons/md";
-import { PiPolygonDuotone } from "react-icons/pi";
-import { MdHelp } from "react-icons/md";
-
-import HoverText from "../../Atoms/HoverText/HoverText";
-
-// Images
-import NavBarHighlight from "../../../assets/images/HelpMenuImages/NavBarHighlight.png";
-import PolygonDetailsHighlight from "../../../assets/images/HelpMenuImages/PolygonDetailsHighlight.png";
-
+import ButtonHelpSection from "../../Atoms/ButtonHelpSection/ButtonHelpSection";
+import PolygonDrawingHelpSection from "../../Atoms/PolygonDrawingHelpSection/PolygonDrawingHelpSection";
 
 import './helpMenu.css'
+import { TbSectionSign } from "react-icons/tb";
 
 // Help menu component
 const HelpMenu = () => {
+    const [currentSection, setCurrentSection] = React.useState("buttons-section");
+
+    const sections = [
+        {id: "buttons-section", title: "Buttons Guide"},
+        {id: "polygon-drawing-section", title: "Drawing a Polygon"}
+    ];
+
+    const handleSectionChange = (sectionId: string) => {
+        setCurrentSection(sectionId);
+        // Add to history #
+        window.location.hash = sectionId;
+    };
+
+    // Get current section index
+    const currentIndex = sections.findIndex(section => section.id === currentSection);
+    const nextSection = sections[currentIndex + 1] ? sections[currentIndex + 1].id : null;
+
+    const renderSection = () => {
+        switch (currentSection) {
+            case "buttons-section":
+                return <ButtonHelpSection />;
+            case "polygon-drawing-section":
+                return <PolygonDrawingHelpSection />;
+            default:
+                return <ButtonHelpSection />;
+        }
+    };
+
         return (
         <div className="help-menu-container">
             <h1 className="help-title">Help</h1>
@@ -31,152 +44,29 @@ const HelpMenu = () => {
             <div className="help-index">
                 <h2>Index</h2>
                 <div className="help-index-items">
-                    <li>
-                        <a href="#buttons-section" className="help-index-link">
-                            Buttons Guide
-                        </a>
-                    </li>
+                    {sections.map((section) => (
+                        <li key={section.id}>
+                            <a href={`#${section.id}`} 
+                                className={`help-index-link ${currentSection === section.id ? "active" : ""}`}
+                                onClick={() => handleSectionChange(section.id)}>
+                                {section.title}
+                            </a>
+                        </li>
+                    ))}
                 </div>
             </div>
     
             <div className="help-menu">
+                {/* Render selection section */}
+                {renderSection()}
 
-                {/* Buttons Section */}
-                <div id="buttons-section" className="help-section">
-                    <h2 className="help-title">Buttons Guide</h2>
-        
-                    <div className="button-info">
-                        <h3>Center</h3>
-                        <div className="button-details">
-                            <HoverText title="Center Button">
-                                <span className="buttons-span">
-                                    <button className="polygon-details__button-center">
-                                        <FaLocationCrosshairs  />
-                                    </button>
-                                    
-                                    <button className="polygon-details__button-center-disabled" disabled>
-                                        <FaLocationCrosshairs  />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Centers the selected polygon on the map. If the polygon is not on the map this button is disabled.</p>
-                        </div>
-                    </div>
-        
-                    <div className="button-info">
-                        <h3>Add to Map</h3>
-                        <div className="button-details">
-                            <HoverText title="Add to map">
-                                <span className="buttons-span">
-                                    <button className="button-view-on-map">
-                                        <FaMapLocationDot />
-                                    </button>
-                                    
-                                    <button className="button-view-on-map-disabled" disabled>
-                                        <FaMapLocationDot />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Adds the selected polygon on the map. If no polygon is selected the button is disabled.</p>
-                        </div>
-                    </div>
-
-                    <div className="button-info">
-                        <h3>Remove from Map</h3>
-                        <div className="button-details">
-                            <HoverText title="Remove from map">
-                                <span className="buttons-span">
-                                    <button className="polygon-widget__button-remove-from-map">
-                                        <FaMapLocationDot />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Removes the selected polygon from the map. This does not delete the polygon from the app.</p>
-                        </div>
-                    </div>
-        
-                    <div className="button-info">
-                        <h3>Delete</h3>
-                        <div className="button-details">
-                            <HoverText title="Delete polygon">
-                                <span className="buttons-span">
-                                    <button className="button-delete">
-                                        <FaTrashCan />
-                                    </button>
-                                    
-                                    <button className="button-delete-disabled" disabled>
-                                        <FaTrashCan />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Deletes the selected polygon from the app. This action is irreversible. If no polygon is selected the button is disabled.</p>
-                        </div>
-                    </div>
-
-                    <div className="button-info">
-                        <h3>Save Changes</h3>
-                        <div className="button-details">
-                            <HoverText title="Save changes">
-                                <span className="buttons-span">
-                                    <button className="polygon-details__button-save">
-                                        <FiSave />
-                                    </button>
-                                    
-                                    <button className="polygon-details__button-save-disabled" disabled>
-                                        <FiSave />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Saves the changes made to the polygon. If no changes have been made the button is disabled.</p>
-                        </div>
-                    </div>
-
-                    <div className="button-info">
-                        <h3>Load More Polygons</h3>
-                        <div className="button-details">
-                            <HoverText title="Load more polygons">
-                                <span className="buttons-span">
-                                    <button className="button-load-more">
-                                        <MdOutlineExpandMore />
-                                    </button>
-                                    
-                                    <button className="button-load-more-disabled" disabled>
-                                        <MdOutlineExpandMore />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Loads more polygons drawn by the user. If there are no more polygons to load the button is disabled.</p>
-                        </div>
-                    </div>
-
-                    <div className="button-info">
-                        <h3>Download Classification</h3>
-                        <div className="button-details">
-                            <HoverText title="Download classification">
-                                <span className="buttons-span">
-                                    <button className="polygon-details__button-download">
-                                        <IoMdDownload />
-                                    </button>
-                                    <button className="polygon-details__button-download-disabled">
-                                        <IoMdDownload />
-                                    </button>
-                                </span>
-                            </HoverText>
-
-                            <p>Downloads the classification image of the selected polygon if one has been made. The image is downloaded as a GeoTIFF zip with an image of one band 
-                                representing the Spekboom Abundance Probability at each pixel.</p>
-                        </div>
-                    </div>
-                </div>
-
-
-
+                {/* Next section button */}
+                {nextSection && (
+                    <button className="help-next-button" onClick={() => handleSectionChange(nextSection)}>
+                        <span>Up Next</span>
+                        <h3>{sections.find(section => section.id === nextSection)?.title}</h3>
+                    </button>
+                )}
             </div>
         </div>
         );

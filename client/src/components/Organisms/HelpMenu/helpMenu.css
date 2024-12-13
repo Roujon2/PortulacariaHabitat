@@ -51,34 +51,39 @@
     color: #333;
 }
 
-.button-info {
-    width: 100%;
-}
-
-
-.button-details {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    width: 98%;
-    gap: 1rem;
-    padding: 0.5rem;
-    background-color: white;
-    border: 1px solid #cccccc98;
-    border-radius: 5px;
+.help-index-link {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #333333;
     cursor: pointer;
+    transition: color 0.3s ease;
+}
+.help-index-link:hover {
+    color: #495fc5;
 }
 
-
-.buttons-span{
+.help-index-link.active {
+    font-weight: bold;
+    color: #495fc5;
+    
+}
+  
+.help-next-button{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    gap: 0.5rem;
+    border-radius: 5px;
+    padding: 0.35rem 0.5rem;
+    background-color: #a7a2d18a;
+    border: 1px solid #cccccc98;
+    cursor: pointer;
+    margin-top: 0.3rem;
+    transition: background-color 0.3s ease;
 }
-
+.help-next-button:hover{
+    background-color: #969696;
+}
 
 /* MENU SECTION */
 
