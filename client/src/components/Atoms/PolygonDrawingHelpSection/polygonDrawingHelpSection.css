@@ -1,0 +1,5 @@
+.polygon-drawing__save-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,3 +1,15 @@
+.save-polygon-menu-container{
+    background-color: rgb(167, 203, 167);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 1rem;
+    margin: 0.3rem;
+    padding: 1rem;
+    position: relative;
+}
+
 .close-button{
     position: absolute;
     top: 0;
@@ -16,26 +28,6 @@
 
 .required{
     color: red;
-}
-
-.save-polygon-menu-container{
-    position: absolute;
-    width: fit-content;
-    height: fit-content;
-    padding: 1rem;
-    left: 0%;
-    bottom: 40%;
-
-    background-color: rgb(167, 203, 167);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 1rem;
-    margin: 0.3rem;
-
-    z-index: 2;
-
 }
 
 .menu-fields{

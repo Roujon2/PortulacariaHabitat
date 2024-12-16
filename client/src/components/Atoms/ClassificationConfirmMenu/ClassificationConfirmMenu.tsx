@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import "./classificationConfirmMenu.css"
 import { IoClose } from "react-icons/io5";
+import polygonSchema from './../../../../../server/src/validators/polygonValidator';
 
 interface Props {
   onClose: () => void;
@@ -40,7 +41,7 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
                     </label>
                     {exactAreaCalculation && (
                         <p className="warning-text">
-                        Exact classification area calculation can significantly slow down processing times for large polygons.
+                        Enabling this option will significantly slow down processing times for large polygons.
                         </p>
                     )}
                 </div>
@@ -55,17 +56,23 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
                     Retrieve Classification Download URL
                     </label>
                     {downloadUrl && (
-                        <div className="filename-field">
-                        <label>
-                            Filename:
-                            <input
-                            type="text"
-                            value={filename}
-                            onChange={(e) => setFilename(e.target.value)}
-                            placeholder="Enter filename"
-                            />
-                        </label>
-                    </div>
+                        <>
+                            <div className="filename-field">
+                                <label>
+                                    Filename:
+                                    <input
+                                    type="text"
+                                    value={filename}
+                                    onChange={(e) => setFilename(e.target.value)}
+                                    placeholder="Enter filename"
+                                    />
+                                </label>
+                            </div>
+                            <p className="warning-text">
+                            The image may be unavailable for large polygons.
+                            </p>
+
+                        </>
                     )}
                 </div>
 

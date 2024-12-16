@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 
 
 import ButtonHelpSection from "../../Atoms/ButtonHelpSection/ButtonHelpSection";
@@ -10,6 +10,7 @@ import { TbSectionSign } from "react-icons/tb";
 // Help menu component
 const HelpMenu = () => {
     const [currentSection, setCurrentSection] = React.useState("buttons-section");
+    const sectionRef = useRef<HTMLDivElement>(null);
 
     const sections = [
         {id: "buttons-section", title: "Buttons Guide"},
@@ -20,6 +21,8 @@ const HelpMenu = () => {
         setCurrentSection(sectionId);
         // Add to history #
         window.location.hash = sectionId;
+        // Scroll up 
+        sectionRef.current?.scrollTo(0, 0);
     };
 
     // Get current section index
@@ -56,7 +59,7 @@ const HelpMenu = () => {
                 </div>
             </div>
     
-            <div className="help-menu">
+            <div className="help-menu" ref={sectionRef}>
                 {/* Render selection section */}
                 {renderSection()}
 

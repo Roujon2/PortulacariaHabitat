@@ -5,6 +5,8 @@ import { IoClose } from "react-icons/io5";
 
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaCheck } from "react-icons/fa6";
+import { FiSave } from "react-icons/fi";
+
 
 
 
@@ -148,7 +150,7 @@ const SavePolygonMenu: React.FC<SavePolygonMenuProps> = ({ onSave, onCancel }: S
                             <button type="button" onClick={handleCancel}>
                                 Cancel
                             </button>
-                            <button type="submit">Save</button>
+                            <button type="submit" className="polygon-details__button-save"><FiSave /></button>
                         </div>
                     </form>
                 </>

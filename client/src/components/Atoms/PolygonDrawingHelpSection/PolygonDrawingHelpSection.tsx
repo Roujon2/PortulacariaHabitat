@@ -2,6 +2,9 @@ import React from "react";
 
 import './polygonDrawingHelpSection.css';
 
+import SavePolygonMenu from "../SavePolygonMenu/SavePolygonMenu";
+import { FiSave } from "react-icons/fi";
+
 
 const PolygonDrawingHelpSection = () => (
     <div id="polygon-drawing-section" className="help-section">
@@ -12,44 +15,18 @@ const PolygonDrawingHelpSection = () => (
             add points. Click on the first point to close the polygon.
         </p>
 
-        <div className="button-info">
-            <h3>Draw Polygon</h3>
-            <div className="button-details">
-                <span className="buttons-span">
-                    <button className="polygon-drawing__button-draw">
-                        Draw
-                    </button>
-                </span>
+        <p>Once the polygon is drawn, the following Save Menu will appear:</p>
 
-                <p>Click on the map to draw a polygon. Click on the first point to close the polygon.</p>
-            </div>
+        <div className="polygon-drawing__save-menu">
+            <SavePolygonMenu 
+                onCancel={() => {}}
+                onSave={() => {}}
+            />
+            <p>Note: The fields marked with a red asterisk are required.</p>
         </div>
 
-        <div className="button-info">
-            <h3>Undo</h3>
-            <div className="button-details">
-                <span className="buttons-span">
-                    <button className="polygon-drawing__button-undo">
-                        Undo
-                    </button>
-                </span>
+        <p>Fill in the required fields and click the <FiSave/> icon to save the polygon.</p>
 
-                <p>Removes the last point added to the polygon.</p>
-            </div>
-        </div>
-
-        <div className="button-info">
-            <h3>Clear</h3>
-            <div className="button-details">
-                <span className="buttons-span">
-                    <button className="polygon-drawing__button-clear">
-                        Clear
-                    </button>
-                </span>
-
-                <p>Clears the polygon from the map.</p>
-            </div>
-        </div>
     </div>
 );
 

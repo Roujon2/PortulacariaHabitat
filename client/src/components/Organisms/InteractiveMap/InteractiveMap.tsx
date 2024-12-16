@@ -579,7 +579,14 @@ const InteractiveMap: React.FC = () => {
                         handleRemoveFromMap={() => removePolygonFromMap(selectedPolygonDetailsId as number)}
                     />
 
-                    {showSavePolygonMenu && <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />}
+                    {showSavePolygonMenu && (
+                        <>
+                            <div className="polygon-upload__background"></div>
+                            <div className='save-polygon-menu-wrapper'>
+                                <SavePolygonMenu onSave={handleSave} onCancel={handleCancel} />
+                            </div>
+                        </>
+                    )}
 
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
 
