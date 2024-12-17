@@ -4,6 +4,8 @@ import { Polygon } from '../types/polygon';
 
 import { useAlert } from './AlertContext';
 
+import { parseError } from '../utils/errorHandler';
+
 interface PolygonContextProps {
     polygons: Polygon[];
     refreshPolygons: () => void;
@@ -280,7 +282,9 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
             setPolygonSpekboomClassification(spekboomMaskObject);
 
         }catch(error){
-            showAlert('Unable to retrieve the Spekboom classification. Try again later.', 'error', String(error));
+            var errorString = JSON.stringify(error, null, 2);
+            
+            showAlert('Unable to retrieve the Spekboom classification. Try again later.', 'error', errorString);
         }finally{
             setLoading(false);
         }

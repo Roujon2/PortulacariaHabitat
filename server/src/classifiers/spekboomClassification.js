@@ -182,7 +182,6 @@ const calculateSixClassAreas = function (classifiedImage, polygon, scale) {
 
 
 
-
 // ------ STACKING VARIABLES ------
 var createStack = function(polygon) {
     var avgMSAVI2_V = getAvgMSAVI2(polygon);
@@ -281,24 +280,26 @@ var spekboomClassification = function(polygon, classificationOptions) {
             var classAreas = calculateSixClassAreas(classAdjust, polygon, scale);
 
             // Add colors to the classes
-            var classAreasRes = [
-                ["17<", "#0000ff", classAreas[0]],
-                [">17", "#dcdcff", classAreas[1]],
-                [">23", "#ffff00", classAreas[2]],
-                [">29", "#ffffb4", classAreas[3]],
-                [">34", "#ffb4b4", classAreas[4]],
-                [">40", "#ff0000", classAreas[5]]
-            ]
-
+            var classAreasRes =[
+                    ["17<", "#0000ff", classAreas[0]],
+                    [">17", "#dcdcff", classAreas[1]],
+                    [">23", "#ffff00", classAreas[2]],
+                    [">29", "#ffffb4", classAreas[3]],
+                    [">34", "#ffb4b4", classAreas[4]],
+                    [">40", "#ff0000", classAreas[5]]
+                ];
 
             // Wrap in promise for getInfo
             const classAreasPromise = new Promise((resolve, reject) => {
                 ee.List(classAreasRes.map(([percentage, color, area]) => [percentage, color, ee.Number(area)]))
                     .getInfo((result, error) => {
                         if (error) {
-                            return reject("Error getting class areas for Spekboom classification. "+error);
+                            return reject("Error getting class areas for Spekboom classification. " + error);
                         }
-                        resolve(result);
+                        resolve({
+                            areas: result,
+                            exact: classificationOptions.exactArea
+                        });
                     });
             });
 

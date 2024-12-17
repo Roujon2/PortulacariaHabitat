@@ -1,5 +1,6 @@
 import AppError from "../errors/appError.js";
 import polygonModel from "../models/polygonModel.js";
+import polygonService from "../services/polygonService.js";
 import sseService from "../services/sseService.js";
 
 import { logInfo } from "../../logger.js";
@@ -10,6 +11,12 @@ const savePolygon = async (req, res, next) => {
         const user_id = req.user.id;
         const polygon = req.body;
         const client = res.locals.dbClient;
+
+        // Calculate polygon area
+        const area_hectares = await polygonService.calculatePolygonAreaHectares(polygon.coordinates);
+
+        // Add area to polygon object
+        polygon.area_hectares = area_hectares;
 
         const savedPolygon = await polygonModel.savePolygon(client, user_id, polygon);
 

@@ -55,6 +55,22 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
         },
     ];
 
+    // Function for hectare area formatting
+    const formatHectares = (hectares: number) => {
+        if (typeof hectares !== 'number') {
+            return 'Invalid data';
+        }
+        if (hectares > 1e6){
+            return `${(hectares / 1e6).toFixed(2)} Mha`;
+        }  
+        else if (hectares > 1e3){
+            return `${(hectares / 1e3).toFixed(2)} Kha`;
+        }
+        else{
+            return hectares.toFixed(0) + ' ha';
+        }
+    };
+
 
 
     // Define columns for data table
@@ -77,6 +93,11 @@ const PolygonTable: React.FC<PolygonTableProps> = ({ polygons, selectedPolygons,
         {
             name: 'Farm/Series Name',
             selector: (row: Polygon) => row.farm_series_name,
+            sortable: true,
+        },
+        {
+            name: 'Area',
+            selector: (row: Polygon) => formatHectares(row.area_hectares),
             sortable: true,
         },
         {

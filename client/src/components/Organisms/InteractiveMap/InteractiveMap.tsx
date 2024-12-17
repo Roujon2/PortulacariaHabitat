@@ -591,7 +591,7 @@ const InteractiveMap: React.FC = () => {
                     {showErrorBox && <ErrorBox message="Polygon must have at least 3 vertices." handleExit={() => setShowErrorBox(false)} />}
 
                     {overlays[selectedPolygonDetailsId as number] &&
-                        <AreaTable areas={overlays[selectedPolygonDetailsId as number]?.classAreas ?? ['Error retrieving Spekboom class areas', '#0000ff', 0]} />
+                        <AreaTable classAreasObj={overlays[selectedPolygonDetailsId as number]?.classAreas ?? {areas: ['Error retrieving Spekboom class areas', '#0000ff', 0], exact: false}} />
                     }
                     
                 </GoogleMap>

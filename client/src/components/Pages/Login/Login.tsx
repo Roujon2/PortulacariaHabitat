@@ -118,7 +118,7 @@ const Login: React.FC = () => {
             </div>
 
             <div className='login-footer'>
-                <p>© 2024 Spekboom Mapping</p>
+                <p>© 2024 Portulacaria Ltd</p>
             </div>
 
         </div>

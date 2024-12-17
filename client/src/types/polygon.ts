@@ -15,4 +15,5 @@ export interface Polygon extends NewPolygon{
     created_at: string;
     updated_at: string;
     classification_status: string;
+    area_hectares: number;
 }

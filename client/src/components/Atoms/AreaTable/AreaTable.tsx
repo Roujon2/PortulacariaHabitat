@@ -4,11 +4,27 @@ import './areaTable.css'
 
 
 interface AreaTableProps {
-    areas: [string, string, number][];
+    classAreasObj: { areas: [string, string, number][], exact: boolean };
 }
 
 
-const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
+const AreaTable: React.FC<AreaTableProps> = ({ classAreasObj }) => {
+
+    // Function to reformat hectares
+    const formatHectares = (hectares: number) => {
+        if (typeof hectares !== 'number') {
+            return 'Invalid data';
+        }
+        if (hectares > 1e6){
+            return `${(hectares / 1e6).toFixed(2)} Mha`;
+        }  
+        else if (hectares > 1e3){
+            return `${(hectares / 1e3).toFixed(2)} Kha`;
+        }
+        else{
+            return hectares.toFixed(0) + ' ha';
+        }
+    };
     
 
     return (
@@ -19,20 +35,22 @@ const AreaTable: React.FC<AreaTableProps> = ({ areas }) => {
                     <th>Color</th>
                     <th>
                         Hectares
-                        <p>
-                            <small className="area-table-warning">
-                                (Results may not be accurate)
-                            </small>
-                        </p>
+                        {!classAreasObj.exact && (
+                            <p>
+                                <small className="area-table-warning">
+                                    (90% certainty)
+                                </small>
+                            </p>
+                        )}
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {areas.map(([growProb, color, hectares], index) => (
+                {classAreasObj.areas.map(([growProb, color, hectares], index) => (
                     <tr key={index}>
                         <td className="suitabilityIndex">{growProb}</td>
                         <td className="color" style={{ backgroundColor: color }}></td>
-                        <td>{hectares.toLocaleString()} ha</td>
+                        <td>{formatHectares(hectares)}</td>
                     </tr>
                 ))}
             </tbody>
