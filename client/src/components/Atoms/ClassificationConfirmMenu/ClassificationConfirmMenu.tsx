@@ -69,7 +69,7 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
                                 </label>
                             </div>
                             <p className="warning-text">
-                            The image may be unavailable for large polygons.
+                            The downloadable image will be unavailable for large polygons {'(>19Mha)'}.
                             </p>
 
                         </>

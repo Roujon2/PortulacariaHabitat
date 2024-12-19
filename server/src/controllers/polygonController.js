@@ -48,6 +48,12 @@ const updatePolygon = async (req, res, next) => {
 
         const client = res.locals.dbClient;
 
+        // Calculate new area
+        const area_hectares = await polygonService.calculatePolygonAreaHectares(polygon.coordinates);
+
+        // Add area to polygon object
+        polygon.area_hectares = area_hectares;
+
         const updatedPolygon = await polygonModel.updatePolygon(client, polygon_id, polygon);
 
         // Send SSE event

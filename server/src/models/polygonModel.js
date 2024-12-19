@@ -19,10 +19,10 @@ const savePolygon = async (client, user_id, polygon) => {
 // Function to update polygon data
 const updatePolygon = async (client, polygon_id, polygon) => {
     // Query
-    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7, classification_status = $8 WHERE id = $9 RETURNING *';
+    const query = 'UPDATE polygons SET name = $1, description = $2, coordinates = $3, locality = $4, ownership_type = $5, farm_series_name = $6, notes = $7, classification_status = $8, area_hectares = $9 WHERE id = $10 RETURNING *';
 
     // Values
-    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, polygon.classification_status, polygon_id];
+    const values = [polygon.name, polygon.description, JSON.stringify(polygon.coordinates), polygon.locality, polygon.ownership_type, polygon.farm_series_name, polygon.notes, polygon.classification_status, polygon.area_hectares, polygon_id];
 
     try{
         // Query

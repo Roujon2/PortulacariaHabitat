@@ -48,7 +48,7 @@ const Login: React.FC = () => {
             <div className='login-page'>
                 <div className='background'></div>
 
-                <h1 className='login-app-name'>Spekboom Mapping</h1>
+                <h1 className='login-app-name'>Spekboom Mapper</h1>
 
                 <div className={`login-content ${loading ? 'loading' : ''}`}>
                     <div className='login-main'>
@@ -66,7 +66,7 @@ const Login: React.FC = () => {
                 </div>
 
                 <div className='login-footer'>
-                    <p>© 2024 Spekboom Mapping</p>
+                    <p>© 2024 Portulacaria Ltd</p>
                 </div>
             </div>
         );
@@ -103,7 +103,7 @@ const Login: React.FC = () => {
         <div className='login-page'>
             <div className='background'></div>
 
-            <h1 className='login-app-name'>Spekboom Mapping</h1>
+            <h1 className='login-app-name'>Spekboom Mapper</h1>
 
             <div className={`login-content`}>
                 <div className='login-main'>
