@@ -8,16 +8,15 @@ function connect(req, res) {
 
     res.flushHeaders();
 
-    // Send keep-alive
-    const keepAliveInterval = setInterval(() => {
-        res.write(': keep-alive\n\n');
-    }, 3000);
-
-    // Initial heartbeat
-    res.write("\n\n");
-
     // Get user id from request object
     const clientId = req.user.id;
+
+    // Send keep-alive
+    const keepAliveInterval = setInterval(() => {
+        sseService.sendEvent(clientId, { message: "Keep-alive" });
+        res.write(': keep-alive\n\n');
+    }, 30000);
+
 
     // Add client to the store
     sseService.addClient(clientId, res);

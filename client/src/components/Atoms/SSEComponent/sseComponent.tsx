@@ -37,7 +37,6 @@ const SSEComponent: React.FC<SSEComponentProps> = ({ setServerOnline }) => {
             // Listen for messages from the server
             eventSourceRef.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log('Received event:', data);
                 refreshPolygons();
 
                 // Switch statement to set success message based on event type
