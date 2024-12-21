@@ -183,7 +183,7 @@ const refreshPolygons = async (limit: number) => {
     }
 
     if (limit < 1){
-        limit = 10;
+        limit = 100;
     }
 
     try{

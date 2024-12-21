@@ -85,6 +85,13 @@
     background-color: #969696;
 }
 
+.help-note-container{
+    border: 1px solid #cccccc98;
+    border-radius: 5px;
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+}
+
 /* MENU SECTION */
 
 .section-image-container{

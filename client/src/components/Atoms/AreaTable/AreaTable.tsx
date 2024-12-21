@@ -25,6 +25,11 @@ const AreaTable: React.FC<AreaTableProps> = ({ classAreasObj }) => {
             return hectares.toFixed(0) + ' ha';
         }
     };
+
+    // Safety check
+    if(!classAreasObj || !classAreasObj.areas || !classAreasObj.areas.length){
+        classAreasObj = {areas: [['Error retrieving Spekboom class areas', '#0000ff', 0]], exact: false}
+    }
     
 
     return (

@@ -6,6 +6,8 @@ import PolygonDrawingHelpSection from "../../Atoms/PolygonDrawingHelpSection/Pol
 
 import './helpMenu.css'
 import { TbSectionSign } from "react-icons/tb";
+import PolygonUploadHelpSection from "../../Atoms/PolygonUploadHelpSection/PolygonUploadHelpSection";
+import PolygonClassificationHelpSection from "../../Atoms/PolygonClassificationHelpSection/PolygonClassificationHelpSection";
 
 // Help menu component
 const HelpMenu = () => {
@@ -14,7 +16,9 @@ const HelpMenu = () => {
 
     const sections = [
         {id: "buttons-section", title: "Buttons Guide"},
-        {id: "polygon-drawing-section", title: "Drawing a Polygon"}
+        {id: "polygon-drawing-section", title: "Drawing a Polygon"},
+        {id: "polygon-upload-section", title: "Uploading a Polygon"},
+        {id: "polygon-classification-section", title: "Classifying a Polygon"}
     ];
 
     const handleSectionChange = (sectionId: string) => {
@@ -35,6 +39,10 @@ const HelpMenu = () => {
                 return <ButtonHelpSection />;
             case "polygon-drawing-section":
                 return <PolygonDrawingHelpSection />;
+            case "polygon-upload-section":
+                return <PolygonUploadHelpSection />;
+            case "polygon-classification-section":
+                return <PolygonClassificationHelpSection />;
             default:
                 return <ButtonHelpSection />;
         }

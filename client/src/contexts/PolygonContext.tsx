@@ -39,7 +39,7 @@ interface PolygonContextProps {
     setOverlays: React.Dispatch<React.SetStateAction<{ [key: number]: { overlay: google.maps.ImageMapType; downloadUrl: string; classAreas: any; }; }>>;
 }
 
-const call_limit = 10;
+const call_limit = 100;
 
 const PolygonContext = createContext<PolygonContextProps | undefined>(undefined);
 
@@ -73,7 +73,7 @@ export const PolygonContextProvider: React.FC<PolygonContextProviderProps> = ({ 
     const [loading, setLoading] = useState<boolean>(false);
 
     // for knowing how many polygons have been retrieved already
-    var retrievedPolygons = 10;
+    var retrievedPolygons = 100;
 
     // Check if there are more polygons to fetch
     const [hasMore, setHasMore] = useState<boolean>(true);

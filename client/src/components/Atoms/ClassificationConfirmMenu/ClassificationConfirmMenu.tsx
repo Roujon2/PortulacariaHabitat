@@ -21,7 +21,6 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
     };
 
   return (
-    <div className="classification-confirm-overlay">
         <div className="classification-confirm-container">
             <div onClick={onClose}>
                             <IoClose className="close-button" />
@@ -84,7 +83,6 @@ const ClassificationConfirmMenu: React.FC<Props> = ({ onClose, onConfirm }) => {
                 </button>
             </div>
         </div>
-    </div>
   );
 }
 

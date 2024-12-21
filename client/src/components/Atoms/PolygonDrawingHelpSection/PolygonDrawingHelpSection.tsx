@@ -22,7 +22,7 @@ const PolygonDrawingHelpSection = () => (
                 onCancel={() => {}}
                 onSave={() => {}}
             />
-            <p>Note: The fields marked with a red asterisk are required.</p>
+            <p className="help-note-container">Note: The fields marked with a red asterisk are required.</p>
         </div>
 
         <p>Fill in the required fields and click the <FiSave/> icon to save the polygon.</p>

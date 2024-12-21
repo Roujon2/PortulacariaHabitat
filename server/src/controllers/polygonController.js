@@ -153,7 +153,7 @@ const refreshPolygons = async (req, res, next) => {
     try{
 
         const user_id = req.user.id;
-        const limit = req.query.limit || 10;
+        const limit = req.query.limit || 100;
 
         const client = res.locals.dbClient;
 

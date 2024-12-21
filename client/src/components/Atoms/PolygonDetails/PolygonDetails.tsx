@@ -108,14 +108,16 @@ const PolygonDetails: React.FC<PolygonDetailsProps> = ({ polygon, handleEdit, ha
         <div className="polygon-details__container">
 
             {showClassificationConfirmation && (
-                <ClassificationConfirmMenu 
-                    onClose={() => setShowClassificationConfirmation(false)}
-                    onConfirm={(options) => {
-                        setShowClassificationConfirmation(false);
-                        handleSpekboomClassification(polygon.id, options);
-                    }
-                    }
-                />
+                <div className="classification-confirm-overlay">
+                    <ClassificationConfirmMenu 
+                        onClose={() => setShowClassificationConfirmation(false)}
+                        onConfirm={(options) => {
+                            setShowClassificationConfirmation(false);
+                            handleSpekboomClassification(polygon.id, options);
+                        }
+                        }
+                    />
+                </div>
             )}
 
             {showSaveConfirmation && (
