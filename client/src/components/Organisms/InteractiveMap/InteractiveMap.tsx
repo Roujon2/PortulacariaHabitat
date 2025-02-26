@@ -20,6 +20,8 @@ import ErrorBox from "../../Atoms/ErrorBox/ErrorBox";
 import { useAlert } from "../../../contexts/AlertContext";
 import AreaTable from "../../Atoms/AreaTable/AreaTable";
 
+import { ParsedError } from "../../../utils/errorHandler";
+
 const libraries: LoadScriptProps['libraries'] = ['drawing', 'geometry'];
 
 const mapOptions = {
@@ -340,7 +342,11 @@ const InteractiveMap: React.FC = () => {
             }
         }catch(error){
             console.error("Error saving polygon:", error);
-            showAlert('Unable to save polygon. Please try again.', 'error', String(error));
+            var errorMessage = "";
+            if ((error as ParsedError).message){
+                var errorMessage = (error as ParsedError).message + " " + (error as ParsedError).extra?.error;
+            }
+            showAlert('Unable to save polygon. Please try again.', 'error', errorMessage || undefined);
         }
     }
 

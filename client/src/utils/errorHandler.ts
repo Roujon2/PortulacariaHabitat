@@ -13,7 +13,7 @@ export const parseError = (error: unknown): ParsedError => {
       const { message, extra } = error.response.data as { message: string; extra?: Record<string, any> };
       return { message, extra };
     }
-    return { message: 'An API error occurred.', extra: { details: error.message } };
+    return { message: 'An API error occurred.', extra: { error: error.message } };
   }
 
   // Handle non-Axios errors

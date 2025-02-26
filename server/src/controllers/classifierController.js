@@ -132,6 +132,9 @@ const getPolygonClassificationResult = async (req, res, next) => {
 // Function to get spekboom classification
 const getSpekboomClassification = async (req, res, next) => {
     try {
+        // Timer for request length
+        const start = Date.now();
+
         const polygon_id = req.params.id;
         const client = res.locals.dbClient;
 
@@ -184,9 +187,12 @@ const getSpekboomClassification = async (req, res, next) => {
         sseService.sendEvent(polygon.user_id, {action: "classification_complete", data: result});
 
         // Log the action
+        const elapsedTime = Date.now() - start;
+
         var userData = req.cookies?.user ? jwt.decode(req.cookies.user) : undefined;
         userData.polygon_id = polygon_id;
         userData.classificationOptions = classificationOptions;
+        userData.elapsedTime = `${elapsedTime}ms`;
         logInfo('Status Code: 200 | Spekboom classification complete', userData);
 
         res.status(200).json(result);
