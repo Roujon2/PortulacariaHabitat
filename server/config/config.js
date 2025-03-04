@@ -3,6 +3,34 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();
 
+const requiredEnvVars = [
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "GOOGLE_REDIRECT_URI",
+    "GOOGLE_AUTH_URL",
+    "GOOGLE_TOKEN_URL",
+    "GOOGLE_CLIENT_URL",
+    "GOOGLE_TOKEN_SECRET",
+    "GOOGLE_TOKEN_EXPIRY",
+    "GOOGLE_EE_SERVICE_ACCOUNT_KEY",
+    "PORT",
+    "SSL_CERT_PATH",
+    "SSL_KEY_PATH",
+    "DB_USER_CLIENT",
+    "DB_HOST",
+    "DB_NAME_CLIENT",
+    "DB_PASSWORD_CLIENT",
+    "DB_PORT"
+];
+
+// Check if all required environment variables are set
+requiredEnvVars.forEach(envVar => {
+    if(!process.env[envVar]) {
+        console.error(`Environment variable ${envVar} not set`);
+        process.exit(1);
+    }
+});
+
 const config = {
     google: {
         client_id: process.env.GOOGLE_CLIENT_ID,
