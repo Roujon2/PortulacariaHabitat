@@ -40,13 +40,16 @@ jobs:
       - name: Login to DigitalOcean container registry
         run: doctl registry login --expiry-seconds 600
 
-      - name: Remove old stage images
+      - name: Untag old stage images
         run: |
           if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
             doctl registry repository list-tags $(echo $IMAGE_NAME) | grep stage- | 
             sort -r | tail -n +3 | 
             xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {}
           fi
+        
+      - name: Trigger garbage collection
+        run: doctl registry garbage-collection start --include-untagged-manifests
       
       - name: Push container image to DigitalOcean container registry
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
