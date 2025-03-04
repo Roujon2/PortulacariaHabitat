@@ -42,7 +42,7 @@ app.use(cors({
 
 // General endpoint
 app.get('/', (req, res) => {
-	res.status(200).json({message: "Welcome to the Spekboom Mapping API!"});
+	res.status(200).json({message: "Welcome to the Spekboom Mapping API! Have fun classifying polygons!"});
 });
 
 // Parsing cookies
