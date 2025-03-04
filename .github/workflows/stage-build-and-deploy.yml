@@ -43,8 +43,8 @@ jobs:
       - name: Remove old stage images
         run: |
           if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
-            doctl registry repository list-tags $(echo $IMAGE_NAME) | grep prod- | 
-            sort -r | tail -n +6 | 
+            doctl registry repository list-tags $(echo $IMAGE_NAME) | grep stage- | 
+            sort -r | tail -n +3 | 
             xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {}
           fi
       
