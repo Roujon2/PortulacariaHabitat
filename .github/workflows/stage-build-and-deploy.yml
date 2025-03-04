@@ -1,0 +1,20 @@
+name: Stage CI
+
+# Trigger workflow on stage branch push
+on:
+  push:
+    branches: [stage]
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Stage Image version'
+        required: true
+
+# Environment variables
+env:
+  REGISTRY: "registry.digitalocean.com/spekboom-mapper-registry"
+  IMAGE_NAME: "backend-app"
+
+# Jobs
