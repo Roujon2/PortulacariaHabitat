@@ -18,3 +18,65 @@ env:
   IMAGE_NAME: "backend-app"
 
 # Jobs
+jobs:
+  build_and_push:
+    runs_on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Build container image
+        run: |
+          docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7) \
+          --build-arg ENVIRONMENT=staging .
+        
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login to DigitalOcean container registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Remove old stage images
+        run: |
+          if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
+            doctl registry repository list-tags $(echo $IMAGE_NAME) | grep prod- | 
+            sort -r | tail -n +6 | 
+            xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {}
+          fi
+      
+      - name: Push container image to DigitalOcean container registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
+
+  deploy:
+    needs: build_and_push
+    runs_on: ubuntu-latest
+    steps:
+      - name: Deploy to DigitalOcean droplet via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.STAGE_USERNAME }}
+          key: ${{ secrets.STAGE_SSH_KEY }}
+          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA
+          script: |
+            # Login to registry
+            docker login -u $REGISTRY -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+            # Stop existing stage container
+            docker stop $(echo $IMAGE_NAME)-stage || true
+
+            # Remove existing stage container
+            docker rm $(echo $IMAGE_NAME)-stage || true
+
+            # Pull the latest image
+            docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
+
+            # Run the new image
+            docker run -d \
+              --restart always \
+              --name $(echo $IMAGE_NAME)-stage \
+              -p 8080:5000 \
+              --env-file /home/spekboom_mapper_stage/PortulacariaHabitat/staging-env/.env \
+              $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
