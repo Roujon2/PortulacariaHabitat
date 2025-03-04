@@ -50,7 +50,7 @@ jobs:
         
       - name: Trigger garbage collection
         run: |
-          yes | doctl registry garbage-collection start --include-untagged-manifests 
+          doctl registry garbage-collection start --include-untagged-manifests --force
       
       - name: Push container image to DigitalOcean container registry
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
