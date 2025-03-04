@@ -28,7 +28,7 @@ jobs:
       - name: Build container image
         run: |
           docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7) \
-          --build-arg ENVIRONMENT=staging .
+          --build-arg ENVIRONMENT=staging ./server
         
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
