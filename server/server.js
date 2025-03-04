@@ -164,7 +164,7 @@ if(process.env.NODE_ENV === 'production') {
     });
 }else if(process.env.NODE_ENV === 'development') {
     // Start server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server is running on port ${PORT}`);
     });
 }else{
