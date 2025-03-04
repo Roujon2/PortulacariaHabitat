@@ -20,7 +20,7 @@ env:
 # Jobs
 jobs:
   build_and_push:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
 
   deploy:
     needs: build_and_push
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy to DigitalOcean droplet via SSH
         uses: appleboy/ssh-action@master
