@@ -77,6 +77,9 @@ jobs:
             # Remove existing stage container
             docker rm $(echo $IMAGE_NAME)-stage || true
 
+            # Clear unused Docker resources to free memory
+            docker system prune -af --volumes
+
             # Pull the latest image
             docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
 
