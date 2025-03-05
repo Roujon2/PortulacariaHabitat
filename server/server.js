@@ -35,7 +35,7 @@ const PORT = config.server.port;
 
 // CORS config
 app.use(cors({
-    origin: [config.google.client_url, 'https://spekboom-mapper.web.app'],
+    origin: [config.google.client_url, 'https://spekboom-mapper.web.app', 'https://stage-spekboom-mapper.web.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
