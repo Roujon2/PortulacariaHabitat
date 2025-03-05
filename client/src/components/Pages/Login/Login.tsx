@@ -103,7 +103,7 @@ const Login: React.FC = () => {
         <div className='login-page'>
             <div className='background'></div>
 
-            <h1 className='login-app-name'>Spekboom Mapper Staging</h1>
+            <h1 className='login-app-name'>Spekboom Mapper Staging Page</h1>
 
             <div className={`login-content`}>
                 <div className='login-main'>

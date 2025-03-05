@@ -27,19 +27,19 @@ jobs:
         working-directory: client
         run: |
           if [ "${{ github.ref_name }}" == "stage" ]; then
-            echo "${{ secrets.STAGE_FRONTEND_ENV }}" > .env
+            echo -e "${{ secrets.STAGE_FRONTEND_ENV }}" > .env
           else
-            echo "${{ secrets.PRODUCTION_FRONTEND_ENV }}" > .env
+            echo -e "${{ secrets.PRODUCTION_FRONTEND_ENV }}" > .env
           fi
 
       - name: Build App
         working-directory: client
         run: |
-          npm run build
+          CI=false npm run build
         
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SPEKBOOM_MAPPER }}
-          target: ${{ github.ref_name == 'staging' && 'staging' || 'production' }}
+          target: ${{ github.ref_name == 'stage' && 'staging' || 'production' }}
