@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - stage
-      
+
     paths:
       - 'client/**'
 
@@ -22,15 +22,19 @@ jobs:
       - name: Install dependencies
         working-directory: client
         run: npm install
+      
+      - name: Env setup
+        working-directory: client
+        run: |
+          if [ "${{ github.ref_name }}" == "stage" ]; then
+            echo "${{ secrets.STAGE_FRONTEND_ENV }}" > .env
+          else
+            echo "${{ secrets.PRODUCTION_FRONTEND_ENV }}" > .env
+          fi
 
       - name: Build App
         working-directory: client
         run: |
-          if [ "${{ github.ref_name }}" == "stage" ]; then
-            cp .env.staging .env
-          else
-            cp .env.production .env
-          fi
           npm run build
         
       - name: Deploy to Firebase Hosting
