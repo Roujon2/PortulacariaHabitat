@@ -45,7 +45,7 @@ jobs:
           if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
             doctl registry repository list-tags $(echo $IMAGE_NAME) | grep stage- | 
             sort -r | tail -n +3 | 
-            xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {}
+            xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {} --force
           fi
         
       - name: Trigger garbage collection
