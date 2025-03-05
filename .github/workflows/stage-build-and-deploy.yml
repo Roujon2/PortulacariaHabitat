@@ -44,8 +44,9 @@ jobs:
         run: |
           if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
             doctl registry repository list-tags $(echo $IMAGE_NAME) | grep stage- | 
-            sort -r | tail -n +3 | 
-            xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {}
+            awk '{print $1}' |
+            sort -r | tail -n +2 | 
+            xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {} --force || echo "No old images to delete"
           fi
         
       - name: Trigger garbage collection
@@ -76,6 +77,9 @@ jobs:
             # Remove existing stage container
             docker rm $(echo $IMAGE_NAME)-stage || true
 
+            # Clear unused Docker resources to free memory
+            docker system prune -af --volumes
+
             # Pull the latest image
             docker pull $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
 
@@ -83,6 +87,6 @@ jobs:
             docker run -d \
               --restart always \
               --name $(echo $IMAGE_NAME)-stage \
-              -p 8080:5000 \
+              -p 127.0.0.1:8080:5000 \
               --env-file /home/spekboom_mapper_stage/PortulacariaHabitat/staging-env/.env \
               $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
