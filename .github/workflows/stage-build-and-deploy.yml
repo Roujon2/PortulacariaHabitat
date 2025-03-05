@@ -45,7 +45,7 @@ jobs:
           if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then 
             doctl registry repository list-tags $(echo $IMAGE_NAME) | grep stage- | 
             awk '{print $1}' |
-            sort -r | tail -n +3 | 
+            sort -r | tail -n +2 | 
             xargs -I {} doctl registry repository delete-tag $(echo $IMAGE_NAME) {} --force || echo "No old images to delete"
           fi
         
