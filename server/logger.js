@@ -15,18 +15,39 @@ const logger = createLogger({
         }
     )),
     transports: [
+        // Info logs
         new DailyRotateFile({
-            filename: 'logs/%DATE%.log',
+            filename: 'logs/info-%DATE%.log',
             datePattern: 'DD-MM-YYYY',
             maxSize: '20m',
             maxFiles: '14d',
+            level: 'info'
+        }),
+        // Warn logs
+        new DailyRotateFile({
+            filename: 'logs/warn-%DATE%.log',
+            datePattern: 'DD-MM-YYYY',
+            maxSize: '20m',
+            maxFiles: '14d',
+            level: 'warn'
+        }),
+        // Error logs
+        new DailyRotateFile({
+            filename: 'logs/error-%DATE%.log',
+            datePattern: 'DD-MM-YYYY',
+            maxSize: '20m',
+            maxFiles: '14d',
+            level: 'error'
+        }),
+        new transports.Console({
+            format: format.combine(format.colorize(), format.simple()),
         }),
     ],
 });
 
 // Custom logging methods
 const logInfo = (message, user) => {
-    logger.log(
+    logger.info(
         {
             level: 'info',
             message: message,
@@ -36,7 +57,7 @@ const logInfo = (message, user) => {
 }
 
 const logError = (message, user, metadata) => {
-    logger.log(
+    logger.error(
         {
             level: 'error',
             message: message,
@@ -47,7 +68,7 @@ const logError = (message, user, metadata) => {
 }
 
 const logWarn = (message, user, metadata) => {
-    logger.log(
+    logger.warn(
         {
             level: 'warn',
             message: message,

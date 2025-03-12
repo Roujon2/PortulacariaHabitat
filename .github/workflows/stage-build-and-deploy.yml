@@ -90,4 +90,5 @@ jobs:
               -p 127.0.0.1:8080:5000 \
               --env-file /home/spekboom_mapper_stage/PortulacariaHabitat/staging-env/.env \
               --add-host=host.docker.internal:$(hostname -I | awk '{print $2}') \
+              -v /home/spekboom_mapper_stage/PortulacariaHabitat/logs:/app/logs \
               $(echo $REGISTRY)/$(echo $IMAGE_NAME):stage-$(echo $GITHUB_SHA | head -c7)
