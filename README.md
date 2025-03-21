@@ -16,3 +16,8 @@ It is designed to facilitate the management and classification of geographical r
 - **Database**: PostgreSQL
 - **Containerization**: Docker
 - **CI/CD**: GitHub Actions
+
+## Images
+![Login menu](documentation/LoginMenu.png)
+![Home menu](documentation/HomeMenu.png)
+![Polygon classification example](documentation/ClassifiedMenu.png)
