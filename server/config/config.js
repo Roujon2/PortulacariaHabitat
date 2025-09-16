@@ -14,8 +14,6 @@ const requiredEnvVars = [
     "GOOGLE_TOKEN_EXPIRY",
     "GOOGLE_EE_SERVICE_ACCOUNT_KEY",
     "PORT",
-    "SSL_CERT_PATH",
-    "SSL_KEY_PATH",
     "DB_USER_CLIENT",
     "DB_HOST",
     "DB_NAME_CLIENT",
