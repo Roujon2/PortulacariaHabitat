@@ -35,14 +35,14 @@ const PORT = config.server.port;
 
 // CORS config
 app.use(cors({
-    origin: [config.google.client_url, 'https://spekboom-mapper.web.app'],
+    origin: [config.google.client_url, 'https://spekboom-mapper.web.app', 'https://stage-spekboom-mapper.web.app'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
 // General endpoint
 app.get('/', (req, res) => {
-	res.status(200).json({message: "Welcome to the Spekboom Mapping API!"});
+	res.status(200).json({message: "Welcome to the Spekboom Mapping API!!!"});
 });
 
 // Parsing cookies
@@ -164,7 +164,7 @@ if(process.env.NODE_ENV === 'production') {
     });
 }else if(process.env.NODE_ENV === 'development') {
     // Start server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server is running on port ${PORT}`);
     });
 }else{

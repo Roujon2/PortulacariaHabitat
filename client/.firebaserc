@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "spekboom-mapper"
-  }
+  },
+  "targets": {
+    "spekboom-mapper": {
+      "hosting": {
+        "staging": [
+          "stage-spekboom-mapper"
+        ],
+        "production": [
+          "spekboom-mapper"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
