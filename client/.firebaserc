@@ -17,6 +17,9 @@
       "hosting": {
         "staging": [
           "stage-spekboom-mapper-1b5ae"
+        ],
+        "production": [
+          "spekboom-mapper-49ec9"
         ]
       }
     }
