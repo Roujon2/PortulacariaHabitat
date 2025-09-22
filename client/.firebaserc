@@ -1,15 +1,22 @@
 {
   "projects": {
-    "default": "spekboom-mapper"
+    "default": "spekboom-mapper-49ec9"
   },
   "targets": {
     "spekboom-mapper": {
       "hosting": {
         "staging": [
-          "stage-spekboom-mapper"
+          "stage-spekboom-mapper-1b5ae"
         ],
         "production": [
           "spekboom-mapper"
+        ]
+      }
+    },
+    "spekboom-mapper-49ec9": {
+      "hosting": {
+        "staging": [
+          "stage-spekboom-mapper-1b5ae"
         ]
       }
     }
